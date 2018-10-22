@@ -6,7 +6,7 @@
             <b-navbar-brand href="#"><strong>KOMPIS</strong></b-navbar-brand>
                 <b-collapse is-nav id="nav_collapse">
                     <b-navbar-nav>
-                    <b-nav-item href="#">Min CV</b-nav-item>
+                    <b-nav-item router-link :to="{ name: 'MyCV' }">Min CV</b-nav-item>
                     <b-nav-item router-link :to="{ name: 'PracticeCertificateView' }">Praksisattester</b-nav-item>
                     <b-nav-item href="#">Utviklingsplan</b-nav-item>
                     </b-navbar-nav>

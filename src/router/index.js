@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import MyCV from '@/components/views/MyCV'
 import WorkExperience from '@/components/views/WorkExperience'
+import Education from '@/components/views/Education'
 import KeyCompetence from '@/components/views/KeyCompetence'
 import PracticalSkill from '@/components/views/PracticalSkill'
 import PracticeCertificate from '@/components/views/PracticeCertificate'
@@ -17,8 +18,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'MyCV',
-      component: MyCV
+      name: 'Login',
+      component: Login
     },
     {
       path: '/signup',
@@ -26,14 +27,19 @@ export default new Router({
       component: Signup
     },
     {
-      path: '/login',
-      name: 'Login',
-      component: Login
+      path: '/home',
+      name: 'MyCV',
+      component: MyCV
     },
     {
       path: '/work',
       name: 'WorkExperience',
       component: WorkExperience
+    },
+    {
+      path: '/education',
+      name: 'Education',
+      component: Education
     },
     {
       path: '/keyvalues',

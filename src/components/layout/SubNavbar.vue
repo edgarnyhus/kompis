@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="b-navbar">
-            <b-navbar toggleable="md" type="light" :variant="light" style="height: 2em">
+            <b-navbar toggleable="md" type="light" variant="light" style="height: 2em">
                 <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
                 <b-navbar-brand class="bold-text" href="#"><strong>Ok, la oss komme igang!</strong></b-navbar-brand>
                 <b-collapse is-nav id="nav_collapse">

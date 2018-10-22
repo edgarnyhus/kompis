@@ -16,14 +16,12 @@
             <b-card no-body class="accordion mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
                     <h5 class="b-card-title">Arbeidserfaring
-                    <!-- <a v-b-toggle.accordion1  class="btn-floating float-right"><i class="fa fa-chevron-down"></i></a> -->
                     <b-button class="btn-floating btn-secondary float-right" @click="addWorkExperience()">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
                 </b-card-header>
                 <b-collapse id="accordion1" visible accordion="my-accordion" role="tabpanel">
                     <b-card-body>
-                        <!-- <font-awesome-icon img-left icon="coffee" style="font-size: 2rem; font-weight: 50"/> -->
                         <p class="card-text">
                             I start opened because <code>visible</code> is <code>true</code>
                         </p>
@@ -38,7 +36,6 @@
                 <b-card-header header-tag="header" v-b-toggle.accordion2 role="tab">
                     <h5 class="b-card-title">Utdanning og kurs
                     <b-button class="btn-floating btn-secondary float-right" @click="addEducation()">Legg til emne</b-button>
-                    <!-- <md-icon-button class="md-fab-top-right">add</md-icon-button> -->
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
                 </b-card-header>
@@ -162,41 +159,32 @@ export default {
     },
     methods: {
         addWorkExperience() {
-            console.log('addWorkExperience-->lauching page')
             this.$router.push({ name: 'WorkExperience' })
         },
         addEducation() {
-            console.log('addEducation')
-
+            this.$router.push({ name: 'Education' })
         },
         addKeyCompetence() {
-            console.log('addKeyCompetence')
             this.$router.push({ name: 'KeyCompetence' })
         },
         addPracticalSkill() {
-            console.log('addPracticalSkill')
             this.$router.push({ name: 'PracticalSkill' })
         },
         addVolunteering() {
             console.log('addVolunteering')
-
         },
         addLanguage() {
             console.log('addLanguage')
-
         },
         addReference() {
             console.log('addReference')
-
         },
         showPracticeCertificate() {
             this.$router.push({ name: 'PracticeCertificatView' })
-        
         },
         addPracticeCertificate() {
             this.$router.push({ name: 'PracticeCertificate' })
         }
-
     }
 }
 </script>
