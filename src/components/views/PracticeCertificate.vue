@@ -3,27 +3,32 @@
         <!-- <SubNavbar /> -->
 
         <div class="container">
-            <b-form style="margin-top: 70px">
-                <b-form-input v-model="form.company"
-                  type="text"
-                  placeholder="Navn på bedrift"
-                  style="height: 80px; font-size: 40px; border: none; margin-left: 0; padding left: 0"
-                  v-bind:readonly="form.readonly"
-                  >
-                  {{ form.company }}
+            <b-form @submit.prevent="submit" style="margin-top: 70px">
+                <b-form-input 
+                    @change="reset"
+                    v-model="form.company"
+                    type="text"
+                    placeholder="Navn på bedrift"
+                    style="height: 80px; font-size: 40px; border: none; margin-left: 0; padding left: 0; [read-only]: rgb(0,160,161)"
+                    v-bind:readonly="form.readonly"
+                    ref="companyField"
+                    >
+                    {{ form.company }}
                 </b-form-input>
-                <a v-on:click="form.readonly = !form.readonly" href="#" style="color: rgb(0,160,161)"><strong>Endre</strong></a>
-                <!-- <a v-on:click="enable" href="#" style="color: rgb(0,160,161)"><strong>Endre</strong></a> -->
+                <div style="margin-top: 20px"></div>
+                <a v-on:click="enable" href="#" style="color: rgb(0,160,161)"><strong>Endre</strong></a>
             </b-form>
+
             <!-- <b-progress class="g-m2 mb-3" height="2em" :value="bars[0].value" :variant="this.bars[1].variant" :max="max" show-progress></b-progress> -->
 
+            <div style="margin-top: 40px"></div>
             <b-card no-body class="accordion mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
                     <h5 class="b-card-title">Praksissted
                     <!-- <a v-b-toggle.accordion1  class="btn-floating float-right"><i class="fa fa-chevron-down"></i></a> -->
                     <b-button class="btn-floating btn-secondary float-right" @click="addWorkExperience()">Legg til emne</b-button>
                     </h5>
-                    <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
                 </b-card-header>
                 <b-collapse id="accordion1" visible accordion="my-accordion" role="tabpanel">
                     <b-card-body>
@@ -39,28 +44,11 @@
             </b-card>
             
             <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion2 role="tab">
-                    <h5 class="b-card-title">Utdanning og kurs
-                    <b-button class="btn-floating btn-secondary float-right" @click="addEducation()">Legg til emne</b-button>
-                    <!-- <md-icon-button class="md-fab-top-right">add</md-icon-button> -->
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
-                </b-card-header>
-            <b-collapse id="accordion2" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                <p class="card-text">
-                    {{ text }}
-                </p>
-                </b-card-body>
-            </b-collapse>
-            </b-card>
-
-            <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
                     <h5 class="b-card-title">Nøkkelkompetanse
                     <b-button class="btn-floating btn-secondary float-right" @click="addKeyCompetence()">Legg til emne</b-button>
                     </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper ewr bekreftet gjennom arbeidet på dette praksisstedet?</p>
                 </b-card-header>
             <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -76,7 +64,7 @@
                     <h5 class="b-card-title">Praktiske ferdigheter
                     <b-button class="btn-floating btn-secondary float-right" @click="addPracticalSkill()">Legg til emne</b-button>
                     </h5>
-                    <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbedi ved dette parksisstedet?</p>
                 </b-card-header>
             <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -89,12 +77,12 @@
 
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion5 role="tab">
-                    <h5 class="b-card-title">Frivillig arbeid og verv
+                    <h5 class="b-card-title">Kontaktperson
                     <b-button class="btn-floating btn-secondary float-right" @click="addVolunteering()">Legg til emne</b-button>
                     </h5>
-                    <p class="b-card-text" style="font-style: italic">Har du tatt på deg frivillig arbeid eller verv? Hva?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvem er din kontktperson ved dette praksisstedet?</p>
                 </b-card-header>
-            <b-collapse id="accordion5" accordion="my-accordion" role="tabpanel">
+            <b-collapse id="accordion5" v-if="form.references" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
                 <p class="card-text">
                     {{ text }}
@@ -102,42 +90,9 @@
                 </b-card-body>
             </b-collapse>
             </b-card>
-
-            <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion6 role="tab">
-                    <h5 class="b-card-title">Språk
-                    <b-button class="btn-floating btn-secondary float-right" @click="addLanguage()">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke språk kan du snakke?</p>
-                </b-card-header>
-            <b-collapse id="accordion6" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                <p class="card-text">
-                    {{ text }}
-                </p>
-                </b-card-body>
-            </b-collapse>
-            </b-card>
-
-            <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion7 role="tab">
-                    <h5 class="b-card-title">Referanser
-                    <b-button class="btn-floating btn-secondary float-right" @click="addReference()">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke personer kan potensielle arbeidsgivere kontakte for å bli kjent med deg? Husk å be om tillatelse!</p>
-                </b-card-header>
-            <b-collapse id="accordion7" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                <p class="card-text">
-                    {{ text }}
-                </p>
-                </b-card-body>
-            </b-collapse>
-            </b-card>
-        </div>
-        <div class="end-page">
 
         </div>
+        <div style="margin-bottom: 40px"></div>
     </div>
 </template>
 
@@ -165,11 +120,21 @@ export default {
                 {variant: 'dark', value: 25}
             ],
             form: {
-                disabled: true,
                 readonly: true,
-                company: null
+                company: null,
+                keyCompetences: [],
+                practicalSkills: [],
+                refererence: []
             }
         }
+    },
+    directives: {
+        // focus: {
+        //     // directive definition
+        //     inserted: function (el) {
+        //     el.focus()
+        //     }
+        // }
     },
     methods: {
         addWorkExperience() {
@@ -199,19 +164,23 @@ export default {
         addPracticeCertificate() {
             this.$router.push({ name: 'PracticeCertificat' })
         },
-        enable: function() {
-            console.log('enable')
-            this.form.disable = false
+        enable() {
             this.form.readonly = false
+            this.$refs.companyField.focus();
+        },
+        reset() {
+            this.form.readonly = true
+        },
+        submit() {
+            console.log('submit')
         }
     }
 }
 </script>
 
 <style>
-.page-title {
-    margin-top: 2em;
-    margin-bottom: 1em;
+b-form-input[read-only] {
+  background-color: rgb(0,160,151);
 }
 g-m2 {
     margin-top: 2em;
@@ -220,11 +189,5 @@ g-m2 {
 .accordion {
     margin-top: 1em;
     margin-bottom: 5em;
-}
-b-card-header {
-  cursor: wait;
-}
-.end-page {
-    margin-bottom: 3em;
 }
 </style>

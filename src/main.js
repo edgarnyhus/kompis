@@ -11,7 +11,20 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false
 
-/* eslint-disable no-new */
+// // Register a global custom directive called `v-focus`
+// Vue.directive('focus', {
+//   // When the bound element is inserted into the DOM...
+//   inserted: function (el) {
+//     // Focus the element
+//     el.focus()
+//   },
+//   // When the bound element is updated in the DOM...
+//   update: function (el) {
+//     // Focus the element
+//     el.focus()
+//   }
+// })
+
 new Vue({
   el: '#app',
   router,
