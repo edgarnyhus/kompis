@@ -3,19 +3,23 @@
         <!-- <SubNavbar /> -->
 
         <div class="container">
-            <h4 class="page-title">Praksisattest</h4>
-            
-            <b-progress class="mb-3" height="2em" :value="bars[0].value" :variant="this.bars[1].variant" :max="max" show-progress></b-progress>
-
-            <b-card class="practice-certificate">
-            <h5 class="b-card-title">Har du vært i arberidspraksis?</h5>
-                <p class="b-card-text">Lag praksisattesten først, og dataene vil dukke opp i CVen din. Usikker på hvordan du skal gjære det, ta kontakt med veileder.</p>
-                <button type="button" class="btn btn-info" @click="addPracticeCertificate">Lag ny praksisattest</button>
-            </b-card>
+            <b-form style="margin-top: 70px">
+                <b-form-input v-model="form.company"
+                  type="text"
+                  placeholder="Navn på bedrift"
+                  style="height: 80px; font-size: 40px; border: none; margin-left: 0; padding left: 0"
+                  v-bind:readonly="form.readonly"
+                  >
+                  {{ form.company }}
+                </b-form-input>
+                <a v-on:click="form.readonly = !form.readonly" href="#" style="color: rgb(0,160,161)"><strong>Endre</strong></a>
+                <!-- <a v-on:click="enable" href="#" style="color: rgb(0,160,161)"><strong>Endre</strong></a> -->
+            </b-form>
+            <!-- <b-progress class="g-m2 mb-3" height="2em" :value="bars[0].value" :variant="this.bars[1].variant" :max="max" show-progress></b-progress> -->
 
             <b-card no-body class="accordion mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
-                    <h5 class="b-card-title">Arbeidserfaring
+                    <h5 class="b-card-title">Praksissted
                     <!-- <a v-b-toggle.accordion1  class="btn-floating float-right"><i class="fa fa-chevron-down"></i></a> -->
                     <b-button class="btn-floating btn-secondary float-right" @click="addWorkExperience()">Legg til emne</b-button>
                     </h5>
@@ -147,19 +151,24 @@ export default {
     },
     data () {
         return {
-        home: 'yes',
-        text: 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon',
-        max: 100,
-        value: 33.333333333,
-        bars: [
-            {variant: 'success', value: 25},
-            {variant: 'info', value: 25},
-            {variant: 'warning', value: 25},
-            {variant: 'danger', value: 25},
-            {variant: 'primary', value: 25},
-            {variant: 'secondary', value: 25},
-            {variant: 'dark', value: 25}
-        ]
+            home: 'yes',
+            text: 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon',
+            max: 100,
+            value: 33.333333333,
+            bars: [
+                {variant: 'success', value: 25},
+                {variant: 'info', value: 25},
+                {variant: 'warning', value: 25},
+                {variant: 'danger', value: 25},
+                {variant: 'primary', value: 25},
+                {variant: 'secondary', value: 25},
+                {variant: 'dark', value: 25}
+            ],
+            form: {
+                disabled: true,
+                readonly: true,
+                company: null
+            }
         }
     },
     methods: {
@@ -189,6 +198,11 @@ export default {
         },
         addPracticeCertificate() {
             this.$router.push({ name: 'PracticeCertificat' })
+        },
+        enable: function() {
+            console.log('enable')
+            this.form.disable = false
+            this.form.readonly = false
         }
     }
 }
@@ -196,16 +210,12 @@ export default {
 
 <style>
 .page-title {
-    margin-top: 1.5em;
-    margin-bottom: 0.5em;
-}
-b-progress {
-
-}
-.practice-certificate {
-    margin-top: 3.5em;
+    margin-top: 2em;
     margin-bottom: 1em;
-    background-color: (242,242,242);
+}
+g-m2 {
+    margin-top: 2em;
+    margin-bottom: 0.5em;
 }
 .accordion {
     margin-top: 1em;
