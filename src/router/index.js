@@ -14,7 +14,7 @@ import firebase from 'firebase'
 
 Vue.use(Router)
 
-export default new Router({
+const router = new Router({
   routes: [
     {
       path: '/',
@@ -29,64 +29,89 @@ export default new Router({
     {
       path: '/home',
       name: 'MyCV',
-      component: MyCV
+      component: MyCV,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/work',
       name: 'WorkExperience',
-      component: WorkExperience
+      component: WorkExperience,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/education',
       name: 'Education',
-      component: Education
+      component: Education,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/keyvalues',
       name: 'KeyCompetence',
-      component: KeyCompetence
+      component: KeyCompetence,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/skill',
       name: 'PracticalSkill',
-      component: PracticalSkill
+      component: PracticalSkill,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/practice',
       name: 'PracticeCertificateView',
-      component: PracticeCertificateView
+      component: PracticeCertificateView,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/cert',
       name: 'PracticeCertificate',
-      component: PracticeCertificate
+      component: PracticeCertificate,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/goal',
       name: 'PersonalGoal',
-      component: PersonalGoal
+      component: PersonalGoal,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
 
 // router guards
-// router.beforeEach((to, from, next) => {
-//   // check to see if route has auth guard
-//   if(to.matched.some(rec => rec.meta.requiresAuth)){
-//     // check auth state of user
-//     let user = firebase.auth().currentUser
-//     if (user) {
-//       // User is signed in. Proceed to route
-//       next()
-//     } else {
-//       // No user is signed in. Redirect to login
-//       next({
-//         name: 'Login'
-//       })
-//     }
-//   } else {
-//     // if route is not guarded by auth, proceed
-//     next()
-//   }
-// })
+router.beforeEach((to, from, next) => {
+  // check to see if route has auth guard
+  if(to.matched.some(rec => rec.meta.requiresAuth)){
+    // check auth state of user
+    let user = firebase.auth().currentUser
+    if (user) {
+      // User is signed in. Proceed to route
+      next()
+    } else {
+      // No user is signed in. Redirect to login
+      next({
+        name: 'Login'
+      })
+    }
+  } else {
+    // if route is not guarded by auth, proceed
+    next()
+  }
+})
 
+export default router

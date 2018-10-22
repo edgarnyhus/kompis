@@ -33,12 +33,12 @@
                             placeholder="">
                 </b-form-input>
             </b-form-group>
-            <p v-if="feedback" style="color: red">{{ feedback }}</p>
             <b-form-group class="g-m2">
                 <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
                 <b-link @click="login()" style="color: rgb(0,161,181)"><strong>Logg inn</strong></b-link>
             </b-form-group>
 
+            <p v-if="feedback" style="color: red">{{ feedback }}</p>
         </b-form>
         </b-container>
     </div>
@@ -87,7 +87,7 @@ export default {
             })
         },
         login() {
-
+            this.$router.push({ name: 'Login' })
         }
     }
 

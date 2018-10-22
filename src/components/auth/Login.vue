@@ -6,7 +6,7 @@
             <b-form-group id="email"
                     label="Din email adressse"
                     label-for="email"
-                    description="We'll never share your email with anyone else.">
+                    description="">
                 <b-form-input @change="reset()" id="email"
                     type="email"
                     v-model="form.email"
@@ -24,12 +24,12 @@
                           
                 </b-form-input>
             </b-form-group>
-            <p v-if="feedback" style="color: red">{{ feedback }}</p>
             <b-form-group class="g-m2">
                 <b-button class="g-span" type="submit" variant="info">Logg inn</b-button>
                 <b-link @click="signup()" style="color: rgb(0,161,181)"><strong>Registrer deg</strong></b-link>
             </b-form-group>
 
+            <p v-if="feedback" style="color: red">{{ feedback }}</p>
         </b-form>
         </b-container>
     </div>
@@ -73,7 +73,7 @@ export default {
             }
         },
         signup() {
-
+            this.$router.push({ name: 'Signup' })
         }
     }
 

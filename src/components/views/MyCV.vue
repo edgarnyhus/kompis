@@ -8,7 +8,7 @@
             <b-progress class="mb-3" height="2em" :value="bars[0].value" :variant="this.bars[1].variant" :max="max" show-progress></b-progress>
 
             <b-card class="g-practice">
-                <h5 class="b-card-title">Har du vært i arberidspraksis?</h5>
+                <h5 class="b-card-title">Har du vært i arbeidspraksis?</h5>
                 <p class="b-card-text">Lag praksisattesten først, og dataene vil dukke opp i CVen din. Usikker på hvordan du skal gjære det, ta kontakt med veileder.</p>
                 <button type="button" class="btn btn-info" @click="addPracticeCertificate">Lag ny praksisattest</button>
             </b-card>
@@ -154,7 +154,8 @@ export default {
             {variant: 'primary', value: 25},
             {variant: 'secondary', value: 25},
             {variant: 'dark', value: 25}
-        ]
+        ],
+        user: null
         }
     },
     methods: {
@@ -185,6 +186,12 @@ export default {
         addPracticeCertificate() {
             this.$router.push({ name: 'PracticeCertificate' })
         }
+    },
+    mounted() {
+
+    },
+    created() {      
+
     }
 }
 </script>

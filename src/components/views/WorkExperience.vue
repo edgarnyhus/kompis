@@ -24,11 +24,10 @@
             </b-form-group>
 
             <b-form-group class="g-group2">
-                <div class="g-group form-row">
+                <!-- <div class="g-group form-row">
                     <div class="form-group col-md-3">
                         <label for="fromMonth"><strong>Fra</strong></label>
                         <b-form-select v-model="form.from.month" :options="months" class="mb-3" />
-                        <!-- <b-input id="fromMonth" placeholder="Fra hvilken måned?" v-model="form.from.month" /> -->
                     </div>
                     <div class="form-group col-md-3">
                         <label for="fromYear">(år) </label>
@@ -37,24 +36,24 @@
                     <div class="form-group col-md-3">
                         <label for="toMonth"><strong>Til</strong></label>
                         <b-form-select v-model="form.to.month" :options="months" class="mb-3" />
-                        <!-- <b-input id="toMonth" placeholder="Til hvilken måned?" v-model="form.to.month" /> -->
                     </div>
                     <div class="form-group col-md-3">
                         <label for="toYear">(år) </label>
                         <b-input  id="toYear" placeholder="Til hvilket år?" v-model="form.to.year" />
                     </div>
-                </div>
+                </div> -->
 
-                <!-- <div class="form-row">
+                <div class="form-row">
                     <div class="form-group col-md-6">
                         <label><strong>Fra</strong></label>
-                        <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker>
+                        <!-- <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker> -->
+                        <b-input type='date' :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></b-input>
                     </div>
                     <div class="form-group col-md-6">
                         <label><strong>Til</strong></label>
-                        <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker>
+                        <!-- <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker> -->
                     </div>
-                </div> -->
+                </div>
             </b-form-group>
 
             <b-form-group class="g-group3">
