@@ -2,7 +2,7 @@
     <div class="container">
         <div>
             <h4 class="page-title">Praksisattester
-                <b-button class="btn-floating btn-info float-right" @click="newPracticeCertificate()">Lag ny praksisattest</b-button>
+                <b-button class="btn-floating btn-info float-right" router-link :to="{ name: 'PracticeCertificate' }">Lag ny praksisattest</b-button>
             </h4>
         </div>
 

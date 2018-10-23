@@ -3,7 +3,7 @@
         <!-- <SubNavbar /> -->
 
         <div class="container">
-            <b-form @submit.prevent="submit" style="margin-top: 70px">
+            <b-form @submit.prevent="update" style="margin-top: 70px">
                 <b-form-input 
                     @change="reset"
                     v-model="form.company"
@@ -26,7 +26,7 @@
                 <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
                     <h5 class="b-card-title">Praksissted
                     <!-- <a v-b-toggle.accordion1  class="btn-floating float-right"><i class="fa fa-chevron-down"></i></a> -->
-                    <b-button class="btn-floating btn-secondary float-right" @click="addWorkExperience()">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'JobTraining' }">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
                 </b-card-header>
@@ -48,7 +48,7 @@
                     <h5 class="b-card-title">Nøkkelkompetanse
                     <b-button class="btn-floating btn-secondary float-right" @click="addKeyCompetence()">Legg til emne</b-button>
                     </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper ewr bekreftet gjennom arbeidet på dette praksisstedet?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
                 </b-card-header>
             <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -64,7 +64,7 @@
                     <h5 class="b-card-title">Praktiske ferdigheter
                     <b-button class="btn-floating btn-secondary float-right" @click="addPracticalSkill()">Legg til emne</b-button>
                     </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbedi ved dette parksisstedet?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
                 </b-card-header>
             <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
                 <b-card-body>
@@ -137,13 +137,6 @@ export default {
         // }
     },
     methods: {
-        addWorkExperience() {
-            console.log('addWorkExperience-->lauching page')
-            this.$router.push({ name: 'WorkExperience' })
-        },
-        addEducation() {
-            console.log('addEducation')
-        },
         addKeyCompetence() {
             console.log('addKeyCompetence')
             this.$router.push({ name: 'KeyCompetence' })
@@ -152,17 +145,8 @@ export default {
             console.log('addPracticalSkill')
             this.$router.push({ name: 'PracticalSkill' })
         },
-        addVolunteering() {
-            console.log('addVolunteering')
-        },
-        addLanguage() {
-            console.log('addLanguage')
-        },
         addReference() {
             console.log('addReference')
-        },
-        addPracticeCertificate() {
-            this.$router.push({ name: 'PracticeCertificat' })
         },
         enable() {
             this.form.readonly = false
@@ -171,8 +155,8 @@ export default {
         reset() {
             this.form.readonly = true
         },
-        submit() {
-            console.log('submit')
+        update() {
+            console.log('update')
         }
     }
 }
