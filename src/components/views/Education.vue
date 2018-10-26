@@ -1,67 +1,50 @@
 <template>
     <div class="container">
         <div>
-            <h4 class="page-title">Arbeidserfaring</h4>
-            <p style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
+            <h4 class="g-title">Utdanning</h4>
+            <p style="font-style: italic">Hvilke skole har du gått på? Har du tatt noe kurs på jobb, skole eller fritid?</p>
         </div>
 
-        <b-form>
-            <b-form-group>
-            <div class="form-row">
-                <div class="col">
-                    <label for="employer"><strong>Arbeidsgiver</strong></label>
-                    <b-input class="mb-2 mr-sm-2 mb-sm-0" id="employer" placeholder="" v-model="form.employer" />
-                </div>
-                <div class="col">
-                    <label for="place"><strong>Sted</strong></label>
-                    <b-input class="mb-2 mr-sm-2 mb-sm-0" id="place" placeholder="" v-model="form.place" />
-                </div>
-            </div>
-            <b-form-group>
-            </b-form-group>
-                <label for="role"><strong>Min rolle</strong></label>
-                <b-input class="mb-2 mr-sm-2 mb-sm-0" id="role" placeholder="" v-model="form.role" />
-            </b-form-group>
-
+        <b-form @submit.prevent="update">
             <b-form-group>
                 <div class="form-row">
-                    <div class="form-group col-md-3">
-                        <label for="fromMonth"><strong>Fra</strong></label>
-                        <b-form-select v-model="form.from.month" :options="months" class="mb-3" />
-                        <!-- <b-input id="fromMonth" placeholder="Fra hvilken måned?" v-model="form.from.month" /> -->
+                    <div class="col">
+                        <label for="school"><strong>Nav på skole/kurs</strong></label>
+                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="employer" type="text" v-model="form.school" required />
                     </div>
-                    <div class="form-group col-md-3">
-                        <label for="fromYear">(år) </label>
-                        <b-input id="fromYear" placeholder="Fra hvilket år?" v-model="form.to.year" />
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="toMonth"><strong>Til</strong></label>
-                        <b-form-select v-model="form.to.month" :options="months" class="mb-3" />
-                        <!-- <b-input id="toMonth" placeholder="Til hvilken måned?" v-model="form.to.month" /> -->
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="toYear">(år) </label>
-                        <b-input  id="toYear" placeholder="Til hvilket år?" v-model="form.to.year" />
+                    <div class="col">
+                        <label for="place"><strong>Navn på studie</strong></label>
+                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="place" placeholder="" v-model="form.study" required/>
                     </div>
                 </div>
-
-                <!-- <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label><strong>Fra</strong></label>
-                        <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label><strong>Til</strong></label>
-                        <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker>
-                    </div>
-                </div> -->
             </b-form-group>
 
             <b-form-group>
-                <b-form-checkbox>Jeg jobber her nå</b-form-checkbox>
+                <div class="g-m2 form-row">
+                    <b-form-group class="col-md-3">
+                        <label for="fromMonth"><strong>Fra</strong></label>
+                        <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="from.month" required />
+                    </b-form-group>
+                    <b-form-group class="col-md-3">
+                        <label for="fromYear" style="color: white">(år) </label>
+                        <b-form-input id="fromYear" type="number" placeholder="Årstall" v-model="from.year" required />
+                    </b-form-group>
+                    <b-form-group class="col-md-3">
+                        <label for="toMonth"><strong>Til</strong></label>
+                        <b-form-select class="mb-3" :options="months" v-model="to.month" />
+                    </b-form-group>
+                    <b-form-group class="col-md-3">
+                        <label for="toYear" style="color: white">(år) </label>
+                        <b-form-input  type="number" id="toYear" placeholder="Årstall" v-model="to.year" />
+                    </b-form-group>
+                </div>
             </b-form-group>
 
-            <b-form-group>
+            <b-form-group class="">
+                <b-form-checkbox v-model="form.ongoing">Jeg går her nå</b-form-checkbox>
+            </b-form-group>
+
+            <b-form-group class="g-group">
                 <label for="description"><strong>Beskrivelse</strong> </label>
                 <b-form-textarea id="description"
                                 v-model="form.description"
@@ -92,10 +75,10 @@
 
 <script>
 import firebase from 'firebase'
-import Datepicker from 'vuejs-datepicker'
+import db from '@/firebase/init'
 
 export default {
-    name: 'WorkExperience',
+    name: 'Education',
     data() {
         return {
             months: [
@@ -114,9 +97,15 @@ export default {
                 { value: '12', text: 'desember' }
             ],
             form: {
-            employer: null,
-            place: null,
-            role: null,
+                school: null,
+                study: null,
+                from: null,
+                to: null,
+                ongoing: false,
+                description: null,
+                userId: null,
+                timestamp: null
+            },
             from: {
                 month: null,
                 year: null
@@ -124,27 +113,75 @@ export default {
             to: {
                 month: null,
                 year: null
-            },
-            currentEmployer: false,
-            description: null
-            },
-            date: ''
+            }
         }
 
     },
     components: {
-        Datepicker
+
     },
     methods: {
         cancel() {
             console.log("cancel")
-            this.$router.push({ name: 'MyCV' })
+            this.$router.go(-1)
+        },
+        update() {
+            if (this.user) {
+                let date = '01-' + this.from.month + '-' + this.from.year
+                this.form.from = new Date(date)
+                if (this.to.month) {
+                    let date = '01-' + this.to.month + '-' + this.to.year
+                    this.form.to = new Date(date)
+                }
+                this.form.userId = this.user.uid 
+                this.form.timestamp = Date.now()
+                console.log('from: ' + this.form.from.toLocaleDateString('no'))
+                if (this.$route.params.id) {
+                    db.collection('education').doc(this.$route.params.id).set(
+                        this.form, { merge: true })
+                        .then (doc => {
+                            conssole.log('Education updated')
+                        })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                } else {
+                    db.collection('education').add(this.form)
+                    .then (doc => {
+                        conssole.log('Education added')
+                     })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                }
+            }
+            else {
+                console.log('User not logged in???')
+            }
+            this.$router.go(-1)
         }
+    },
+    mounted() {
+        this.user = firebase.auth().currentUser
+        if (this.user && this.$route.params.id) {
+            // get object
+            ref = db.collection('education').doc(this.$route.params.id)
+            ref.get().
+            then (doc => {
+                if(doc.exists) {
+                    this.form = doc.data()
+                }
+            })
+        }            
     }
 }
 </script>
 
 <style>
+.g-title {
+    margin-top: 2em;
+    margin-bottom: 0em;
+}
 a {
     color: rgb(0,161,181);
 }

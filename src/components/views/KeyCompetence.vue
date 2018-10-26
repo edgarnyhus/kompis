@@ -51,7 +51,6 @@
 
 <script>
 import firebase from 'firebase'
-import Datepicker from 'vuejs-datepicker'
 
 export default {
     name: 'WorkExperience',
@@ -72,7 +71,7 @@ export default {
 
     },
     components: {
-        Datepicker
+
     },
     methods: {
         cancel() {

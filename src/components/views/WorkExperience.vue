@@ -5,7 +5,7 @@
             <p style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
         </div>
 
-        <b-form>
+        <b-form @submit.prevent="update">
             <b-form-group class="g-group">
                 <div class="form-row">
                     <div class="col">
@@ -23,41 +23,40 @@
                 <b-input class="mb-2 mr-sm-2 mb-sm-0" id="role" placeholder="" v-model="form.role" />
             </b-form-group>
 
-            <b-form-group class="g-group2">
-                <!-- <div class="g-group form-row">
-                    <div class="form-group col-md-3">
-                        <label for="fromMonth"><strong>Fra</strong></label>
-                        <b-form-select v-model="form.from.month" :options="months" class="mb-3" />
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="fromYear">(år) </label>
-                        <b-input id="fromYear" placeholder="Fra hvilket år?" v-model="form.to.year" />
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="toMonth"><strong>Til</strong></label>
-                        <b-form-select v-model="form.to.month" :options="months" class="mb-3" />
-                    </div>
-                    <div class="form-group col-md-3">
-                        <label for="toYear">(år) </label>
-                        <b-input  id="toYear" placeholder="Til hvilket år?" v-model="form.to.year" />
-                    </div>
-                </div> -->
-
-                <div class="form-row">
+            <b-form-group>
+                <!-- <div class="form-row">
                     <div class="form-group col-md-6">
                         <label><strong>Fra</strong></label>
-                        <!-- <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker> -->
                         <b-input type='date' :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></b-input>
                     </div>
                     <div class="form-group col-md-6">
                         <label><strong>Til</strong></label>
-                        <!-- <datepicker :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></datepicker> -->
+                        <b-input type='date' :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></b-input>
                     </div>
+                </div> -->
+
+                <div class="g-m2 form-row">
+                    <b-form-group class="col-md-3">
+                        <label for="fromMonth"><strong>Fra</strong></label>
+                        <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="from.month" required />
+                    </b-form-group>
+                    <b-form-group class="col-md-3">
+                        <label for="fromYear">(år) </label>
+                        <b-form-input id="fromYear" type="number" placeholder="Fra hvilket år?" v-model="from.year" required />
+                    </b-form-group>
+                    <b-form-group class="col-md-3">
+                        <label for="toMonth"><strong>Til</strong></label>
+                        <b-form-select class="mb-3" :options="months" v-model="to.month" />
+                    </b-form-group>
+                    <b-form-group class="col-md-3">
+                        <label for="toYear" style="color: white">(år) </label>
+                        <b-form-input  type="number" id="toYear" placeholder="Til hvilket år?" v-model="to.year" />
+                    </b-form-group>
                 </div>
             </b-form-group>
 
             <b-form-group class="g-group3">
-                <b-form-checkbox>Jeg jobber her nå</b-form-checkbox>
+                <b-form-checkbox v-model="form.ongoing">Jeg jobber her nå</b-form-checkbox>
             </b-form-group>
 
             <b-form-group class="g-group">
@@ -91,7 +90,8 @@
 
 <script>
 import firebase from 'firebase'
-import Datepicker from 'vuejs-datepicker'
+import db from '@/firebase/init'
+import moment from 'moment'
 
 export default {
     name: 'WorkExperience',
@@ -113,9 +113,17 @@ export default {
                 { value: '12', text: 'desember' }
             ],
             form: {
-            employer: null,
-            place: null,
-            role: null,
+                employer: null,
+                place: null,
+                jobType: null,
+                role: null,
+                from: null,
+                to: null,
+                ongoing: false,
+                description: null,
+                timestamp: null,
+                userId: null
+            },
             from: {
                 month: null,
                 year: null
@@ -124,22 +132,105 @@ export default {
                 month: null,
                 year: null
             },
-            currentEmployer: false,
-            description: null
-            },
-            date: ''
+            user: null
         }
 
     },
     components: {
-        Datepicker
+
     },
     methods: {
         cancel() {
             console.log("cancel")
-            this.$router.push({ name: 'MyCV' })
+            this.$router.go(-1)
+        },
+        update() {
+            if (this.user) {
+                this.form.userId = this.user.uid 
+                this.form.timestamp = Date.now()
+                try {
+                    let date = this.from.month + '-' + '10-' + this.from.year
+                    this.form.from = new Date(date)
+                    if (this.to.month && this.to.year) {
+                        date = this.to.month + '-' + '10-' + this.to.year
+                        this.form.to = new Date(date)
+                    } else {
+                        this.form.to = null
+                    }
+                } catch (error) {
+                    console.log('moment excception: error')
+                }
+                if (this.$route.params.id) {
+                    db.collection('workExperience').doc(this.$route.params.id).set(
+                        this.form, { merge: true })
+                        .then (doc => {
+                            conssole.log('Work experience updated')
+                        })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                } else {
+                    // db.collection('workExperience').add(
+                    db.collection('workExperience').add(
+                        this.form)
+                        .then (doc => {
+                            conssole.log('Work experience added')
+                     })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                }
+            }
+            else {
+                console.log('User not logged in???')
+            }
+            this.$router.go(-1)
+        },
+        createDate(my) {
+            // let date = moment()
+            // if (my) {
+            //     if (my.month) {
+            //         date.month(my.month)
+            //     } 
+            //     if (my.year) {
+            //         date.year(my.year)
+            //     }
+            // }
+            console.log('createDate: ')
+
+            let date = null
+            if (my) {
+                let d = null
+                if (my.month) {
+                    let d = '01-' + my.month + '-' + my.year
+                } else {
+                    let d = '01-01-' + my.year
+                }
+                date = new Date(d)
+                console.log('dateString: ' + d)
+            } 
+            console.log('date: ' + date.toISOString())
+            return date
         }
+    },
+    mounted() {
+        this.user = firebase.auth().currentUser
+        if (this.user && this.$route.params.id) {
+            // get object
+            ref = db.collection('workExperience').doc(this.$route.params.id)
+            ref.get().
+            then (doc => {
+                if(doc.exists) {
+                    this.form = doc.data()
+                    this.from.month = this.form.from.getMonth()
+                    this.from.year = this.form.from.getYear()
+                    this.to.month = this.form.to.getMonth()
+                    this.to.year = this.form.to.getYear()
+                }
+            })
+        }            
     }
+
 }
 </script>
 

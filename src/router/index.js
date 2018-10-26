@@ -5,6 +5,9 @@ import WorkExperience from '@/components/views/WorkExperience'
 import Education from '@/components/views/Education'
 import KeyCompetence from '@/components/views/KeyCompetence'
 import PracticalSkill from '@/components/views/PracticalSkill'
+import Volunteering from '@/components/views/Volunteering'
+import Language from '@/components/views/Language'
+import Reference from '@/components/views/Reference'
 import PracticeCertificate from '@/components/views/PracticeCertificate'
 import PracticeCertificateView from '@/components/views/PracticeCertificateView'
 import JobTraining from '@/components/views/JobTraining'
@@ -63,6 +66,30 @@ const router = new Router({
       path: '/skill',
       name: 'PracticalSkill',
       component: PracticalSkill,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/volunteering',
+      name: 'Volunteering',
+      component: Volunteering,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/lang',
+      name: 'Language',
+      component: Language,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/ref',
+      name: 'Reference',
+      component: Reference,
       meta: {
         requiresAuth: true
       }

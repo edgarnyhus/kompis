@@ -13,7 +13,7 @@
                     v-bind:readonly="form.readonly"
                     ref="companyField"
                     >
-                    {{ form.company }}
+                    {{ form.employer }}
                 </b-form-input>
                 <div style="margin-top: 20px"></div>
                 <a v-on:click="enable" href="#" style="color: rgb(0,160,161)"><strong>Endre</strong></a>
@@ -22,42 +22,58 @@
             <!-- <b-progress class="g-m2 mb-3" height="2em" :value="bars[0].value" :variant="this.bars[1].variant" :max="max" show-progress></b-progress> -->
 
             <div style="margin-top: 40px"></div>
-            <b-card no-body class="accordion mb-1">
+            <b-card no-body class="disabled-div accordion mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
                     <h5 class="b-card-title">Praksissted
                     <!-- <a v-b-toggle.accordion1  class="btn-floating float-right"><i class="fa fa-chevron-down"></i></a> -->
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'JobTraining' }">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'JobTraining', params: { show: 'jobTraining', id: null } }">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
                 </b-card-header>
-                <b-collapse id="accordion1" visible accordion="my-accordion" role="tabpanel">
+                <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
+                    <li v-for="(elem, index) in training" :key="index">
+                        <b-card title="elem.employer"
+                                sub-title="elem.from.month elem.year - elem.role">
+                            <p class="card-text">
+                                {{ elem.desciption}}
+                            </p>
+                        </b-card>
+
+                    </li>
+
+                    <!-- <div>
+                        <b-card title="Card title"
+                                sub-title="Card subtitle">
+                            <p class="card-text">
+                                Some quick example text to build on the <em>card title</em> and make up the bulk of the card's content.
+                            </p>
+                            <a href="#"
+                            class="card-link">Card link</a>
+                            <b-link href="#"
+                                    class="card-link">Another link</b-link>
+                        </b-card>
+                    </div> -->
+'                </b-collapse>
+            </b-card>
+
+<fieldset :disabled="isdisabled">
+
+            <b-card no-body class="mb-1">
+                <b-card-header header-tag="header" v-b-toggle.accordion3>
+                    <h5 class="b-card-title">Nøkkelkompetanse
+                    <b-button class="btn-floating btn-secondary float-right" @click="addKeyCompetence()">Legg til emne</b-button>
+                    </h5>
+                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
+                </b-card-header>
+                <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
                     <b-card-body>
-                        <!-- <font-awesome-icon img-left icon="coffee" style="font-size: 2rem; font-weight: 50"/> -->
-                        <p class="card-text">
-                            I start opened because <code>visible</code> is <code>true</code>
-                        </p>
                         <p class="card-text">
                             {{ text }}
                         </p>
                     </b-card-body>
                 </b-collapse>
             </b-card>
-            
-            <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
-                    <h5 class="b-card-title">Nøkkelkompetanse
-                    <b-button class="btn-floating btn-secondary float-right" @click="addKeyCompetence()">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
-                </b-card-header>
-            <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                <p class="card-text">
-                    {{ text }}
-                </p>
-                </b-card-body>
-            </b-collapse>
-            </b-card>
+</fieldset>
 
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
@@ -66,13 +82,13 @@
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
                 </b-card-header>
-            <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                <p class="card-text">
-                    {{ text }}
-                </p>
-                </b-card-body>
-            </b-collapse>
+                <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
+                    <b-card-body>
+                        <p class="card-text">
+                            {{ text }}
+                        </p>
+                    </b-card-body>
+                </b-collapse>
             </b-card>
 
             <b-card no-body class="mb-1">
@@ -82,13 +98,13 @@
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvem er din kontktperson ved dette praksisstedet?</p>
                 </b-card-header>
-            <b-collapse id="accordion5" v-if="form.references" accordion="my-accordion" role="tabpanel">
-                <b-card-body>
-                <p class="card-text">
-                    {{ text }}
-                </p>
-                </b-card-body>
-            </b-collapse>
+                <b-collapse id="accordion5" v-if="form.references" accordion="my-accordion" role="tabpanel">
+                    <b-card-body>
+                        <p class="card-text">
+                            {{ text }}
+                        </p>
+                    </b-card-body>
+                </b-collapse>
             </b-card>
 
         </div>
@@ -98,11 +114,19 @@
 
 <script>
 import SubNavbar from '@/components/layout/SubNavbar'
+import firebase from 'firebase'
+import db from '@/firebase/init'
 
 export default {
     name: 'PracticeCertificate',
     components: {
         SubNavbar
+    },
+    computed: {
+        isdisabled() {
+            return true;
+        }
+
     },
     data () {
         return {
@@ -121,11 +145,14 @@ export default {
             ],
             form: {
                 readonly: true,
-                company: null,
+                trainings: [],
                 keyCompetences: [],
                 practicalSkills: [],
                 refererence: []
-            }
+            },
+            step: 1,
+            dis: '',
+            user: null
         }
     },
     directives: {
@@ -139,6 +166,7 @@ export default {
     methods: {
         addKeyCompetence() {
             console.log('addKeyCompetence')
+            // this.$router.push({ name: 'JobTraining', params: { show: 'jobTraining' }})
             this.$router.push({ name: 'KeyCompetence' })
         },
         addPracticalSkill() {
@@ -158,11 +186,30 @@ export default {
         update() {
             console.log('update')
         }
+    },
+    created() {
+        this.user = firebase.auth().currentUser
+
+        db.collection('training').where('userId', '==', this.user.uid)
+        .onSnapshot((snapshot) => {
+        snapshot.docChanges.forEach(change => {
+            if(change.type == 'added'){
+            this.trainings.unshift({
+                from: change.doc.data().from,
+                content: change.doc.data().content
+            })
+            }
+        })
+        })
     }
 }
 </script>
 
 <style>
+.disabled-div {
+    pointer-events: none;
+    opacity: 0.5;
+}
 b-form-input[read-only] {
   background-color: rgb(0,160,151);
 }
