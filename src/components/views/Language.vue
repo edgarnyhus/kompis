@@ -55,9 +55,9 @@ export default {
         return {
             proficiency: [
                 { value: null, text: 'Velg ferdighetsnivå' },
-                { value: 'elemetær', text: 'elemetær' },
-                { value: 'begrenset', text: 'begrenset' },
-                { value: 'profesjonelt', text: 'profesjonelt' },
+                { value: 'Elemetær', text: 'Elemetær' },
+                { value: 'Begrenset', text: 'Begrenset' },
+                { value: 'Profesjonelt', text: 'Profesjonelt' },
                 { value: 'Innfødt og tospråklig', text: 'Innfødt og tospråklig' }
             ],
             form: {
@@ -66,7 +66,8 @@ export default {
                 description: null,
                 userId: null,
                 timestamp: null
-            }
+            },
+            user: null
         }
 
     },
@@ -79,10 +80,12 @@ export default {
             this.$router.go(-1)
         },
         update() {
-            let user = firebase.auth().currentUser
-            if (user) {
+            if (this.user) {
+                this.form.userId = this.user.uid 
+                this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
-                    db.collection('education').doc(this.$route.params.id).set(
+
+                    db.collection('languages').doc(this.$route.params.id).set(
                         this.form, { merge: true })
                     .then (doc => {
                         conssole.log('Language updated')
@@ -91,7 +94,7 @@ export default {
                         console.log('Firestore error: ' + err)
                     })
                 } else {
-                    db.collection('language').add(this.form)
+                    db.collection('languages').add(this.form)
                     .then (doc => {
                         conssole.log('Language added')
                      })
@@ -107,10 +110,10 @@ export default {
         }
     },
     mounted() {
-        let user = firebase.auth().currentUser
-        if (user && this.$route.params.id) {
+        this.user = firebase.auth().currentUser
+        if (this.user && this.$route.params.id) {
             // get object
-            ref = db.collection('language').doc(this.$route.params.id)
+            ref = db.collection('languages').doc(this.$route.params.id)
             ref.get()
             .then (doc => {
                 if(doc.exists) {

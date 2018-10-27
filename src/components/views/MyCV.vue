@@ -20,9 +20,9 @@
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
                 </b-card-header>
-                <b-collapse id="accordion1" :visible="true" accordion="my-accordion" role="tabpanel">
+                <b-collapse id="accordion1" :visible="false" accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each job training/experience -->
-                    <b-card-group v-for="elem in workExperiences" :key="elem.id">
+                    <b-card-group v-for="elem in experiences" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
                                 <h6 class="card-title">{{ elem.employer }}
@@ -35,7 +35,7 @@
                                 </h6>
                                 <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
                                 <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
-                                <p class="card-text text-muted" style="margin-bottom: 0.5em"><span>{{elem.from | formatDate}}</span><br>
+                                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
                                     {{elem.place}}</P>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
@@ -58,7 +58,7 @@
                             <div class="card-body">
                                 <h6 class="card-title">{{ elem.school }}</h6>
                                 <h5 class="card-subtitle text-muted">{{elem.study}}</h5>
-                                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}</p>
+                                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}</p>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
                         </div>
@@ -75,10 +75,10 @@
                 </b-card-header>
                 <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each ekey competence -->
-                    <b-card-group v-for="elem in keyCompetences" :key="elem.id">
+                    <b-card-group v-for="elem in competences" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ elem.competence }}</h5>
+                                <h5 class="card-subtitle text-muted">{{ elem.keyCompetence }}</h5>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
                         </div>
@@ -98,7 +98,7 @@
                     <b-card-group v-for="elem in skills" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ elem.skill }}</h5>
+                                <h5 class="card-subtitle text-muted">{{ elem.skill }}</h5>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
                         </div>
@@ -118,7 +118,11 @@
                     <b-card-group v-for="elem in volunteering" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ elem.volunteering }}</h5>
+                                <h6 class="card-title">{{ elem.org }}
+                                </h6>
+                                <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
+                                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
+                                    {{elem.location}}</P>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
                         </div>
@@ -159,7 +163,7 @@
                     <b-card-group v-for="elem in references" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ elem.reference }}</h5>
+                                <h5 class="card-title">{{ elem.person }}</h5>
                                 <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
@@ -176,7 +180,6 @@
 import firebase from 'firebase'
 import db from '@/firebase/init'
 import SubNavbar from '@/components/layout/SubNavbar'
-import moment from 'moment'
 
 
 export default {
@@ -196,9 +199,9 @@ export default {
             },
             user: null,
             profile: null,
-            workExperiences: [],
+            experiences: [],
             education: [],
-            keyCompetences: [],
+            competences: [],
             skills: [],
             volunteering: [],
             languages: [],
@@ -206,13 +209,7 @@ export default {
         }
     },
     filters: {
-        formatDate(value) {
-            if (value) {
-                console.log('value: ' + value)
-                return moment(value.timestamp).format('lll')
-             }
-            return ''
-        }
+
     },
     computed: {
 
@@ -237,28 +234,15 @@ export default {
         })
 
         // fetch work experience
-        db.collection('workExperience').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('training').where('userId', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
                 let elem = doc.data()
                 elem.id = doc.id
-                this.workExperiences.push(elem)
+                this.experiences.push(elem)
             })
         })
-
-        // subscribe to changes to the 'messages' collection
-        // let ref = db.collection('experience').orderBy('from')
-        // ref.onSnapshot(snapshot => {
-        //     snapshot.docChanges().forEach(change => {
-        //         if (change.type == 'added') {
-        //             let data = change.doc.date()
-        //             data.id = doc.id,
-        //             // data.from = moment(data.from).format('ll')
-        //             this.messages.push(data)
-        //         }
-        //     })
-        // })
 
         // fetch education
         db.collection('education').where('userId', '==',firebase.auth().currentUser.uid)
@@ -272,18 +256,18 @@ export default {
         })
 
         // fetch key competences
-        db.collection('keyCompetance').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('competences').where('userId', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
                 let elem = doc.data()
                 elem.id = doc.id
-                this.keyCompetances.push(elem)
+                this.competences.push(elem)
             })
         })
 
         // fetch practical skills
-        db.collection('practicalSkill').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('skills').where('userId', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -305,7 +289,7 @@ export default {
         })
 
         // fetch languages
-        db.collection('language').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('languages').where('userId', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -316,7 +300,7 @@ export default {
         })
 
         // fetch references
-        db.collection('reference').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('references').where('userId', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {

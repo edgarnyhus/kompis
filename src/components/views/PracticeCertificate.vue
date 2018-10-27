@@ -61,7 +61,7 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion3>
                     <h5 class="b-card-title">Nøkkelkompetanse
-                    <b-button class="btn-floating btn-secondary float-right" @click="addKeyCompetence()">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyCompetence' }">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
                 </b-card-header>
@@ -78,7 +78,7 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
                     <h5 class="b-card-title">Praktiske ferdigheter
-                    <b-button class="btn-floating btn-secondary float-right" @click="addPracticalSkill()">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticalSkill' }">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
                 </b-card-header>
@@ -164,18 +164,6 @@ export default {
         // }
     },
     methods: {
-        addKeyCompetence() {
-            console.log('addKeyCompetence')
-            // this.$router.push({ name: 'JobTraining', params: { show: 'jobTraining' }})
-            this.$router.push({ name: 'KeyCompetence' })
-        },
-        addPracticalSkill() {
-            console.log('addPracticalSkill')
-            this.$router.push({ name: 'PracticalSkill' })
-        },
-        addReference() {
-            console.log('addReference')
-        },
         enable() {
             this.form.readonly = false
             this.$refs.companyField.focus();

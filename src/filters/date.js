@@ -1,8 +1,5 @@
-import Vue from 'vue';
-import moment from 'moment'
 
-Vue.filter('formatDate', function(value) {
-  if (value) {
-    return moment(String(value)).format('MM/YYYY')
-  }
-})
+export const toTimestamp (month, year) {
+    let date =month + '-' + '10-' + year
+    return new Date(date)
+}

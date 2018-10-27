@@ -5,10 +5,19 @@
             <p style="font-style: italic">Hva er dine praktiske evner? Noe du har lært på skole eller i jobb?</p>
         </div>
 
-        <b-form>
+        <b-form @submit.prevent="update">
             <b-form-group>
-                <div class="form-group">
-                    <b-form-select v-model="form.skill" :options="skills" />
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <b-dropdown id="skill" text="Ferdighet" class="mr-sm-2 mb-sm-0">
+                            <!-- <b-dropdown-item v-model="form.skill">Varepåfylling</b-dropdown-item>
+                            <b-dropdown-item v-model="form.skill">Murerarbeid</b-dropdown-item> -->
+
+                            <b-dropdown-item-button @click="setSkill('Varepåfylling')">Varepåfylling</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="setSkill('Murerarbeid')">Murerarbeid</b-dropdown-item-button>
+                        </b-dropdown>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Praktisk ferdighet (f.eks.Varepåfylling eller Murerarbeid)" v-model="form.skill" required>
                 </div>
             </b-form-group>
 
@@ -51,6 +60,7 @@
 
 <script>
 import firebase from 'firebase'
+import db from '@/firebase/init'
 
 export default {
     name: 'PracticalSkill',
@@ -62,20 +72,69 @@ export default {
                 { value: 'Murerarbreid', text: 'Murerarbreid' }
             ],
             form: {
-                goal: null,
-                description: null
-            }
+                skill: null,
+                level: null,
+                description: null,
+                userId: null,
+                timestamp: null
+            },
+            user: null
         }
 
     },
     components: {
 
-},
+    },
     methods: {
+        setSkill(value) {
+            this.form.skill = value
+        },
         cancel() {
-            console.log("cancel")
-            this.$router.push({ name: 'MyCV' })
+            this.$router.go(-1)
+        },
+        update() {
+            if (this.user) {
+                this.form.userId = this.user.uid 
+                this.form.timestamp = Date.now()
+                if (this.$route.params.id) {
+                    db.collection('skills').doc(this.$route.params.id).set(
+                        this.form, { merge: true })
+                        .then (doc => {
+                            conssole.log('Work experience updated')
+                        })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                } else {
+                    // db.collection('experiences').add(
+                    db.collection('skills').add(
+                        this.form)
+                        .then (doc => {
+                            conssole.log('Work experience added')
+                     })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                }
+            }
+            else {
+                console.log('User not logged in???')
+            }
+            this.$router.go(-1)
         }
+    },
+    mounted() {
+        this.user = firebase.auth().currentUser
+        if (this.user && this.$route.params.id) {
+            // get object
+            ref = db.collection('skills').doc(this.$route.params.id)
+            ref.get()
+            .then (doc => {
+                if(doc.exists) {
+                    this.form = doc.data()
+                }
+            })
+        }            
     }
 }
 </script>

@@ -40,19 +40,19 @@
                 <div class="g-m2 form-row">
                     <b-form-group class="col-md-3">
                         <label for="fromMonth"><strong>Fra</strong></label>
-                        <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="form.from.month" required />
+                        <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="from.month" required />
                     </b-form-group>
                     <b-form-group class="col-md-3">
                         <label for="fromYear">(år) </label>
-                        <b-form-input id="fromYear" type="number" placeholder="Fra hvilket år?" v-model="form.from.year" required />
+                        <b-form-input id="fromYear" type="number" placeholder="Fra hvilket år?" v-model="from.year" required />
                     </b-form-group>
                     <b-form-group class="col-md-3">
                         <label for="toMonth"><strong>Til</strong></label>
-                        <b-form-select class="mb-3" :options="months" v-model="form.to.month" />
+                        <b-form-select class="mb-3" :options="months" v-model="to.month" />
                     </b-form-group>
                     <b-form-group class="col-md-3">
                         <label for="toYear" style="color: white">(år) </label>
-                        <b-form-input  type="number" id="toYear" placeholder="Til hvilket år?" v-model="form.to.year" />
+                        <b-form-input  type="number" id="toYear" placeholder="Til hvilket år?" v-model="to.year" />
                     </b-form-group>
                 </div>
             </b-form-group>
@@ -128,18 +128,20 @@ export default {
                 place: null,
                 jobType: null,
                 role: null,
-                from: {
-                    month: null,
-                    year: null
-                },
-                to: {
-                    month: null,
-                    year: null
-                },
-                currentEmployer: false,
+                from: null,
+                to: null,
+                ongoing: false,
                 description: null,
                 timestamp: null,
                 userId: null
+            },
+            from: {
+                month: null,
+                year: null
+            },
+            to: {
+                month: null,
+                year: null
             },
             user: null,
             ref: null
@@ -159,6 +161,14 @@ export default {
             if (this.user) {
                 this.form.userId = this.user.uid 
                 this.form.timestamp = Date.now()
+                try {
+                    this.form.from = toTimestamp(this.from.month, this.from.year)
+                    if (this.to.month && this.to.year) {
+                        this.form.to = toTimestamp(this.to.month, this.to.year)
+                    }
+                } catch (error) {
+                    console.log('update excception: ' + error)
+                }
                 if (this.$route.params.id) {
                     db.collection('training').doc(this.$route.params.id).update(
                         this.form

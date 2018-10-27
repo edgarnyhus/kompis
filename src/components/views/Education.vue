@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <div>
-            <h4 class="g-title">Utdanning</h4>
+            <h4 class="g-title">Utdanning og kurs</h4>
             <p style="font-style: italic">Hvilke skole har du gått på? Har du tatt noe kurs på jobb, skole eller fritid?</p>
         </div>
 
@@ -113,7 +113,8 @@ export default {
             to: {
                 month: null,
                 year: null
-            }
+            },
+            user: null
         }
 
     },
@@ -127,15 +128,16 @@ export default {
         },
         update() {
             if (this.user) {
-                let date = '01-' + this.from.month + '-' + this.from.year
-                this.form.from = new Date(date)
-                if (this.to.month) {
-                    let date = '01-' + this.to.month + '-' + this.to.year
-                    this.form.to = new Date(date)
-                }
                 this.form.userId = this.user.uid 
                 this.form.timestamp = Date.now()
-                console.log('from: ' + this.form.from.toLocaleDateString('no'))
+                try {
+                    this.form.from = toTimestamp(this.from.month, this.from.year)
+                    if (this.to.month && this.to.year) {
+                        this.form.to = toTimestamp(this.to.month, this.to.year)
+                    }
+                } catch (error) {
+                    console.log('update excception: ' + error)
+                }
                 if (this.$route.params.id) {
                     db.collection('education').doc(this.$route.params.id).set(
                         this.form, { merge: true })

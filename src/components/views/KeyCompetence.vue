@@ -5,10 +5,18 @@
             <p style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
         </div>
 
-        <b-form>
+        <b-form @submit.prevent="update">
             <b-form-group>
-                <div class="form-group">
-                    <b-form-select v-model="form.keyCompetence" :options="competences" />
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <b-dropdown id="skill" text="Nøkkelkompetanse" class="mr-sm-2 mb-sm-0">
+                            <b-dropdown-item-button @click="setKey('Pålitelig')">Pålitelig</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="setKey('Tar initiativ')">Tar initiativ</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="setKey('Loyal')">Loyal</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="setKey('Ansvarlig')">Ansvarlig</b-dropdown-item-button>
+                        </b-dropdown>
+                    </div>
+                    <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.keyCompetence" required>
                 </div>
             </b-form-group>
 
@@ -51,9 +59,10 @@
 
 <script>
 import firebase from 'firebase'
+import db from '@/firebase/init'
 
 export default {
-    name: 'WorkExperience',
+    name: 'KeyCompetence',
     data() {
         return {
             competences: [
@@ -65,19 +74,65 @@ export default {
             ],
             form: {
                 keyCompetence: null,
-                description: null
-            }
+                description: null,
+                userId: null,
+                timestamp: null
+            },
+            user: null
         }
-
     },
     components: {
 
     },
     methods: {
+        setKey(value) {
+            this.form.keyCompetence = value
+        },
         cancel() {
-            console.log("cancel")
-            this.$router.push({ name: 'MyCV' })
+            this.$router.go(-1)
+        },
+        update() {
+            if (this.user) {
+                this.form.userId = this.user.uid 
+                this.form.timestamp = Date.now()
+                if (this.$route.params.id) {
+                    db.collection('competences').doc(this.$route.params.id).set(
+                        this.form, { merge: true })
+                        .then (doc => {
+                            conssole.log('Work experience updated')
+                        })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                } else {
+                    db.collection('competences').add(
+                        this.form)
+                    .then (doc => {
+                        conssole.log('Work experience added')
+                     })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                }
+            }
+            else {
+                console.log('User not logged in???')
+            }
+            this.$router.go(-1)
         }
+    },
+    mounted() {
+        this.user = firebase.auth().currentUser
+        if (this.user && this.$route.params.id) {
+            // get object
+            ref = db.collection('competences').doc(this.$route.params.id)
+            ref.get()
+            .then (doc => {
+                if(doc.exists) {
+                    this.form = doc.data()
+                }
+            })
+        }            
     }
 }
 </script>
@@ -96,5 +151,9 @@ b-button {
 }
 .button-span {
     margin-right: 1em;
+}
+.button-group-span {
+    border-radius: 25px;
+    margin-right: 0.3em;
 }
 </style>

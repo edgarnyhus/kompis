@@ -18,6 +18,7 @@
                     </div>
                 </div>
             </b-form-group>
+
             <b-form-group class="g-group">
                 <label for="role"><strong>Min rolle</strong></label>
                 <b-input class="mb-2 mr-sm-2 mb-sm-0" id="role" placeholder="" v-model="form.role" />
@@ -41,7 +42,7 @@
                         <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="from.month" required />
                     </b-form-group>
                     <b-form-group class="col-md-3">
-                        <label for="fromYear">(år) </label>
+                        <label for="fromYear" style="color: white">(år) </label>
                         <b-form-input id="fromYear" type="number" placeholder="Fra hvilket år?" v-model="from.year" required />
                     </b-form-group>
                     <b-form-group class="col-md-3">
@@ -112,7 +113,7 @@ export default {
                 { value: '11', text: 'november' },
                 { value: '12', text: 'desember' }
             ],
-            form: {
+           form: {
                 employer: null,
                 place: null,
                 jobType: null,
@@ -149,32 +150,28 @@ export default {
                 this.form.userId = this.user.uid 
                 this.form.timestamp = Date.now()
                 try {
-                    let date = this.from.month + '-' + '10-' + this.from.year
-                    this.form.from = new Date(date)
+                    this.form.from = toTimestamp(this.from.month, this.from.year)
                     if (this.to.month && this.to.year) {
-                        date = this.to.month + '-' + '10-' + this.to.year
-                        this.form.to = new Date(date)
-                    } else {
-                        this.form.to = null
+                        this.form.to = toTimestamp(this.to.month, this.to.year)
                     }
                 } catch (error) {
-                    console.log('moment excception: error')
+                    console.log('update excception: ' + error)
                 }
                 if (this.$route.params.id) {
-                    db.collection('workExperience').doc(this.$route.params.id).set(
+                    db.collection('training').doc(this.$route.params.id).set(
                         this.form, { merge: true })
                         .then (doc => {
-                            conssole.log('Work experience updated')
+                            conssole.log('Training updated')
                         })
                     .catch(err => {
                         console.log('Firestore error: ' + err)
                     })
                 } else {
-                    // db.collection('workExperience').add(
-                    db.collection('workExperience').add(
+                    // db.collection('training').add(
+                    db.collection('training').add(
                         this.form)
                         .then (doc => {
-                            conssole.log('Work experience added')
+                            conssole.log('Training added')
                      })
                     .catch(err => {
                         console.log('Firestore error: ' + err)
@@ -185,39 +182,13 @@ export default {
                 console.log('User not logged in???')
             }
             this.$router.go(-1)
-        },
-        createDate(my) {
-            // let date = moment()
-            // if (my) {
-            //     if (my.month) {
-            //         date.month(my.month)
-            //     } 
-            //     if (my.year) {
-            //         date.year(my.year)
-            //     }
-            // }
-            console.log('createDate: ')
-
-            let date = null
-            if (my) {
-                let d = null
-                if (my.month) {
-                    let d = '01-' + my.month + '-' + my.year
-                } else {
-                    let d = '01-01-' + my.year
-                }
-                date = new Date(d)
-                console.log('dateString: ' + d)
-            } 
-            console.log('date: ' + date.toISOString())
-            return date
         }
     },
     mounted() {
         this.user = firebase.auth().currentUser
         if (this.user && this.$route.params.id) {
             // get object
-            ref = db.collection('workExperience').doc(this.$route.params.id)
+            ref = db.collection('training').doc(this.$route.params.id)
             ref.get().
             then (doc => {
                 if(doc.exists) {
@@ -235,35 +206,8 @@ export default {
 </script>
 
 <style>
-.g-title {
-    margin-top: 2em;
-    margin-bottom: 0em;
-}
-.g-title2 {
-    margin-top: 2em;
-    margin-bottom: 0em;
-}
 a {
     color: rgb(0,161,181);
-}
-b-button {
-    margin-right: 2em;
-}
-.g-group {
-    margin-top: 2em;
-    margin-bottom: 0em;
-}
-.g-group2 {
-    margin-top: 0em;
-    margin-bottom: 0em;
-}
-.g-group3 {
-    margin-top: 0em;
-    margin-bottom: 0em;
-}
-.g-group4 {
-    margin-top: 2.5em;
-    margin-bottom: 1.5em;
 }
 .g-span {
     margin-right: 1em;
