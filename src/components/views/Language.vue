@@ -65,6 +65,7 @@ export default {
                 proficiency: null,
                 description: null,
                 userId: null,
+                certId: null,
                 timestamp: null
             },
             user: null
@@ -82,6 +83,7 @@ export default {
         update() {
             if (this.user) {
                 this.form.userId = this.user.uid 
+                this.form.certId = this.$route.params.id
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
 

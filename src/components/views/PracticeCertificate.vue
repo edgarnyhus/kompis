@@ -1,132 +1,146 @@
 <template>
     <div role="tablist">
-        <!-- <SubNavbar /> -->
+        <SubNavbar />
 
         <div class="container">
-            <b-form @submit.prevent="update" style="margin-top: 70px">
-                <b-form-input 
-                    @change="reset"
-                    v-model="form.company"
-                    type="text"
-                    placeholder="Navn på bedrift"
-                    style="height: 80px; font-size: 40px; border: none; margin-left: 0; padding left: 0; [read-only]: rgb(0,160,161)"
-                    v-bind:readonly="form.readonly"
-                    ref="companyField"
-                    >
-                    {{ form.employer }}
-                </b-form-input>
-                <div style="margin-top: 20px"></div>
-                <a v-on:click="enable" href="#" style="color: rgb(0,160,161)"><strong>Endre</strong></a>
+            <b-form @submit.prevent="update">
+                <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ form.employer }}</h1>
+                <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
+                <b-link v-b-modal.modalPrevent  variant="info" class="info-color"><strong>Endre</strong></b-link>
+
+                <!-- Modal Component -->
+                <b-modal id="modalPrevent"
+                        ref="modal"
+                        title="Navn på bedrift"
+                        @cancel="handleCancel"
+                        @ok="handleOk"
+                        @shown="clearName">
+                <form @submit.stop.prevent="handleSubmit">
+                    <b-form-input type="text"
+                                placeholder=""
+                                v-model="form.employer"></b-form-input>
+                </form>
+                </b-modal>
             </b-form>
 
-            <!-- <b-progress class="g-m2 mb-3" height="2em" :value="bars[0].value" :variant="this.bars[1].variant" :max="max" show-progress></b-progress> -->
+            <!-- <b-progress class="mb-3" height="2em" :value="bar.value" variant="info" :max="max" show-progress></b-progress> -->
 
-            <div style="margin-top: 40px"></div>
-            <b-card no-body class="disabled-div accordion mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
-                    <h5 class="b-card-title">Praksissted
-                    <!-- <a v-b-toggle.accordion1  class="btn-floating float-right"><i class="fa fa-chevron-down"></i></a> -->
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'JobTraining', params: { show: 'jobTraining', id: null } }">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
-                </b-card-header>
-                <b-collapse id="accordion1" accordion="my-accordion" role="tabpanel">
-                    <li v-for="(elem, index) in training" :key="index">
-                        <b-card title="elem.employer"
-                                sub-title="elem.from.month elem.year - elem.role">
-                            <p class="card-text">
-                                {{ elem.desciption}}
-                            </p>
-                        </b-card>
+            <fieldset :disabled="isDisabled">
+                <div style="margin-bottom: 2em"></div>
+                <b-card no-body class="accordion mb-1">
+                    <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
+                        <h5 class="b-card-title">Praksisted
+                            <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'WorkExperience', params: { show: 'training', id: this.id } }">Legg til emne</b-button>
+                        </h5>
+                        <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
+                    </b-card-header>
+                    <b-collapse id="accordion1" :visible="false" accordion="my-accordion" role="tabpanel">
+                        <!-- present a card for each job experiences/experience -->
+                        <b-card-group v-for="elem in experiences" :key="elem.id">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ elem.employer }}
+                                        <!-- <md-button class="md-fab md-mini md-primary float-right" >
+                                            <menu-icon>edit</menu-icon>
+                                        </md-button>
+                                        <md-button class="md-fab md-mini md-primary float-right" >
+                                            <menu-icon>delete</menu-icon>
+                                        </md-button> -->
+                                    </h6>
+                                    <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
+                                    <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
+                                    <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
+                                        {{elem.place}}</P>
+                                    <p class="card-text">{{elem.description}}</p>
+                                </div>
+                            </div>
+                        </b-card-group>
+                    </b-collapse>
+                </b-card>
+            </fieldset>
 
-                    </li>
+            <fieldset :disabled="isDisabled">
+                <b-card no-body class="mb-1">
+                    <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
+                        <h5 class="b-card-title">Nøkkelkompetanse
+                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyCompetence', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
+                        </h5>
+                        <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
+                    </b-card-header>
+                    <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
+                        <!-- present a card for each ekey competence -->
+                        <b-card-group v-for="elem in competences" :key="elem.id">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-subtitle text-muted">{{ elem.keyCompetence }}</h5>
+                                    <p class="card-text">{{elem.description}}</p>
+                                </div>
+                            </div>
+                        </b-card-group>
+                    </b-collapse>
+                </b-card>
+            </fieldset>
 
-                    <!-- <div>
-                        <b-card title="Card title"
-                                sub-title="Card subtitle">
-                            <p class="card-text">
-                                Some quick example text to build on the <em>card title</em> and make up the bulk of the card's content.
-                            </p>
-                            <a href="#"
-                            class="card-link">Card link</a>
-                            <b-link href="#"
-                                    class="card-link">Another link</b-link>
-                        </b-card>
-                    </div> -->
-'                </b-collapse>
-            </b-card>
+            <fieldset :disabled="isDisabled">
+                <b-card no-body class="mb-1">
+                    <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
+                        <h5 class="b-card-title">Praktiske ferdigheter
+                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticalSkill', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
+                        </h5>
+                        <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
+                    </b-card-header>
+                    <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
+                        <!-- present a card for each practical skill -->
+                        <b-card-group v-for="elem in skills" :key="elem.id">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-subtitle text-muted">{{ elem.skill }}</h5>
+                                    <p class="card-text">{{elem.description}}</p>
+                                </div>
+                            </div>
+                        </b-card-group>
+                    </b-collapse>
+                </b-card>
+            </fieldset>
 
-<fieldset :disabled="isdisabled">
-
-            <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion3>
-                    <h5 class="b-card-title">Nøkkelkompetanse
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyCompetence' }">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
-                </b-card-header>
-                <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
-                    <b-card-body>
-                        <p class="card-text">
-                            {{ text }}
-                        </p>
-                    </b-card-body>
-                </b-collapse>
-            </b-card>
-</fieldset>
-
-            <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
-                    <h5 class="b-card-title">Praktiske ferdigheter
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticalSkill' }">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
-                </b-card-header>
-                <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
-                    <b-card-body>
-                        <p class="card-text">
-                            {{ text }}
-                        </p>
-                    </b-card-body>
-                </b-collapse>
-            </b-card>
-
-            <b-card no-body class="mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion5 role="tab">
-                    <h5 class="b-card-title">Kontaktperson
-                    <b-button class="btn-floating btn-secondary float-right" @click="addVolunteering()">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Hvem er din kontktperson ved dette praksisstedet?</p>
-                </b-card-header>
-                <b-collapse id="accordion5" v-if="form.references" accordion="my-accordion" role="tabpanel">
-                    <b-card-body>
-                        <p class="card-text">
-                            {{ text }}
-                        </p>
-                    </b-card-body>
-                </b-collapse>
-            </b-card>
-
+            <fieldset :disabled="isDisabled">
+                <b-card no-body class="mb-1">
+                    <b-card-header header-tag="header" v-b-toggle.accordion7 role="tab">
+                        <h5 class="b-card-title">Kontaktperson
+                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'Reference', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
+                        </h5>
+                        <p class="b-card-text" style="font-style: italic">Hvem er din kontaktperson ved dette praksisstedet?</p>
+                    </b-card-header>
+                    <b-collapse id="accordion7" accordion="my-accordion" role="tabpanel">
+                        <!-- present a card for each reference -->
+                        <b-card-group v-for="elem in references" :key="elem.id">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ elem.person }}</h5>
+                                    <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
+                                    <p class="card-text">{{elem.description}}</p>
+                                </div>
+                            </div>
+                        </b-card-group>
+                    </b-collapse>
+                </b-card>
+            </fieldset>
         </div>
-        <div style="margin-bottom: 40px"></div>
+        <div class="g-bottom"></div>
     </div>
 </template>
 
 <script>
-import SubNavbar from '@/components/layout/SubNavbar'
 import firebase from 'firebase'
 import db from '@/firebase/init'
+import SubNavbar from '@/components/layout/SubNavbar'
+import WorkExperience from '@/components/views/WorkExperience'
+
 
 export default {
     name: 'PracticeCertificate',
     components: {
         SubNavbar
-    },
-    computed: {
-        isdisabled() {
-            return true;
-        }
-
     },
     data () {
         return {
@@ -134,79 +148,202 @@ export default {
             text: 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon',
             max: 100,
             value: 33.333333333,
-            bars: [
-                {variant: 'success', value: 25},
-                {variant: 'info', value: 25},
-                {variant: 'warning', value: 25},
-                {variant: 'danger', value: 25},
-                {variant: 'primary', value: 25},
-                {variant: 'secondary', value: 25},
-                {variant: 'dark', value: 25}
-            ],
-            form: {
-                readonly: true,
-                trainings: [],
-                keyCompetences: [],
-                practicalSkills: [],
-                refererence: []
+            bar: {
+                variant: 'success', 
+                value: 25
             },
-            step: 1,
-            dis: '',
-            user: null
+            form: {
+                employer: 'Navn på bedrift',
+                userId: null,
+                timestamp: null
+            },
+            id: null,
+            oldName: null,
+            user: null,
+            profile: null,
+            experiences: [],
+            competences: [],
+            skills: [],
+            references: []
         }
     },
-    directives: {
-        // focus: {
-        //     // directive definition
-        //     inserted: function (el) {
-        //     el.focus()
-        //     }
-        // }
+    filters: {
+
+    },
+    computed: {
+        isDisabled() {
+            if (!this.form.employer || this.form.employer == 'Navn på bedrift') {
+                return true
+            }
+            return false;
+        }
     },
     methods: {
-        enable() {
-            this.form.readonly = false
-            this.$refs.companyField.focus();
+        clearName () {
+            this.oldName = this.form.employer
+            if (this.form.employer.startsWith('Navn på')) {
+                this.form.employer = ''
+            }
         },
-        reset() {
-            this.form.readonly = true
+        handleCancel (evt) {
+            // Prevent modal from closing
+            evt.preventDefault()
+            this.form.employer = this.oldName
+            this.handleSubmit()
+        },
+        handleOk (evt) {
+            // Prevent modal from closing
+            evt.preventDefault()
+            if (!this.form.employer) {
+                this.form.employer = this.oldName
+                alert('Vær vennlig å oppgi navnet på bedriften')
+            } else {
+                this.handleSubmit()
+            }
+        },
+        handleSubmit () {
+            // this.clearName()
+            this.$refs.modal.hide()
+            this.update()
+        },
+        addTraining() {
+            this.$router.push({ name: 'WorkExperience', params: { show: 'training', id: this.id }})
         },
         update() {
-            console.log('update')
+            this.user = firebase.auth().currentUser
+            if (this.user) {
+                this.form.userId = this.user.uid 
+                this.form.timestamp = Date.now()
+                if (this.$route.params.id) {
+                    db.collection('certs').doc(this.$route.params.id).set(
+                        this.form, { merge: true })
+                    .then (doc => {
+                        this.id = doc.id
+                        conssole.log('Certificate updated')
+                    })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                } else {
+                    // db.collection('training').add(
+                    db.collection('certs').add(
+                        this.form)
+                    .then (doc => {
+                        this.id = doc.id
+                        conssole.log('Certificate added')
+                     })
+                    .catch(err => {
+                        console.log('Firestore error: ' + err)
+                    })
+                }
+            }
+            else {
+                console.log('User not logged in???')
+            }
+
+        },       
+        showPracticeCertificate() {
+            this.$router.push({ name: 'PracticeCertificatView' })
+        },
+        addPracticeCertificate() {
+            this.$router.push({ name: 'PracticeCertificate' })
         }
     },
-    created() {
-        this.user = firebase.auth().currentUser
+    mounted() {
 
-        db.collection('training').where('userId', '==', this.user.uid)
-        .onSnapshot((snapshot) => {
-        snapshot.docChanges.forEach(change => {
-            if(change.type == 'added'){
-            this.trainings.unshift({
-                from: change.doc.data().from,
-                content: change.doc.data().content
+    },
+    created() {
+        // current user
+        db.collection('users').doc(firebase.auth().currentUser.uid)
+        .get()
+        .then(doc => {
+            this.profile = doc.data()
+        })
+
+        if (this.$route.params.id) {
+            db.collection('certs').doc(this.$route.params.id)
+            .get()
+            .then(doc => {
+                this.id = doc.id
+                this.form = doc.data()
             })
-            }
+            .catch(err => {
+                console.log('gFetching certificate with id = ' + this.$route.params.id + 'failed: ' + err)
+            })
+        }
+
+        // fetch work experience
+        db.collection('experiences').where('userId', '==',firebase.auth().currentUser.uid)
+        .get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                let elem = doc.data()
+                elem.id = doc.id
+                this.experiences.push(elem)
+            })
         })
+
+        // fetch key competences
+        db.collection('competences').where('userId', '==',firebase.auth().currentUser.uid)
+        .get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                let elem = doc.data()
+                elem.id = doc.id
+                this.competences.push(elem)
+            })
         })
+
+        // fetch practical skills
+        db.collection('skills').where('userId', '==',firebase.auth().currentUser.uid)
+        .get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                let elem = doc.data()
+                elem.id = doc.id
+                this.skills.push(elem)
+            })
+        })
+
+        // fetch references
+        db.collection('references').where('userId', '==',firebase.auth().currentUser.uid)
+        .get()
+        .then(snapshot => {
+            snapshot.forEach(doc => {
+                let elem = doc.data()
+                elem.id = doc.id
+                this.references.push(elem)
+            })
+        })
+
     }
 }
 </script>
 
 <style>
-.disabled-div {
-    pointer-events: none;
-    opacity: 0.5;
+.info-color {
+    color: rgb(0,161,181);
 }
-b-form-input[read-only] {
-  background-color: rgb(0,160,151);
+  small {
+    display: block;
+  }
+  .g-title {
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
-g-m2 {
-    margin-top: 2em;
-    margin-bottom: 0.5em;
+.g-practice {
+    margin-top: 3em;
+    margin-bottom: 1em;
+    background-color: rgb(242,242,242);
 }
 .accordion {
     margin-top: 1em;
     margin-bottom: 5em;
+}
+b-card-header {
+  cursor: wait;
+}
+.g-bottom {
+    margin-bottom: 2em;
 }
 </style>

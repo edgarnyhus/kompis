@@ -1,9 +1,21 @@
 <template>
     <div class="container">
-        <div>
-            <h4 class="g-title">Arbeidserfaring</h4>
+        <div v-if="this.$route.params.show == 'training'">
+            <h4  class="g-title">Praksissted</h4>
+            <p style="font-style: italic">Hvor har du vært i praksis?</p>
+        </div>
+        <div v-else>
+            <h4  class="g-title">Arbeidserfaring</h4>
             <p style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
         </div>
+
+        <b-form-group v-if="this.$route.params.show == 'training'" style="font-weight: 650" label="Type arbeid">
+            <b-form-radio-group style="font-weight: 400" v-model="form.jobType"
+                                :options="jobTypes"
+                                stacked
+                                name="where">
+            </b-form-radio-group>
+        </b-form-group>
 
         <b-form @submit.prevent="update">
             <b-form-group class="g-group">
@@ -56,7 +68,7 @@
                 </div>
             </b-form-group>
 
-            <b-form-group class="g-group3">
+            <b-form-group v-if="this.$route.params.show != 'jobTraining'" class="g-group3">
                 <b-form-checkbox v-model="form.ongoing">Jeg jobber her nå</b-form-checkbox>
             </b-form-group>
 
@@ -98,6 +110,10 @@ export default {
     name: 'WorkExperience',
     data() {
         return {
+            jobTypes: [
+                { text: 'Bedrift', value: 'Bedrift' },
+                { text: 'Frivillig organisasjon', value: 'Frivillig organisasjon' }
+            ],
             months: [
                 { value: null, text: 'Velg en måned' },
                 { value: '01', text: 'januar' },
@@ -113,7 +129,7 @@ export default {
                 { value: '11', text: 'november' },
                 { value: '12', text: 'desember' }
             ],
-           form: {
+            form: {
                 employer: null,
                 place: null,
                 jobType: null,
@@ -123,7 +139,8 @@ export default {
                 ongoing: false,
                 description: null,
                 timestamp: null,
-                userId: null
+                userId: null,
+                certId: null
             },
             from: {
                 month: null,
@@ -143,11 +160,13 @@ export default {
     methods: {
         cancel() {
             console.log("cancel")
-            this.$router.go(-1)
+            // this.$router.go(-1)
+            this.$router.back()
         },
         update() {
             if (this.user) {
                 this.form.userId = this.user.uid 
+                this.form.certId = this.$route.params.id
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -188,9 +207,9 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.user && this.$route.params.id) {
             // get object
-            ref = db.collection('training').doc(this.$route.params.id)
-            ref.get().
-            then (doc => {
+            db.collection('training').doc(this.$route.params.id)
+            .get()
+            .then (doc => {
                 if(doc.exists) {
                     this.form = doc.data()
                     this.from.month = this.form.from.getMonth()

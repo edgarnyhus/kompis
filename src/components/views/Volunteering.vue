@@ -110,6 +110,7 @@ export default {
                 ongoing: false,
                 description: null,
                 userId: null,
+                certId: null,
                 timestamp: null
             },
             from: {
@@ -135,6 +136,7 @@ export default {
         update() {
             if (this.user) {
                 this.form.userId = this.user.uid 
+                this.form.certId = this.$route.params.id
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)

@@ -1,7 +1,11 @@
 <template>
     <div class="container">
-        <div>
-            <h4 class="page-title">Referanse</h4>
+        <div v-if="this.$route.params.show == 'training'">
+            <h4  class="g-title">Kontaktperson</h4>
+            <p style="font-style: italic">Hvem var din kontaktperson på praksisstedet?</p>
+        </div>
+        <div v-else>
+            <h4  class="g-title">Referanse</h4>
             <p style="font-style: italic">Hvilken person kan potensielle arbeidsgivere kontakte for å bli bedre kjent med deg? Husk å be om tilatelse!</p>
         </div>
 
@@ -68,6 +72,7 @@ export default {
                 description: null,
                 confirmation: null,
                 userId: null,
+                certId: null,
                 timestamp: null
             },
             user: null
@@ -84,6 +89,7 @@ export default {
         update() {
             if (this.user) {
                 this.form.userId = this.user.uid 
+                this.form.certId = this.$route.params.id
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
                     db.collection('references').doc(this.$route.params.id).set(

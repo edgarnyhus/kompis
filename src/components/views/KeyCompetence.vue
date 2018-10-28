@@ -76,6 +76,7 @@ export default {
                 keyCompetence: null,
                 description: null,
                 userId: null,
+                certId: null,
                 timestamp: null
             },
             user: null
@@ -94,6 +95,7 @@ export default {
         update() {
             if (this.user) {
                 this.form.userId = this.user.uid 
+                this.form.certId = this.$route.params.id
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
                     db.collection('competences').doc(this.$route.params.id).set(
@@ -125,7 +127,7 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.user && this.$route.params.id) {
             // get object
-            ref = db.collection('competences').doc(this.$route.params.id)
+            let ref = db.collection('competences').doc(this.$route.params.id)
             ref.get()
             .then (doc => {
                 if(doc.exists) {
