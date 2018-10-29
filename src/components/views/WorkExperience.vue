@@ -200,7 +200,8 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$router.go(-1)
+            // this.$router.go(-1)
+            this.$router.back()
         }
     },
     mounted() {
