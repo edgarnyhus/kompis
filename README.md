@@ -7,6 +7,9 @@
 ``` bash
 # install dependencies
 npm install
+npm install moment --save
+npm install firebase --save
+npm install bootstrp-vue --save
 
 # serve with hot reload at localhost:8080
 npm run dev

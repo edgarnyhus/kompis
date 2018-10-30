@@ -138,7 +138,7 @@ export default {
                         this.form.to = toTimestamp(this.to.month, this.to.year)
                     }
                 } catch (error) {
-                    console.log('update excception: ' + error)
+                    console.log('update excception: ', error)
                 }
                 if (this.$route.params.id) {
                     db.collection('education').doc(this.$route.params.id).set(
@@ -146,16 +146,16 @@ export default {
                         .then (doc => {
                             conssole.log('Education updated')
                         })
-                    .catch(err => {
-                        console.log('Firestore error: ' + err)
+                    .catch(error => {
+                        console.log('Firestore error: ', error)
                     })
                 } else {
                     db.collection('education').add(this.form)
                     .then (doc => {
                         conssole.log('Education added')
                      })
-                    .catch(err => {
-                        console.log('Firestore error: ' + err)
+                    .catch(error => {
+                        console.log('Firestore error: ', error)
                     })
                 }
             }

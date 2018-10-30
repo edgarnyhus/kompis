@@ -22,7 +22,7 @@
                 </b-card-header>
                 <b-collapse id="accordion1" :visible="false" accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each job training/experience -->
-                    <b-card-group v-for="elem in experiences" :key="elem.id">
+                    <b-card-group v-for="elem in training" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
                                 <h6 class="card-title">{{ elem.employer }}
@@ -69,13 +69,13 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
                     <h5 class="b-card-title">Nøkkelkompetanse
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyCompetence' }">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyValue' }">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
                 </b-card-header>
                 <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each ekey competence -->
-                    <b-card-group v-for="elem in competences" :key="elem.id">
+                    <b-card-group v-for="elem in key_values" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-subtitle text-muted">{{ elem.key_competence }}</h5>
@@ -199,9 +199,9 @@ export default {
             },
             user: null,
             profile: null,
-            experiences: [],
+            training: [],
             education: [],
-            competences: [],
+            key_values: [],
             skills: [],
             volunteering: [],
             languages: [],
@@ -240,7 +240,7 @@ export default {
             snapshot.forEach(doc => {
                 let elem = doc.data()
                 elem.id = doc.id
-                this.experiences.push(elem)
+                this.training.push(elem)
             })
         })
 
@@ -256,13 +256,13 @@ export default {
         })
 
         // fetch key competences
-        db.collection('competences').where('user_id', '==',firebase.auth().currentUser.uid)
+        db.collection('key_values').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
                 let elem = doc.data()
                 elem.id = doc.id
-                this.competences.push(elem)
+                this.key_values.push(elem)
             })
         })
 

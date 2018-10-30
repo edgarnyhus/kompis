@@ -101,7 +101,7 @@ export default {
                         console.log('Firestore error: ' + err)
                     })
                 } else {
-                    // db.collection('experiences').add(
+                    // db.collection('training').add(
                     db.collection('references').add(
                         this.form)
                         .then (doc => {
@@ -122,7 +122,7 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.user && this.$route.params.id) {
             // get object
-            ref = db.collection('competences').doc(this.$route.params.id)
+            ref = db.collection('references').doc(this.$route.params.id)
             ref.get()
             .then (doc => {
                 if(doc.exists) {

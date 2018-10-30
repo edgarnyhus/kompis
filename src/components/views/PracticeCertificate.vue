@@ -4,7 +4,7 @@
 
         <div class="container">
             <b-form @submit.prevent="update">
-                <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ form.employer }}</h1>
+                <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ employer }}</h1>
                 <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
                 <b-link v-b-modal.modalPrevent  variant="info" class="info-color"><strong>Endre</strong></b-link>
 
@@ -18,7 +18,7 @@
                 <form @submit.stop.prevent="handleSubmit">
                     <b-form-input type="text"
                                 placeholder=""
-                                v-model="form.employer"></b-form-input>
+                                v-model="employer"></b-form-input>
                 </form>
                 </b-modal>
             </b-form>
@@ -30,13 +30,18 @@
                 <b-card no-body class="accordion mb-1">
                     <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
                         <h5 class="b-card-title">Praksisted
-                            <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'WorkExperience', params: { show: 'training', id: this.id } }">Legg til emne</b-button>
+                            <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
                         </h5>
                         <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
                     </b-card-header>
-                    <b-collapse id="accordion1" :visible="false" accordion="my-accordion" role="tabpanel">
+
+                    <b-collapse id="accordion1" v-if="selectedComponent" :visible="false" accordion="my-accordion" role="tabpanel">
+                        <component v-on:finished="onFinishedChild" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
+                    </b-collapse>
+
+                    <b-collapse id="accordion1" v-else :visible="false" accordion="my-accordion" role="tabpanel">
                         <!-- present a card for each job experiences/experience -->
-                        <b-card-group v-for="elem in experiences" :key="elem.id">
+                        <b-card-group v-for="elem in training" :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ elem.employer }}
@@ -63,16 +68,16 @@
                 <b-card no-body class="mb-1">
                     <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
                         <h5 class="b-card-title">Nøkkelkompetanse
-                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyCompetence', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyValue', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
                         </h5>
                         <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
                     </b-card-header>
                     <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
-                        <!-- present a card for each ekey competence -->
-                        <b-card-group v-for="elem in competences" :key="elem.id">
+                        <!-- present a card for each key values -->
+                        <b-card-group v-for="elem in key_values" :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-subtitle text-muted">{{ elem.key_competence }}</h5>
+                                    <h5 class="card-subtitle text-muted">{{ elem.key_value}}</h5>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
                             </div>
@@ -140,31 +145,35 @@ import WorkExperience from '@/components/views/WorkExperience'
 export default {
     name: 'PracticeCertificate',
     components: {
-        SubNavbar
+        SubNavbar,
+        WorkExperience
     },
+    props: ['name', 'cid'],
     data () {
         return {
-            home: 'yes',
-            text: 'Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon',
+            employer: "Navn på bedrift",
             max: 100,
-            value: 33.333333333,
             bar: {
                 variant: 'success', 
                 value: 25
             },
             form: {
-                employer: 'Navn på bedrift',
+                employer: null,
+                location: null,
                 user_id: null,
                 timestamp: null
             },
-            id: null,
             oldName: null,
             user: null,
             profile: null,
-            experiences: [],
-            competences: [],
+            training: [],
+            key_values: [],
             skills: [],
-            references: []
+            references: [],
+            selectedComponent: null,
+            show: 'training',
+            cert_id: null,
+            id: null
         }
     },
     filters: {
@@ -172,76 +181,88 @@ export default {
     },
     computed: {
         isDisabled() {
-            if (!this.form.employer || this.form.employer == 'Navn på bedrift') {
+            if (!this.employer || this.employer == 'Navn på bedrift') {
                 return true
             }
             return false;
         }
     },
     methods: {
+        onFinishedChild(value) {
+            // child component (slot) signaled finished
+            console.log('onFinishedChild: id=',  value)
+            this.id = value
+            this.selectedComponent = null
+            this.fetchTraining()
+        },
         clearName () {
-            this.oldName = this.form.employer
-            if (this.form.employer.startsWith('Navn på')) {
-                this.form.employer = ''
+            this.oldName = this.employer
+            if (this.employer.startsWith('Navn på')) {
+                this.employer = ''
             }
         },
         handleCancel (evt) {
             // Prevent modal from closing
             evt.preventDefault()
-            this.form.employer = this.oldName
+            this.employer = this.oldName
             this.handleSubmit()
         },
         handleOk (evt) {
             // Prevent modal from closing
             evt.preventDefault()
-            if (!this.form.employer) {
-                this.form.employer = this.oldName
-                alert('Vær vennlig å oppgi navnet på bedriften')
+            if (!this.employer) {
+                this.employer = this.oldName
+                // alert('Vær vennlig å oppgi navnet på bedriften')
             } else {
                 this.handleSubmit()
             }
         },
         handleSubmit () {
-            // this.clearName()
+            console.log('update: cert_id=',  this.cert_id)
             this.$refs.modal.hide()
-            this.update()
-        },
-        addTraining() {
-            this.$router.push({ name: 'WorkExperience', params: { show: 'training', id: this.id }})
-        },
-        update() {
             this.user = firebase.auth().currentUser
             if (this.user) {
-                this.form.user_id = this.user.uid 
+                this.form.employer = this.employer
+                this.form.user_id = this.user.uid
                 this.form.timestamp = Date.now()
-                if (this.$route.params.id) {
-                    db.collection('certs').doc(this.$route.params.id).set(
-                        this.form, { merge: true })
-                    .then (doc => {
-                        this.id = doc.id
-                        conssole.log('Certificate updated')
+                if (this.cert_id) {
+                    db.collection("certs").doc(this.cert_id).set(this.form, {merge: true})
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
                     })
-                    .catch(err => {
-                        console.log('Firestore error: ' + err)
-                    })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
                 } else {
-                    // db.collection('training').add(
-                    db.collection('certs').add(
-                        this.form)
-                    .then (doc => {
-                        this.id = doc.id
-                        conssole.log('Certificate added')
-                     })
-                    .catch(err => {
-                        console.log('Firestore error: ' + err)
+                    db.collection("certs").add(this.form)
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
+                        this.cert_id = docRef.id
                     })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
                 }
             }
             else {
                 console.log('User not logged in???')
             }
 
-        },       
+        },
+        fetchTraining() {
+            if (this.user && this.cert_id) {
+                db.collection('training').where('cert_id', '==',this.cert_id)
+                .where('user_id', '==',this.user.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.training.push(elem)
+                    })
+                })
+            }
+        }, 
         showPracticeCertificate() {
             this.$router.push({ name: 'PracticeCertificatView' })
         },
@@ -250,7 +271,7 @@ export default {
         }
     },
     mounted() {
-
+        this.cert_id = this.cid
     },
     created() {
         // current user
@@ -260,11 +281,10 @@ export default {
             this.profile = doc.data()
         })
 
-        if (this.$route.params.id) {
-            db.collection('certs').doc(this.$route.params.id)
+        if (this.cert_id) {
+            db.collection('certs').doc(this.cert_id)
             .get()
             .then(doc => {
-                this.id = doc.id
                 this.form = doc.data()
             })
             .catch(err => {
@@ -272,30 +292,24 @@ export default {
             })
         }
 
-        // fetch work experience
-        db.collection('experiences').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.experiences.push(elem)
-            })
-        })
+        // fetch work experience/training
+        fetchTraining()
 
-        // fetch key competences
-        db.collection('competences').where('user_id', '==',firebase.auth().currentUser.uid)
+        // fetch key values
+        db.collection('key_values').where('cert_id', '==',this.cert_id)
+        .where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
                 let elem = doc.data()
                 elem.id = doc.id
-                this.competences.push(elem)
+                this.key_values.push(elem)
             })
         })
 
         // fetch practical skills
-        db.collection('skills').where('user_id', '==',firebase.auth().currentUser.uid)
+        db.collection('skills').where('cert_id', '==',this.cert_id)
+        .where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -306,7 +320,8 @@ export default {
         })
 
         // fetch references
-        db.collection('references').where('user_id', '==',firebase.auth().currentUser.uid)
+        db.collection('references').where('cert_id', '==',this.cert_id)
+        .where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {

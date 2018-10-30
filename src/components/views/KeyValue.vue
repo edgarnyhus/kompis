@@ -16,7 +16,7 @@
                             <b-dropdown-item-button @click="setKey('Ansvarlig')">Ansvarlig</b-dropdown-item-button>
                         </b-dropdown>
                     </div>
-                    <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.key_competence" required>
+                    <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.key_value" required>
                 </div>
             </b-form-group>
 
@@ -62,10 +62,10 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 
 export default {
-    name: 'keyCompetence',
+    name: 'KeyValue',
     data() {
         return {
-            competences: [
+            values: [
                 { value: null, text: 'Velg en nøkkelkompetanse' },
                 { value: 'Punktlig', text: 'Punktlig' },
                 { value: 'Tar initiativ', text: 'Tar initiativ' },
@@ -73,7 +73,7 @@ export default {
                 { value: 'Ansvarlig', text: 'Ansvarlig' }
             ],
             form: {
-                key_competence: null,
+                key_value: null,
                 description: null,
                 user_id: null,
                 cert_id: null,
@@ -87,7 +87,7 @@ export default {
     },
     methods: {
         setKey(value) {
-            this.form.key_competence = value
+            this.form.key_value = value
         },
         cancel() {
             this.$router.go(-1)
@@ -98,7 +98,7 @@ export default {
                 this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
-                    db.collection('competences').doc(this.$route.params.id).set(
+                    db.collection('key_values').doc(this.$route.params.id).set(
                         this.form, { merge: true })
                         .then (doc => {
                             conssole.log('Work experience updated')
@@ -107,7 +107,7 @@ export default {
                         console.log('Firestore error: ' + err)
                     })
                 } else {
-                    db.collection('competences').add(
+                    db.collection('key_values').add(
                         this.form)
                     .then (doc => {
                         conssole.log('Work experience added')
@@ -127,7 +127,7 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.user && this.$route.params.id) {
             // get object
-            let ref = db.collection('competences').doc(this.$route.params.id)
+            let ref = db.collection('key_values').doc(this.$route.params.id)
             ref.get()
             .then (doc => {
                 if(doc.exists) {

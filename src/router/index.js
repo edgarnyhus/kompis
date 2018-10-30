@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import MyCV from '@/components/views/MyCV'
 import WorkExperience from '@/components/views/WorkExperience'
 import Education from '@/components/views/Education'
-import KeyCompetence from '@/components/views/KeyCompetence'
+import KeyValue from '@/components/views/KeyValue'
 import PracticalSkill from '@/components/views/PracticalSkill'
 import Volunteering from '@/components/views/Volunteering'
 import Language from '@/components/views/Language'
@@ -56,9 +56,9 @@ const router = new Router({
       }
     },
     {
-      path: '/keyvalues',
-      name: 'KeyCompetence',
-      component: KeyCompetence,
+      path: '/keyvalue',
+      name: 'KeyValue',
+      component: KeyValue,
       meta: {
         requiresAuth: true
       }

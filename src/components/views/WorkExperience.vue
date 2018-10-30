@@ -1,6 +1,7 @@
 <template>
     <div class="container">
-        <div v-if="this.$route.params.show == 'training'">
+        <slot>
+        <div v-if="this.show == 'training'">
             <h4  class="g-title">Praksissted</h4>
             <p style="font-style: italic">Hvor har du vært i praksis?</p>
         </div>
@@ -9,24 +10,24 @@
             <p style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
         </div>
 
-        <b-form-group v-if="this.$route.params.show == 'training'" style="font-weight: 650" label="Type arbeid">
-            <b-form-radio-group style="font-weight: 400" v-model="form.jobType"
-                                :options="jobTypes"
-                                stacked
-                                name="where">
-            </b-form-radio-group>
-        </b-form-group>
-
         <b-form @submit.prevent="update">
+            <b-form-group v-if="show == 'training'" style="font-weight: 650" label="Type arbeid">
+                <b-form-radio-group style="font-weight: 400" v-model="form.job_type"
+                                    :options="job_types"
+                                    stacked
+                                    name="where">
+                </b-form-radio-group>
+            </b-form-group>
+
             <b-form-group class="g-group">
                 <div class="form-row">
                     <div class="col">
                         <label for="employer"><strong>Arbeidsgiver</strong></label>
-                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="employer" placeholder="" v-model="form.employer" />
+                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="employer" placeholder="" v-model="employer" />
                     </div>
                     <div class="col">
                         <label for="place"><strong>Sted</strong></label>
-                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="place" placeholder="" v-model="form.place" />
+                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="place" placeholder="" v-model="form.location" />
                     </div>
                 </div>
             </b-form-group>
@@ -68,7 +69,7 @@
                 </div>
             </b-form-group>
 
-            <b-form-group v-if="this.$route.params.show != 'jobTraining'" class="g-group3">
+            <b-form-group v-if="show != 'training'" class="g-group3">
                 <b-form-checkbox v-model="form.ongoing">Jeg jobber her nå</b-form-checkbox>
             </b-form-group>
 
@@ -97,7 +98,7 @@
             </div>
 
         </b-form>
-
+        </slot>
     </div>
 </template>
 
@@ -110,7 +111,7 @@ export default {
     name: 'WorkExperience',
     data() {
         return {
-            jobTypes: [
+            job_types: [
                 { text: 'Bedrift', value: 'Bedrift' },
                 { text: 'Frivillig organisasjon', value: 'Frivillig organisasjon' }
             ],
@@ -131,8 +132,8 @@ export default {
             ],
             form: {
                 employer: null,
-                place: null,
-                jobType: null,
+                location: null,
+                job_type: null,
                 role: null,
                 from: null,
                 to: null,
@@ -150,23 +151,25 @@ export default {
                 month: null,
                 year: null
             },
-            user: null
+            user: null,
+            wid: null,
+            reason: null
         }
 
     },
+    props: ['employer', 'show', 'cid', 'id'],
     components: {
 
     },
     methods: {
         cancel() {
             console.log("cancel")
-            // this.$router.go(-1)
-            this.$router.back()
+            this.$emit('finished', this.wid)
         },
         update() {
             if (this.user) {
+                this.form.employer = this.employer
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -174,45 +177,45 @@ export default {
                         this.form.to = toTimestamp(this.to.month, this.to.year)
                     }
                 } catch (error) {
-                    console.log('update excception: ' + error)
+                    console.log('update excception: ', error)
                 }
-                if (this.$route.params.id) {
-                    db.collection('training').doc(this.$route.params.id).set(
-                        this.form, { merge: true })
-                        .then (doc => {
-                            conssole.log('Training updated')
-                        })
-                    .catch(err => {
-                        console.log('Firestore error: ' + err)
+
+                if (this.wid) {
+                    db.collection("training").doc(this.wid).set(this.form, {merge: true})
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
                     })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
                 } else {
-                    // db.collection('training').add(
-                    db.collection('training').add(
-                        this.form)
-                        .then (doc => {
-                            conssole.log('Training added')
-                     })
-                    .catch(err => {
-                        console.log('Firestore error: ' + err)
+                    db.collection("training").add(this.form)
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
+                        this.wid = docRef.id
                     })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
                 }
             }
             else {
                 console.log('User not logged in???')
             }
-            // this.$router.go(-1)
-            this.$router.back()
+            this.$emit('finished', this.wid)
         }
     },
     mounted() {
+        this.form.cert_id = this.cid
+        this.wid = this.id
         this.user = firebase.auth().currentUser
-        if (this.user && this.$route.params.id) {
+        if (this.user && this.wid) {
             // get object
-            db.collection('training').doc(this.$route.params.id)
+            db.collection('training').doc(this.wid)
             .get()
-            .then (doc => {
-                if(doc.exists) {
-                    this.form = doc.data()
+            .then ((docRef) => {
+                if(docRef.exists) {
+                    this.form = docRef.data()
                     this.from.month = this.form.from.getMonth()
                     this.from.year = this.form.from.getYear()
                     this.to.month = this.form.to.getMonth()
