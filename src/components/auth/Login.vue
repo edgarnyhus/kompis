@@ -63,10 +63,10 @@ export default {
                 this.feedback = null
                 firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
                 .then(user => {
-                //console.log(user)
-                this.$router.push({ name: 'MyCV' })
+                    //console.log(user)
+                    this.$router.push({ name: 'MyCV' })
                 }).catch(err => {
-                this.feedback = err.message
+                    this.feedback = err.message
                 })
             } else {
                 this.feedback = 'Vær så snill å fylle inn begge feltene'

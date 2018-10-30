@@ -10,7 +10,6 @@ import Language from '@/components/views/Language'
 import Reference from '@/components/views/Reference'
 import PracticeCertificate from '@/components/views/PracticeCertificate'
 import PracticeCertificateView from '@/components/views/PracticeCertificateView'
-import JobTraining from '@/components/views/JobTraining'
 import PersonalGoal from '@/components/views/PersonalGoal'
 import Signup from '@/components/auth/Signup'
 import Login from '@/components/auth/Login'
@@ -100,14 +99,6 @@ const router = new Router({
       path: '/practice',
       name: 'PracticeCertificateView',
       component: PracticeCertificateView,
-      meta: {
-        requiresAuth: true
-      }
-    },
-    {
-      path: '/training',
-      name: 'JobTraining',
-      component: JobTraining,
       meta: {
         requiresAuth: true
       }

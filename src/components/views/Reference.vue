@@ -71,8 +71,8 @@ export default {
                 person: null,
                 description: null,
                 confirmation: null,
-                userId: null,
-                certId: null,
+                user_id: null,
+                cert_id: null,
                 timestamp: null
             },
             user: null
@@ -88,8 +88,8 @@ export default {
         },
         update() {
             if (this.user) {
-                this.form.userId = this.user.uid 
-                this.form.certId = this.$route.params.id
+                this.form.user_id = this.user.uid 
+                this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
                     db.collection('references').doc(this.$route.params.id).set(

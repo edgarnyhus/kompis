@@ -78,7 +78,7 @@
                     <b-card-group v-for="elem in competences" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-subtitle text-muted">{{ elem.keyCompetence }}</h5>
+                                <h5 class="card-subtitle text-muted">{{ elem.key_competence }}</h5>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
                         </div>
@@ -234,7 +234,7 @@ export default {
         })
 
         // fetch work experience
-        db.collection('training').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('training').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -245,7 +245,7 @@ export default {
         })
 
         // fetch education
-        db.collection('education').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('education').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -256,7 +256,7 @@ export default {
         })
 
         // fetch key competences
-        db.collection('competences').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('competences').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -267,7 +267,7 @@ export default {
         })
 
         // fetch practical skills
-        db.collection('skills').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('skills').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -278,7 +278,7 @@ export default {
         })
 
         // fetch volunteering
-        db.collection('volunteering').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('volunteering').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -289,7 +289,7 @@ export default {
         })
 
         // fetch languages
-        db.collection('languages').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('languages').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -300,7 +300,7 @@ export default {
         })
 
         // fetch references
-        db.collection('references').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('references').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {

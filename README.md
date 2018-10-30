@@ -1,6 +1,6 @@
 # kompis
 
-> Praksisattest og CV makeri
+> A Vue.js project
 
 ## Build Setup
 
@@ -19,11 +19,3 @@ npm run build --report
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
-
-# create a new repository on the command line
-echo "# kompis" >> README.md
-git init
-git add README.md
-git commit -m "first commit"
-git remote add origin https://github.com/edgarnyhus/kompis.git
-git push -u origin master

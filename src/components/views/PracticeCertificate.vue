@@ -72,7 +72,7 @@
                         <b-card-group v-for="elem in competences" :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-subtitle text-muted">{{ elem.keyCompetence }}</h5>
+                                    <h5 class="card-subtitle text-muted">{{ elem.key_competence }}</h5>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
                             </div>
@@ -154,7 +154,7 @@ export default {
             },
             form: {
                 employer: 'Navn på bedrift',
-                userId: null,
+                user_id: null,
                 timestamp: null
             },
             id: null,
@@ -212,7 +212,7 @@ export default {
         update() {
             this.user = firebase.auth().currentUser
             if (this.user) {
-                this.form.userId = this.user.uid 
+                this.form.user_id = this.user.uid 
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
                     db.collection('certs').doc(this.$route.params.id).set(
@@ -273,7 +273,7 @@ export default {
         }
 
         // fetch work experience
-        db.collection('experiences').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('experiences').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -284,7 +284,7 @@ export default {
         })
 
         // fetch key competences
-        db.collection('competences').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('competences').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -295,7 +295,7 @@ export default {
         })
 
         // fetch practical skills
-        db.collection('skills').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('skills').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {
@@ -306,7 +306,7 @@ export default {
         })
 
         // fetch references
-        db.collection('references').where('userId', '==',firebase.auth().currentUser.uid)
+        db.collection('references').where('user_id', '==',firebase.auth().currentUser.uid)
         .get()
         .then(snapshot => {
             snapshot.forEach(doc => {

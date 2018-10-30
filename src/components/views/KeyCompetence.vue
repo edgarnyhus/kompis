@@ -16,7 +16,7 @@
                             <b-dropdown-item-button @click="setKey('Ansvarlig')">Ansvarlig</b-dropdown-item-button>
                         </b-dropdown>
                     </div>
-                    <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.keyCompetence" required>
+                    <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.key_competence" required>
                 </div>
             </b-form-group>
 
@@ -62,7 +62,7 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 
 export default {
-    name: 'KeyCompetence',
+    name: 'keyCompetence',
     data() {
         return {
             competences: [
@@ -73,10 +73,10 @@ export default {
                 { value: 'Ansvarlig', text: 'Ansvarlig' }
             ],
             form: {
-                keyCompetence: null,
+                key_competence: null,
                 description: null,
-                userId: null,
-                certId: null,
+                user_id: null,
+                cert_id: null,
                 timestamp: null
             },
             user: null
@@ -87,15 +87,15 @@ export default {
     },
     methods: {
         setKey(value) {
-            this.form.keyCompetence = value
+            this.form.key_competence = value
         },
         cancel() {
             this.$router.go(-1)
         },
         update() {
             if (this.user) {
-                this.form.userId = this.user.uid 
-                this.form.certId = this.$route.params.id
+                this.form.user_id = this.user.uid 
+                this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
                     db.collection('competences').doc(this.$route.params.id).set(
