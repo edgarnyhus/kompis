@@ -10,7 +10,7 @@
             <b-card class="g-practice">
                 <h5 class="b-card-title">Har du vært i arbeidspraksis?</h5>
                 <p class="b-card-text">Lag praksisattesten først, og dataene vil dukke opp i CVen din. Usikker på hvordan du skal gjære det, ta kontakt med veileder.</p>
-                <button type="button" class="btn btn-info" @click="addPracticeCertificate">Lag ny praksisattest</button>
+                <b-button  class="btn btn-info" router-link :to="{ name: 'PracticeCertificate' }">Lag ny praksisattest</b-button>
             </b-card>
 
             <b-card no-body class="accordion mb-1">
@@ -215,11 +215,96 @@ export default {
 
     },
     methods: {
-        showPracticeCertificate() {
-            this.$router.push({ name: 'PracticeCertificatView' })
+        fetchTraining() {
+            if (this.user) {
+                db.collection('training').where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.training.push(elem)
+                    })
+                })
+            }
         },
-        addPracticeCertificate() {
-            this.$router.push({ name: 'PracticeCertificate' })
+        fetchEducation() {
+            if (this.user) {
+                db.collection('education').where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.education.push(elem)
+                    })
+                })
+            }
+        },
+        fetchKeyValues() {
+            if (this.user) {
+                db.collection('key_values').where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.key_values.push(elem)
+                    })
+                })
+            }
+        },
+        fetchSkills() {
+            if (this.user) {
+                db.collection('skills').where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.skills.push(elem)
+                    })
+                })
+            }
+        },
+        fetchVolunteering() {
+            if (this.user) {
+                db.collection('volunteering').where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.volunteering.push(elem)
+                    })
+                })
+            }
+        },
+        fetchLanuages() {
+            if (this.user) {
+                db.collection('languages').where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.languages.push(elem)
+                    })
+                })
+            }
+        },
+        fetchReferences() {
+            if (this.user) {
+                db.collection('references').where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.references.push(elem)
+                    })
+                })
+            }
         }
     },
     mounted() {
@@ -227,89 +312,36 @@ export default {
     },
     created() {
         // current user
+        this.user = firebase.auth().currentUser.uid
         db.collection('users').doc(firebase.auth().currentUser.uid)
         .get()
         .then(doc => {
             this.profile = doc.data()
         })
-
-        // fetch work experience
-        db.collection('training').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.training.push(elem)
-            })
+        .catch(error => {
+            console.error('Firebase error: ', error)
         })
 
-        // fetch education
-        db.collection('education').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.education.push(elem)
-            })
-        })
+        // fetch work experience/training
+        // this.fetchTraining()
 
-        // fetch key competences
-        db.collection('key_values').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.key_values.push(elem)
-            })
-        })
+        // fetch key values
+        // this.fetchEducation()
+
+        // fetch key values
+        // this.fetchKeyValues()
 
         // fetch practical skills
-        db.collection('skills').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.skills.push(elem)
-            })
-        })
+        // this.fetchSkills()
 
-        // fetch volunteering
-        db.collection('volunteering').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.volunteering.push(elem)
-            })
-        })
+        // fetch practical skills
+        // this.fetchVolunteering()
 
-        // fetch languages
-        db.collection('languages').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.languages.push(elem)
-            })
-        })
+        // fetch practical skills
+        // this.fetchLanguages()
 
         // fetch references
-        db.collection('references').where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.references.push(elem)
-            })
-        })
-
+        // this.fetchReferences()
     }
 }
 </script>

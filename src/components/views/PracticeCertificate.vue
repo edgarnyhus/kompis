@@ -4,7 +4,9 @@
 
         <div class="container">
             <b-form @submit.prevent="update">
-                <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ employer }}</h1>
+                <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ employer }}
+                    <b-button class="btn-floating btn-info float-right" @click="back">Tilbake</b-button>
+                </h1>
                 <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
                 <b-link v-b-modal.modalPrevent  variant="info" class="info-color"><strong>Endre</strong></b-link>
 
@@ -36,7 +38,7 @@
                     </b-card-header>
 
                     <b-collapse id="accordion1" v-if="selectedComponent" :visible="false" accordion="my-accordion" role="tabpanel">
-                        <component v-on:finished="onFinishedChild" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
+                        <component v-on:updtraining="onUpdatedTraining" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
                     </b-collapse>
 
                     <b-collapse id="accordion1" v-else :visible="false" accordion="my-accordion" role="tabpanel">
@@ -45,12 +47,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ elem.employer }}
-                                        <!-- <md-button class="md-fab md-mini md-primary float-right" >
-                                            <menu-icon>edit</menu-icon>
-                                        </md-button>
-                                        <md-button class="md-fab md-mini md-primary float-right" >
-                                            <menu-icon>delete</menu-icon>
-                                        </md-button> -->
+                                        <b-button class="btn-floating btn-secondary float-right" @click="updateTraining(elem)">Endre</b-button>
+                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeTraining(elem)">Slett</b-button>
                                     </h6>
                                     <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
                                     <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
@@ -188,12 +186,32 @@ export default {
         }
     },
     methods: {
-        onFinishedChild(value) {
+        back() {
+            this.$router.back()
+        },
+        removeTraining(elem) {
+            console.log("removeTraining", elem.id);
+            db.collection('training').doc(elem.id).delete()
+            .then(() => {
+                console.log("Document successfully deleted!");
+                this.fetchTraining()
+            }).catch(error => {
+                console.error("Error removing document: ", error);
+            })
+        },
+        updateTraining(elem) {
+            console.log("updateTraining", elem.id);
+            this.id = elem.id
+            this.selectedComponent = 'WorkExperience'            
+        },
+        onUpdatedTraining(id) {
             // child component (slot) signaled finished
-            console.log('onFinishedChild: id=',  value)
-            this.id = value
+            console.log('onUpdatedTraining: ID=',  id)
+            this.id = id
             this.selectedComponent = null
-            this.fetchTraining()
+            if (id) {
+                this.fetchTraining()
+            }
         },
         clearName () {
             this.oldName = this.employer
@@ -218,7 +236,7 @@ export default {
             }
         },
         handleSubmit () {
-            console.log('update: cert_id=',  this.cert_id)
+            console.log('PC handleSumit, cert_id=',  this.cert_id)
             this.$refs.modal.hide()
             this.user = firebase.auth().currentUser
             if (this.user) {
@@ -228,7 +246,7 @@ export default {
                 if (this.cert_id) {
                     db.collection("certs").doc(this.cert_id).set(this.form, {merge: true})
                     .then((docRef) => {
-                        console.log("Document written with ID: ", docRef.id);
+                        console.log("Document written/updated with ID: ", this.cert_id);
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -249,10 +267,25 @@ export default {
             }
 
         },
+        fetchCertificate() {
+            if (this.cert_id) {
+                db.collection('certs').doc(this.cert_id)
+                .get()
+                .then(doc => {
+                    console.log('fetchCertificate ok,', doc.data() )
+                    this.form = doc.data()
+                    this.employer = this.form.employer
+                })
+                .catch(err => {
+                    console.log('gFetching certificate with id = ', this.cert_id, 'failed: ', err)
+                })
+            }
+        },
         fetchTraining() {
             if (this.user && this.cert_id) {
+                this.training.length = 0
                 db.collection('training').where('cert_id', '==',this.cert_id)
-                .where('user_id', '==',this.user.uid)
+                .where('user_id', '==',firebase.auth().currentUser.uid)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -262,18 +295,64 @@ export default {
                     })
                 })
             }
-        }, 
-        showPracticeCertificate() {
-            this.$router.push({ name: 'PracticeCertificatView' })
         },
-        addPracticeCertificate() {
-            this.$router.push({ name: 'PracticeCertificate' })
+        fetchKeyValues() {
+            if (this.user && this.cert_id) {
+                db.collection('key_values').where('cert_id', '==',this.cert_id)
+                .where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.key_values.push(elem)
+                    })
+                })
+            }
+        },
+        fetchSkills() {
+            if (this.user && this.cert_id) {
+                db.collection('skills').where('cert_id', '==',this.cert_id)
+                .where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.skills.push(elem)
+                    })
+                })
+            }
+        },
+        fetchReferences() {
+            if (this.user && this.cert_id) {
+                db.collection('references').where('cert_id', '==',this.cert_id)
+                .where('user_id', '==',firebase.auth().currentUser.uid)
+                .get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.references.push(elem)
+                    })
+                })
+            }
         }
     },
+    updated() {
+        console.log('PC updated event, ID=', this.cert_id)
+    },
+    activated() {
+        console.log('PC activated event, ID=', this.cert_id)
+    },
     mounted() {
-        this.cert_id = this.cid
+        console.log('PC mounted event, ID=', this.cert_id)
     },
     created() {
+        this.user = firebase.auth().currentUser.uid
+        this.cert_id = this.cid ? this.cid : this.$route.params.cid
+        console.log('PC created event, ID=', this.cert_id )
+
         // current user
         db.collection('users').doc(firebase.auth().currentUser.uid)
         .get()
@@ -281,61 +360,26 @@ export default {
             this.profile = doc.data()
         })
 
-        if (this.cert_id) {
-            db.collection('certs').doc(this.cert_id)
-            .get()
-            .then(doc => {
-                this.form = doc.data()
-            })
-            .catch(err => {
-                console.log('gFetching certificate with id = ' + this.$route.params.id + 'failed: ' + err)
-            })
-        }
+        // fetch this practice certificate
+        this.fetchCertificate()
 
         // fetch work experience/training
-        fetchTraining()
+        this.fetchTraining()
 
         // fetch key values
-        db.collection('key_values').where('cert_id', '==',this.cert_id)
-        .where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.key_values.push(elem)
-            })
-        })
+        this.fetchKeyValues()
 
         // fetch practical skills
-        db.collection('skills').where('cert_id', '==',this.cert_id)
-        .where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.skills.push(elem)
-            })
-        })
+        this.fetchSkills()
 
         // fetch references
-        db.collection('references').where('cert_id', '==',this.cert_id)
-        .where('user_id', '==',firebase.auth().currentUser.uid)
-        .get()
-        .then(snapshot => {
-            snapshot.forEach(doc => {
-                let elem = doc.data()
-                elem.id = doc.id
-                this.references.push(elem)
-            })
-        })
+        this.fetchReferences()
 
     }
 }
 </script>
 
-<style>
+<style scoped>
 .info-color {
     color: rgb(0,161,181);
 }
@@ -360,5 +404,8 @@ b-card-header {
 }
 .g-bottom {
     margin-bottom: 2em;
+}
+.btn-outline-secondary {
+    border-color: grey;
 }
 </style>

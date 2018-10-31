@@ -93,7 +93,7 @@ export default {
                         conssole.log('Language updated')
                     })
                     .catch(err => {
-                        console.log('Firestore error: ' + err)
+                        console.log('Firestore error: ', err)
                     })
                 } else {
                     db.collection('languages').add(this.form)
@@ -101,7 +101,7 @@ export default {
                         conssole.log('Language added')
                      })
                     .catch(err => {
-                        console.log('Firestore error: ' + err)
+                        console.log('Firestore error: ', err)
                     })
                 }
             }

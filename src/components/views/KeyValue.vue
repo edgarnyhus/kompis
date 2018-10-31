@@ -104,7 +104,7 @@ export default {
                             conssole.log('Work experience updated')
                         })
                     .catch(err => {
-                        console.log('Firestore error: ' + err)
+                        console.log('Firestore error: ', err)
                     })
                 } else {
                     db.collection('key_values').add(
@@ -113,7 +113,7 @@ export default {
                         conssole.log('Work experience added')
                      })
                     .catch(err => {
-                        console.log('Firestore error: ' + err)
+                        console.log('Firestore error: ', err)
                     })
                 }
             }

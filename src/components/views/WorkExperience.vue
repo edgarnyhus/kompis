@@ -23,7 +23,7 @@
                 <div class="form-row">
                     <div class="col">
                         <label for="employer"><strong>Arbeidsgiver</strong></label>
-                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="employer" placeholder="" v-model="employer" />
+                        <b-form-input class="mb-2 mr-sm-2 mb-sm-0" :disabled="disableWrite" id="employer" placeholder="" v-model="employer" />
                     </div>
                     <div class="col">
                         <label for="place"><strong>Sted</strong></label>
@@ -153,7 +153,8 @@ export default {
             },
             user: null,
             wid: null,
-            reason: null
+            disableWrite: false, 
+            reason: 'updtraining'
         }
 
     },
@@ -164,7 +165,7 @@ export default {
     methods: {
         cancel() {
             console.log("cancel")
-            this.$emit('finished', this.wid)
+            this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
@@ -177,13 +178,14 @@ export default {
                         this.form.to = toTimestamp(this.to.month, this.to.year)
                     }
                 } catch (error) {
-                    console.log('update excception: ', error)
+                    console.error('update excception: ', error)
                 }
 
                 if (this.wid) {
                     db.collection("training").doc(this.wid).set(this.form, {merge: true})
                     .then((docRef) => {
-                        console.log("Document written with ID: ", docRef.id);
+                        console.log("Document updated with ID: ", docRef.id);
+                        this.$emit(this.reason, this.wid)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -193,6 +195,7 @@ export default {
                     .then((docRef) => {
                         console.log("Document written with ID: ", docRef.id);
                         this.wid = docRef.id
+                        this.$emit(this.reason, this.wid)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -200,29 +203,47 @@ export default {
                 }
             }
             else {
-                console.log('User not logged in???')
+                console.info('User not logged in???')
             }
-            this.$emit('finished', this.wid)
+        },
+        fetchData() {
+            if (this.user && this.wid) {
+                // get object
+                db.collection('training').doc(this.wid)
+                .get()
+                .then ((docRef) => {
+                    if(docRef.exists) {
+                        this.form = docRef.data()
+                        this.from.month = getMonth(this.form.from)
+                        this.from.year = getYear(this.form.from)
+                        this.to.month = getMonth(this.form.to)
+                        this.to.year = getYear(this.form.to)
+                    }
+                })
+                .catch((error) => {
+                    console.error("WE Error fetching document: ", error);
+                });
+            }            
         }
     },
+    updated() {
+        console.log('WE updated event, ID=', this.form.cert_id , ',', this.cid)
+    },
+    activated() {
+        console.log('WE activated event, ID=', this.form.cert_id )
+    },
     mounted() {
-        this.form.cert_id = this.cid
-        this.wid = this.id
+        console.log('WE mounted event, ID=', this.form.cert_id )
+        if (this.employer && this.cid) {
+            this.disableWrite = true
+        }
+    },
+    created() {
+        this.form.cert_id  = this.cid ? this.cid : this.$route.params.cid
+        this.wid = this.id ? this.id : this.$route.params.id
         this.user = firebase.auth().currentUser
-        if (this.user && this.wid) {
-            // get object
-            db.collection('training').doc(this.wid)
-            .get()
-            .then ((docRef) => {
-                if(docRef.exists) {
-                    this.form = docRef.data()
-                    this.from.month = this.form.from.getMonth()
-                    this.from.year = this.form.from.getYear()
-                    this.to.month = this.form.to.getMonth()
-                    this.to.year = this.form.to.getYear()
-                }
-            })
-        }            
+        console.info('WE created, CID=', this.form.cert_id , ', ', this.id)
+        this.fetchData()
     }
 
 }

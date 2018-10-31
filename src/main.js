@@ -18,25 +18,41 @@ Vue.filter('formatDate', function(value) {
         return date.substring(0,3) + ' ' + date.substring(7,12)
     }
 })
+Vue.filter('formatDateAndTime', function(value) {
+    if (value) {
+        // return moment(String(value)).format('MM/DD/YYYY hh:mm')
+        let date = moment(value).format('lll')
+        return date
+    }
+})
+
+global.getMonth = (value) => {
+    if (value) {
+        // return moment(String(value)).format('MM/DD/YYYY hh:mm')
+        // let date = moment(value)
+        let n = moment.unix(value.seconds).month()
+        if (n < 10)
+            return '0' + String(n)
+        return String(n)
+    }
+    return null;
+}
+
+global.getYear = (value) => {
+    if (value) {
+        // return moment(String(value)).format('MM/DD/YYYY hh:mm')
+        // let date = moment(value)
+        let n = moment.unix(value.seconds).year()
+        if (n < 10)
+            return '0' + String(n)
+        return String(n)
+    }
+    return null;
+}
 
 global.toTimestamp = (month, year) => {
-  let date =month + '-' + '10-' + year
+  let date = month + '-' + '10-' + year
   return new Date(date)
-
-//   let date = ''   // month + '-' + '01-' + year
-
-//   if (!year) {
-//       return date
-//   }
-
-//   if (month) {
-//       date = month + '-01-'
-//   } else {
-//       date ='01-01-'
-//   }
-//   date += year
-//   return new Date(date)
-
 }
 
 // // Register a global custom directive called `v-focus`
