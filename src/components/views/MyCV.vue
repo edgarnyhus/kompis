@@ -23,7 +23,7 @@
                 </b-card-header>
 
                 <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updtraining="onUpdatedTraining" :id="id" :is="selectedComponent"></component>
+                    <component v-on:updtraining="onUpdatedTraining" :cid="cid" :id="id" :is="selectedComponent"></component>
                 </b-collapse>
 
                 <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
@@ -38,6 +38,8 @@
                                     <md-button class="md-fab md-mini md-primary float-right" >
                                         <menu-icon>delete</menu-icon>
                                     </md-button> -->
+                                    <b-link class="btn-floating float-right btn-sm" @click="updateTraining(elem)">Endre</b-link>
+                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeTraining(elem)">Slett</b-link>
                                 </h6>
                                 <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
                                 <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
@@ -53,16 +55,24 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion2 role="tab">
                     <h5 class="b-card-title">Utdanning og kurs
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'Education' }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'Education'">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
                 </b-card-header>
-                <b-collapse id="accordion2" accordion="my-accordion" role="tabpanel">
+
+                <b-collapse id="accordion2" v-if="selectedComponent == 'Education'" accordion="my-accordion" role="tabpanel">
+                    <component v-on:updeducation="onUpdatedEducation" :cid="cid" :id="id" :is="selectedComponent"></component>
+                </b-collapse>
+
+                <b-collapse id="accordion2" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each exam -->
                     <b-card-group v-for="elem in education" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h6 class="card-title">{{ elem.school }}</h6>
+                                <h6 class="card-title">{{ elem.school }}
+                                    <b-link class="btn-floating float-right btn-sm" @click="updateEducation(elem)">Endre</b-link>
+                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeEducation(elem)">Slett</b-link>
+                                </h6>
                                 <h5 class="card-subtitle text-muted">{{elem.study}}</h5>
                                 <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}</p>
                                 <p class="card-text">{{elem.description}}</p>
@@ -75,16 +85,24 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
                     <h5 class="b-card-title">Nøkkelkompetanse
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyValue' }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'KeyValue'">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
                 </b-card-header>
-                <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
+
+                <b-collapse id="accordion3" v-if="selectedComponent == 'KeyValue'" accordion="my-accordion" role="tabpanel">
+                    <component v-on:updkey="onUpdatedKeyValue" :cid="cid" :id="id" :is="selectedComponent"></component>
+                </b-collapse>
+
+                <b-collapse id="accordion3" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each ekey competence -->
                     <b-card-group v-for="elem in key_values" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-subtitle text-muted">{{ elem.key_competence }}</h5>
+                                <h5 class="card-subtitle text-muted">{{ elem.key_value }}
+                                    <b-link class="btn-floating float-right btn-sm" @click="updateKeyValue(elem)">Endre</b-link>
+                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeKeyValue(elem)">Slett</b-link>
+                                </h5>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
                         </div>
@@ -95,16 +113,24 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
                     <h5 class="b-card-title">Praktiske ferdigheter
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticalSkill' }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'PracticalSkill'">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
                 </b-card-header>
-                <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
+
+                <b-collapse id="accordion4" v-if="selectedComponent == 'PracticalSkill'" accordion="my-accordion" role="tabpanel">
+                    <component v-on:updskill="onUpdatedSkill" :cid="cid" :id="id" :is="selectedComponent"></component>
+                </b-collapse>
+
+                <b-collapse id="accordion4" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each practical skill -->
                     <b-card-group v-for="elem in skills" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-subtitle text-muted">{{ elem.skill }}</h5>
+                                <h5 class="card-subtitle text-muted">{{ elem.skill }}
+                                    <b-link class="btn-floating float-right btn-sm" @click="updateSkill(elem)">Endre</b-link>
+                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeSkill(elem)">Slett</b-link>
+                                </h5>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
                         </div>
@@ -115,16 +141,23 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion5 role="tab">
                     <h5 class="b-card-title">Frivillig arbeid og verv
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'Volunteering' }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'Volunteering'">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Har du tatt på deg frivillig arbeid eller verv? Hva?</p>
                 </b-card-header>
-                <b-collapse id="accordion5" accordion="my-accordion" role="tabpanel">
+
+                <b-collapse id="accordion5" v-if="selectedComponent == 'Volunteering'" accordion="my-accordion" role="tabpanel">
+                    <component v-on:updvol="onUpdatedVolunteering" :cid="cid" :id="id" :is="selectedComponent"></component>
+                </b-collapse>
+
+                <b-collapse id="accordion5" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each  -->
                     <b-card-group v-for="elem in volunteering" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
                                 <h6 class="card-title">{{ elem.org }}
+                                    <b-link class="btn-floating float-right btn-sm"  @click="updateVolunteering(elem)">Endre</b-link>
+                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeVolunteering(elem)">Slett</b-link>
                                 </h6>
                                 <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
                                 <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
@@ -139,16 +172,24 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion6 role="tab">
                     <h5 class="b-card-title">Språk
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'Language' }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'Language'">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke språk kan du snakke?</p>
                 </b-card-header>
-                <b-collapse id="accordion6" accordion="my-accordion" role="tabpanel">
+
+                <b-collapse id="accordion6" v-if="selectedComponent == 'Language'" accordion="my-accordion" role="tabpanel">
+                    <component v-on:updlang="onUpdatedLanguage" :cid="cid" :id="id" :is="selectedComponent"></component>
+                </b-collapse>
+
+                <b-collapse id="accordion6" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each language -->
                     <b-card-group v-for="elem in languages" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ elem.language }}</h5>
+                                <h5 class="card-title">{{ elem.language }}
+                                    <b-link class="btn-floating float-right btn-sm" @click="updateLanguage(elem)">Endre</b-link>
+                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeLanguage(elem)">Slett</b-link>
+                                </h5>
                                 <h6 class="card-subtitle text-muted">{{ elem.proficiency }}</h6>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
@@ -160,16 +201,24 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion7 role="tab">
                     <h5 class="b-card-title">Referanser
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'Reference' }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'Reference'">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Hvilke personer kan potensielle arbeidsgivere kontakte for å bli kjent med deg? Husk å be om tillatelse!</p>
                 </b-card-header>
-                <b-collapse id="accordion7" accordion="my-accordion" role="tabpanel">
+
+                <b-collapse id="accordion7" v-if="selectedComponent == 'Reference'" accordion="my-accordion" role="tabpanel">
+                    <component v-on:updref="onUpdatedReference" :cid="cid" :id="id" :is="selectedComponent"></component>
+                </b-collapse>
+
+                <b-collapse id="accordion7" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each reference -->
                     <b-card-group v-for="elem in references" :key="elem.id">
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">{{ elem.person }}</h5>
+                                <h5 class="card-title">{{ elem.person }}
+                                    <b-link class="btn-floating float-right btn-sm" @click="updateReference(elem)">Endre</b-link>
+                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeReference(elem)">Slett</b-link>
+                                </h5>
                                 <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
                                 <p class="card-text">{{elem.description}}</p>
                             </div>
@@ -227,6 +276,7 @@ export default {
             languages: [],
             references: [],
             selectedComponent: null,
+            cid: null,
             id: null
         }
     },
@@ -241,7 +291,6 @@ export default {
             db.collection('training').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
-                // this.fetchTraining()
                 if (elem) {
                     let ix = this.training.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -253,14 +302,39 @@ export default {
             })
         },
         updateTraining(elem) {
-            this.id = elem.id
-            this.selectedComponent = 'WorkExperience'            
+            this.id = elem.id; this.selectedComponent = 'WorkExperience'            
         },
         onUpdatedTraining(id) {
             // child component (slot) signaled finished
+            console.log('updated event from child, ID=', id)
             this.selectedComponent = null
             if (id) {
                 this.fetchTraining()
+            }
+        },
+        removeEducation(elem) {
+            db.collection('education').doc(elem.id).delete()
+            .then(() => {
+                if (elem) {
+                    let ix = this.training.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.training.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing praksissted: ", error);
+            })
+        },
+        updateEducation(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'Education'            
+        },
+        onUpdatedEducation(id) {
+            // child component (slot) signaled finished
+            console.log('updated event from child, ID=', id)
+            this.selectedComponent = null
+            if (id) {
+                this.fetchEducation()
             }
         },
         removeKeyValue(elem) {
@@ -284,6 +358,7 @@ export default {
         },
         onUpdatedKeyValue(id) {
             // child component (slot) signaled finished
+            console.log('onUpdatedKeyValue', id)
             this.selectedComponent = null
             if (id) {
                 this.fetchKeyValues()
@@ -292,8 +367,6 @@ export default {
         removeSkill(elem) {
             db.collection('skills').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
-                // this.fetchTraining()
                 if (elem) {
                     let ix = this.skills.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -310,9 +383,61 @@ export default {
         },
         onUpdatedSkill(id) {
             // child component (slot) signaled finished
+            console.log('onUpdatedSkill', id)
             this.selectedComponent = null
             if (id) {
                 this.fetchSkills()
+            }
+        },
+        removeVolunteering(elem) {
+            db.collection('volunteering').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                if (elem) {
+                    let ix = this.volunteering.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.training.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing praksissted: ", error);
+            })
+        },
+        updateVolunteering(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'Volunteering'            
+        },
+        onUpdatedVolunteering(id) {
+            // child component (slot) signaled finished
+            console.log('updated event from child, ID=', id)
+            this.selectedComponent = null
+            if (id) {
+                this.fetchVolunteering()
+            }
+        },
+        removeLanguage(elem) {
+            db.collection('languages').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                if (elem) {
+                    let ix = this.languages.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.skills.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing skill,", error);
+            })
+        },
+        updateLanguage(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'Language'            
+        },
+        onUpdatedLanguage(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchLanguages()
             }
         },
         removeReference(elem) {
@@ -331,8 +456,7 @@ export default {
             })
         },
         updateReference(elem) {
-            this.id = elem.id
-            this.selectedComponent = 'Reference'            
+            this.id = elem.id; this.selectedComponent = 'Reference'            
         },
         onUpdatedReference(id) {
             // child component (slot) signaled finished
@@ -486,7 +610,7 @@ export default {
         this.fetchVolunteering()
 
         // fetch practical skills
-        // this.fetchLanguages()
+        this.fetchLanguages()
 
         // fetch references
         this.fetchReferences()

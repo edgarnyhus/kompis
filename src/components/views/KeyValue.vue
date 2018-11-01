@@ -80,7 +80,6 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
-            cert_id: null,
             kv_id: null,
             reason: 'updkey',
             user: null
@@ -101,13 +100,13 @@ export default {
         addOrUpdate() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.cert_id
                 this.form.timestamp = Date.now()
                 if (this.kv_id) {
                     db.collection('key_values').doc(this.kv_id).set(
                         this.form, { merge: true })
                         .then (doc => {
                             conssole.log('Work experience updated')
+                            this.$emit(this.reason, this.kv_id)
                         })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -118,6 +117,7 @@ export default {
                     .then (doc => {
                         conssole.log('Work experience added')
                         this.kv_id = doc.id
+                        this.$emit(this.reason, this.kv_id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -127,8 +127,6 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$emit(this.reason, this.fv_id)
-            this.$router.back()
         },
         fetchData() {
             if (this.user && this.kv_id) {
@@ -149,9 +147,9 @@ export default {
     },
     created() {
         this.user = firebase.auth().currentUser
-        this.cert_id  = this.cid ? this.cid : this.$route.params.cid
-        this.kv_id = this.id ? this.id : this.$route.params.id
-        // this.fetchData()
+        this.form.cert_id  = this.cid
+        this.kv_id = this.id
+        this.fetchData()
     }
 }
 </script>

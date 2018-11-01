@@ -80,7 +80,6 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
-            cert_id,
             ps_id: null,
             reason: 'updskill',
             user: null
@@ -96,18 +95,18 @@ export default {
             this.form.skill = value
         },
         cancel() {
-            this.$emit(reason, null)
+            this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.cert_id
                 this.form.timestamp = Date.now()
                 if (this.ps_id) {
                     db.collection('skills').doc(this.ps_id).set(
                         this.form, { merge: true })
                     .then (doc => {
                         conssole.log('Work experience updated')
+                        this.$emit(this.reason, this.ps_id)
                     })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -119,6 +118,7 @@ export default {
                     .then (doc => {
                         conssole.log('Work experience added')
                         this.ps_id = doc.id
+                        this.$emit(this.reason, this.ps_id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -128,7 +128,6 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$emit(reason, this.ps_id)
         },
         fetchData() {
             if (this.user && this.ps_id) {
@@ -148,9 +147,8 @@ export default {
     },
     created() {
         this.user = firebase.auth().currentUser
-        this.cert_id  = this.cid ? this.cid : this.$route.params.cid
-        this.ps_id = this.id ? this.id : this.$route.params.id
-        console.info('WE created, CID=', this.form.cert_id, "WID=", this.ps_id)
+        this.form.cert_id  = this.cid
+        this.ps_id = this.id
         this.fetchData()
     }
 }

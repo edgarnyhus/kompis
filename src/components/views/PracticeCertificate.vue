@@ -47,8 +47,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ elem.employer }}
-                                        <b-button class="btn-floating btn-secondary float-right" @click="updateTraining(elem)">Endre</b-button>
-                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeTraining(elem)">Slett</b-button>
+                                        <b-link class="btn-floating float-right btn-sm" @click="updateTraining(elem)">Endre</b-link>
+                                        <b-link class="button-span btn-floating float-right btn-sm" @click="removeTraining(elem)">Slett</b-link>
                                     </h6>
                                     <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
                                     <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
@@ -81,8 +81,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-subtitle text-muted">{{ elem.key_value }}
-                                        <b-button class="btn-floating btn-secondary float-right" @click="updateKeyValue(elem)">Endre</b-button>
-                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeKeyValue(elem)">Slett</b-button>
+                                        <b-link class="btn-floating float-right btn-sm" @click="updateKeyValue(elem)">Endre</b-link>
+                                        <b-link class="button-span btn-floating float-right btn-sm" @click="removeKeyValue(elem)">Slett</b-link>
                                     </h5>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
@@ -111,8 +111,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-subtitle text-muted">{{ elem.skill }}
-                                        <b-button class="btn-floating btn-secondary float-right" @click="updateSkill(elem)">Endre</b-button>
-                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeSkill(elem)">Slett</b-button>
+                                        <b-link class="btn-floating float-right btn-sm" @click="updateSkill(elem)">Endre</b-link>
+                                        <b-link class="button-span btn-floating float-right btn-sm" @click="removeSkill(elem)">Slett</b-link>
                                     </h5>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
@@ -141,8 +141,8 @@
                             <div class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">{{ elem.person }}
-                                        <b-button class="btn-floating btn-secondary float-right" @click="updateReference(elem)">Endre</b-button>
-                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeReference(elem)">Slett</b-button>
+                                        <b-link class="btn-floating float-right btn-sm" @click="updateReference(elem)">Endre</b-link>
+                                        <b-link class="button-span btn-floating float-right btn-sm" @click="removeReference(elem)">Slett</b-link>
                                     </h5>
                                     <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
                                     <p class="card-text">{{elem.description}}</p>

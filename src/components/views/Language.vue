@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <slot>
         <div>
             <h4 class="g-title">Språk</h4>
             <p style="font-style: italic">Hvilke språk kan du snakke?</p>
@@ -41,7 +42,7 @@
             </div>
 
         </b-form>
-
+        </slot>
     </div>
 </template>
 
@@ -68,29 +69,31 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
-            user: null
+            user: null,
+            l_id: null,
+            reason: 'updlang'
         }
 
     },
+    props: ['cid', 'id'],
     components: {
 
     },
     methods: {
         cancel() {
             console.log("cancel")
-            this.$router.go(-1)
+            this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
-                if (this.$route.params.id) {
-
-                    db.collection('languages').doc(this.$route.params.id).set(
+                if (this.l_id) {
+                    db.collection('languages').doc(this.l_id).set(
                         this.form, { merge: true })
                     .then (doc => {
                         conssole.log('Language updated')
+                        this.$emit(this.reason, this.l_id)
                     })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -99,6 +102,8 @@ export default {
                     db.collection('languages').add(this.form)
                     .then (doc => {
                         conssole.log('Language added')
+                        this.l_id = doc.id
+                        this.$emit(this.reason, this.l_id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -108,15 +113,17 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$router.go(-1)
         }
     },
-    mounted() {
+    created() {
         this.user = firebase.auth().currentUser
-        if (this.user && this.$route.params.id) {
+        this.form.cert_id  = this.cid
+        this.l_id = this.id
+        // this.fetchData()
+        if (this.user && this.l_id) {
             // get object
-            ref = db.collection('languages').doc(this.$route.params.id)
-            ref.get()
+            db.collection('languages').doc(this.l_id)
+            .get()
             .then (doc => {
                 if(doc.exists) {
                     this.form = doc.data()

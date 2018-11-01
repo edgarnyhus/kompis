@@ -117,7 +117,6 @@ export default {
                 year: null
             },
             user: null,
-            cert_id: null,
             edu_id: null,
             reason: 'updeducation'
         }
@@ -130,12 +129,11 @@ export default {
     methods: {
         cancel() {
             console.log("cancel")
-            this.$router.go(-1)
+            this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -146,46 +144,52 @@ export default {
                     console.log('update excception: ', error)
                 }
                 if (this.edu_id) {
-                    db.collection('education').doc(this.$route.params.id).set(
-                        this.form, { merge: true })
-                        .then (doc => {
-                            conssole.log('Education updated')
-                        })
-                    .catch(error => {
-                        console.log('Firestore error: ', error)
+                    db.collection("education").doc(this.edu_id).set(this.form, {merge: true})
+                    .then((docRef) => {
+                        console.log("Document updated with ID: ", this.wid);
+                        this.$emit(this.reason, this.edu_id)
                     })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
                 } else {
-                    db.collection('education').add(this.form)
-                    .then ((doc) => {
-                        conssole.log('Education added')
-                        this.edu_id = doc.id
-                     })
-                    .catch(error => {
-                        console.log('Firestore error: ', error)
+                    db.collection("education").add(this.form)
+                    .then((docRef) => {
+                        console.log("Document written with ID: ", docRef.id);
+                        this.edu_id = docRef.id
+                        this.$emit(this.reason, this.edu_id)
                     })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
                 }
             }
             else {
                 console.log('User not logged in???')
             }
-            this.$emit(reason, this.edu_id)
-            this.$router.back()
+        },
+        fetchData() {
+            if (this.user && this.edu_id) {
+                // get object
+                db.collection('education').doc(this.edu_id)
+                .get().
+                then (doc => {
+                    if(doc.exists) {
+                        this.form = doc.data()
+                    }
+                })
+                .catch(error => {
+                    console.log('Firestore error: ', error)
+                })
+            }            
         }
     },
     created() {
-        this.form.cert_id  = this.cid ? this.cid : this.$route.params.cid
-        this.edu_id = this.id ? this.id : this.$route.params.id
+        this.form.cert_id  = this.cid
+        this.edu_id = this.id
         this.user = firebase.auth().currentUser
-        if (this.user && this.edu_id) {
-            // get object
-            ref = db.collection('education').doc(this.edu_id)
-            ref.get().
-            then (doc => {
-                if(doc.exists) {
-                    this.form = doc.data()
-                }
-            })
-        }            
+
+        this.fetchData()
     }
 }
 </script>

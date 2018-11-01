@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <slot>
         <div>
             <h4 class="g-title">Frivillig arbeid</h4>
             <p style="font-style: italic">Hvilke frivillig verv har du tatt på deg?</p>
@@ -74,7 +75,7 @@
             </div>
 
         </b-form>
-
+        </slot>
     </div>
 </template>
 
@@ -121,22 +122,24 @@ export default {
                 month: null,
                 year: null
             },
-            user: null
+            user: null,
+            v_id: null,
+            reason: 'updvol'
         }
 
     },
+    props: ['cid', 'id'],
     components: {
 
     },
     methods: {
         cancel() {
             console.log("cancel")
-            this.$router.go(-1)
+            this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -146,12 +149,13 @@ export default {
                 } catch (error) {
                     console.log('update excception: ' + error)
                 }
-                if (this.$route.params.id) {
-                    db.collection('volunteering').doc(this.$route.params.id).set(
+                if (this.v_id) {
+                    db.collection('volunteering').doc(this.v_id).set(
                         this.form, { merge: true })
-                        .then (doc => {
-                            conssole.log('Volunteering updated')
-                        })
+                    .then (doc => {
+                        conssole.log('Volunteering updated')
+                        this.$emit(this.reason, this.v_id)
+                    })
                     .catch(err => {
                         console.log('Firestore error: ' + err)
                     })
@@ -159,6 +163,8 @@ export default {
                     db.collection('volunteering').add(this.form)
                     .then (doc => {
                         conssole.log('Education added')
+                        this.v_id = doc.id
+                        this.$emit(this.reason, this.v_id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ' + err)
@@ -168,16 +174,18 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$router.go(-1)
         }
     },
-    mounted() {
+    created() {
         this.user = firebase.auth().currentUser
-        if (this.user && this.$route.params.id) {
+        this.form.cert_id  = this.cid
+        this.v_id = this.id
+        // this.fetchData()
+        if (this.user && this.v_id) {
             // get object
-            ref = db.collection('volunteering').doc(this.$route.params.id)
-            ref.get().
-            then (doc => {
+            db.collection('volunteering').doc(this.v_id)
+            .get()
+            .then (doc => {
                 if(doc.exists) {
                     this.form = doc.data()
                 }

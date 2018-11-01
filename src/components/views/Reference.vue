@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <slot>
         <div v-if="this.$route.params.show == 'training'">
             <h4  class="g-title">Kontaktperson</h4>
             <p style="font-style: italic">Hvem var din kontaktperson på praksisstedet?</p>
@@ -48,7 +49,7 @@
             </div>
 
         </b-form>
-
+        </slot>
     </div>
 </template>
 
@@ -76,30 +77,30 @@ export default {
                 timestamp: null
             },
             user: null,
-            cert_id: null,
             ref_id: null,
             reason: 'updref'
         }
 
     },
+    props: ['cid', 'id'],
     components: {
 
     },
     methods: {
         cancel() {
-            this.$router.go(-1)
+            this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.$route.params.id
                 this.form.timestamp = Date.now()
                 if (this.$route.params.id) {
                     db.collection('references').doc(this.$route.params.id).set(
                         this.form, { merge: true })
-                        .then (doc => {
-                            conssole.log('Work experience updated')
-                        })
+                    .then (doc => {
+                        conssole.log('Work experience updated')
+                        this.$emit(this.reason, this.ref_id)
+                    })
                     .catch(err => {
                         console.log('Firestore error: ', err)
                     })
@@ -107,8 +108,10 @@ export default {
                     // db.collection('training').add(
                     db.collection('references').add(
                         this.form)
-                        .then (doc => {
-                            conssole.log('Work experience added')
+                    .then (doc => {
+                        conssole.log('Work experience added')
+                        this.ref_id = doc.id
+                        this.$emit(this.reason, this.ref_id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -118,15 +121,17 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$router.go(-1)
         }
     },
-    mounted() {
+    created() {
         this.user = firebase.auth().currentUser
-        if (this.user && this.$route.params.id) {
+        this.form.cert_id  = this.cid
+        this.ref_id = this.id
+        // this.fetchData()
+        if (this.user && this.ref_id) {
             // get object
-            ref = db.collection('references').doc(this.$route.params.id)
-            ref.get()
+            db.collection('references').doc(this.ref_id)
+            .get()
             .then (doc => {
                 if(doc.exists) {
                     this.form = doc.data()

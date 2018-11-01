@@ -23,7 +23,7 @@
                 <div class="form-row">
                     <div class="col">
                         <label for="employer"><strong>Arbeidsgiver</strong></label>
-                        <b-form-input class="mb-2 mr-sm-2 mb-sm-0" :disabled="disableWrite" id="employer" placeholder="" v-model="employer" />
+                        <b-form-input class="mb-2 mr-sm-2 mb-sm-0" :disabled="disableWrite" id="employer" placeholder="" v-model="form.employer" />
                     </div>
                     <div class="col">
                         <label for="place"><strong>Sted</strong></label>
@@ -166,13 +166,10 @@ export default {
         cancel() {
             console.log("cancel")
             this.$emit(this.reason, null)
-            if (!this.inline)
-                this.$router.back()
         },
         addOrUpdate() {
             console.log('WE update training, ID=', this.wid)
             if (this.user) {
-                this.form.employer = this.employer
                 this.form.user_id = this.user.uid 
                 this.form.timestamp = Date.now()
                 try {
@@ -188,6 +185,7 @@ export default {
                     db.collection("training").doc(this.wid).set(this.form, {merge: true})
                     .then((docRef) => {
                         console.log("Document updated with ID: ", this.wid);
+                        this.$emit(this.reason, this.wid)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -197,6 +195,7 @@ export default {
                     .then((docRef) => {
                         console.log("Document written with ID: ", docRef.id);
                         this.wid = docRef.id
+                        this.$emit(this.reason, this.wid)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -206,9 +205,6 @@ export default {
             else {
                 console.info('User not logged in???')
             }
-            this.$emit(this.reason, this.wid)
-            if (!this.inline)
-                this.$router.back()
         },
         fetchData() {
             if (this.user && this.wid) {
@@ -238,13 +234,14 @@ export default {
     },
     mounted() {
         console.log('WE mounted event, ID=', this.wid )
-        if (this.employer && this.cid) {
+        if (this.form.employer && this.cid) {
             this.disableWrite = true
         }
     },
     created() {
-        this.form.cert_id  = this.cid ? this.cid : this.$route.params.cid
-        this.wid = this.id ? this.id : this.$route.params.id
+        this.form.employer  = this.employer
+        this.form.cert_id  = this.cid
+        this.wid = this.id
         this.user = firebase.auth().currentUser
         console.info('WE created, CID=', this.form.cert_id, "WID=", this.wid)
         this.fetchData()
