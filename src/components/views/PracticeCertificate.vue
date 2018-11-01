@@ -32,18 +32,18 @@
                 <b-card no-body class="accordion mb-1">
                     <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
                         <h5 class="b-card-title">Praksisted
-                            <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
+                            <b-button class="btn-floating btn-secondary float-right" v-show="training.length == 0"  @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
                         </h5>
                         <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
                     </b-card-header>
 
-                    <b-collapse id="accordion1" v-if="selectedComponent" :visible="false" accordion="my-accordion" role="tabpanel">
+                    <b-collapse id="accordion1" v-if="selectedComponent" accordion="my-accordion" role="tabpanel">
                         <component v-on:updtraining="onUpdatedTraining" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
                     </b-collapse>
 
-                    <b-collapse id="accordion1" v-else :visible="false" accordion="my-accordion" role="tabpanel">
+                    <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
                         <!-- present a card for each job experiences/experience -->
-                        <b-card-group v-for="elem in training" :key="elem.id">
+                        <b-card-group v-for="elem in training"  :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
                                     <h6 class="card-title">{{ elem.employer }}
@@ -75,7 +75,7 @@
                         <b-card-group v-for="elem in key_values" :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-subtitle text-muted">{{ elem.key_value}}</h5>
+                                    <h5 class="card-subtitle text-muted">{{ elem.key_value }}</h5>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
                             </div>
@@ -198,6 +198,12 @@ export default {
             }).catch(error => {
                 console.error("Error removing document: ", error);
             })
+            if (elem) {
+                let ix = this.training.findIndex(e => e.id === elem.id)
+                if (~ix) {
+                    this.training.splice(ix, 1)
+                }
+            }
         },
         updateTraining(elem) {
             console.log("updateTraining", elem.id);
@@ -265,7 +271,6 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-
         },
         fetchCertificate() {
             if (this.cert_id) {
@@ -277,7 +282,7 @@ export default {
                     this.employer = this.form.employer
                 })
                 .catch(err => {
-                    console.log('gFetching certificate with id = ', this.cert_id, 'failed: ', err)
+                    console.log('Fetching certificate failed', err)
                 })
             }
         },
@@ -294,6 +299,9 @@ export default {
                         this.training.push(elem)
                     })
                 })
+                .catch(err => {
+                    console.log('Fetching certificate failed', err)
+                })
             }
         },
         fetchKeyValues() {
@@ -307,6 +315,9 @@ export default {
                         elem.id = doc.id
                         this.key_values.push(elem)
                     })
+                })
+                .catch(err => {
+                    console.log('Fetching certificate failed', err)
                 })
             }
         },
@@ -322,6 +333,9 @@ export default {
                         this.skills.push(elem)
                     })
                 })
+                .catch(err => {
+                    console.log('Fetching certificate failed', err)
+                })
             }
         },
         fetchReferences() {
@@ -335,6 +349,9 @@ export default {
                         elem.id = doc.id
                         this.references.push(elem)
                     })
+                })
+                .catch(err => {
+                    console.log('Fetching certificate failed', err)
                 })
             }
         }
@@ -354,11 +371,16 @@ export default {
         console.log('PC created event, ID=', this.cert_id )
 
         // current user
-        db.collection('users').doc(firebase.auth().currentUser.uid)
-        .get()
-        .then(doc => {
-            this.profile = doc.data()
-        })
+        if (this.user) {
+            db.collection('users').doc(firebase.auth().currentUser.uid)
+            .get()
+            .then(doc => {
+                this.profile = doc.data()
+            })
+            .catch(err => {
+                console.log('Fetching user failed', err)
+            })
+        }
 
         // fetch this practice certificate
         this.fetchCertificate()
