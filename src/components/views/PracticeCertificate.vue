@@ -190,30 +190,29 @@ export default {
             this.$router.back()
         },
         removeTraining(elem) {
-            console.log("removeTraining", elem.id);
+            console.log("PC removeTraining", elem.id);
             db.collection('training').doc(elem.id).delete()
             .then(() => {
-                console.log("Document successfully deleted!");
-                this.fetchTraining()
-            }).catch(error => {
-                console.error("Error removing document: ", error);
-            })
-            if (elem) {
-                let ix = this.training.findIndex(e => e.id === elem.id)
-                if (~ix) {
-                    this.training.splice(ix, 1)
+                console.log("PC Document successfully deleted!");
+                // this.fetchTraining()
+                if (elem) {
+                    let ix = this.training.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.training.splice(ix, 1)
+                    }
                 }
-            }
+            }).catch(error => {
+                console.error("PC Error removing document: ", error);
+            })
         },
         updateTraining(elem) {
-            console.log("updateTraining", elem.id);
+            console.log("PC updateTraining", elem.id);
             this.id = elem.id
             this.selectedComponent = 'WorkExperience'            
         },
         onUpdatedTraining(id) {
             // child component (slot) signaled finished
-            console.log('onUpdatedTraining: ID=',  id)
-            this.id = id
+            console.log('PC onUpdatedTraining: ID=',  id)
             this.selectedComponent = null
             if (id) {
                 this.fetchTraining()

@@ -10,7 +10,7 @@
             <p style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
         </div>
 
-        <b-form @submit.prevent="update">
+        <b-form @submit.prevent="addOrUpdate">
             <b-form-group v-if="show == 'training'" style="font-weight: 650" label="Type arbeid">
                 <b-form-radio-group style="font-weight: 400" v-model="form.job_type"
                                     :options="job_types"
@@ -167,7 +167,8 @@ export default {
             console.log("cancel")
             this.$emit(this.reason, null)
         },
-        update() {
+        addOrUpdate() {
+            console.log('WE update training, ID=', this.wid)
             if (this.user) {
                 this.form.employer = this.employer
                 this.form.user_id = this.user.uid 
@@ -184,7 +185,7 @@ export default {
                 if (this.wid) {
                     db.collection("training").doc(this.wid).set(this.form, {merge: true})
                     .then((docRef) => {
-                        console.log("Document updated with ID: ", docRef.id);
+                        console.log("Document updated with ID: ", this.wid);
                         this.$emit(this.reason, this.wid)
                     })
                     .catch((error) => {
@@ -227,13 +228,13 @@ export default {
         }
     },
     updated() {
-        console.log('WE updated event, ID=', this.form.cert_id , ',', this.cid)
+        console.log('WE updated event, ID=', this.wid)
     },
     activated() {
-        console.log('WE activated event, ID=', this.form.cert_id )
+        console.log('WE activated event, ID=', this.wid )
     },
     mounted() {
-        console.log('WE mounted event, ID=', this.form.cert_id )
+        console.log('WE mounted event, ID=', this.wid )
         if (this.employer && this.cid) {
             this.disableWrite = true
         }
@@ -242,7 +243,7 @@ export default {
         this.form.cert_id  = this.cid ? this.cid : this.$route.params.cid
         this.wid = this.id ? this.id : this.$route.params.id
         this.user = firebase.auth().currentUser
-        console.info('WE created, CID=', this.form.cert_id , ', ', this.id)
+        console.info('WE created, CID=', this.form.cert_id, "WID=", this.wid)
         this.fetchData()
     }
 
