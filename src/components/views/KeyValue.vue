@@ -1,19 +1,20 @@
 <template>
     <div class="container">
+        <slot>
         <div>
             <h4 class="page-title">Nøkkelkompetanse</h4>
             <p style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
         </div>
 
-        <b-form @submit.prevent="update">
+        <b-form @submit.prevent="addOrUpdate">
             <b-form-group>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
                         <b-dropdown id="skill" text="Nøkkelkompetanse" class="mr-sm-2 mb-sm-0">
-                            <b-dropdown-item-button @click="setKey('Pålitelig')">Pålitelig</b-dropdown-item-button>
-                            <b-dropdown-item-button @click="setKey('Tar initiativ')">Tar initiativ</b-dropdown-item-button>
-                            <b-dropdown-item-button @click="setKey('Loyal')">Loyal</b-dropdown-item-button>
-                            <b-dropdown-item-button @click="setKey('Ansvarlig')">Ansvarlig</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="form.key_value = 'Pålitelig'">Pålitelig</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="form.key_value = 'Tar initiativ'">Tar initiativ</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="form.key_value = 'Loyal'">Loyal</b-dropdown-item-button>
+                            <b-dropdown-item-button @click="form.key_value = 'Ansvarlig'">Ansvarlig</b-dropdown-item-button>
                         </b-dropdown>
                     </div>
                     <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.key_value" required>
@@ -53,7 +54,7 @@
             </div>
 
         </b-form>
-
+        </slot>
     </div>
 </template>
 
@@ -79,9 +80,13 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
+            cert_id: null,
+            kv_id: null,
+            reason: 'updkey',
             user: null
         }
     },
+    props: ['cid', 'id'],
     components: {
 
     },
@@ -90,15 +95,16 @@ export default {
             this.form.key_value = value
         },
         cancel() {
-            this.$router.go(-1)
+            this.$emit(this.reason, null)
+            this.$router.back()
         },
-        update() {
+        addOrUpdate() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.$route.params.id
+                this.form.cert_id = this.cert_id
                 this.form.timestamp = Date.now()
-                if (this.$route.params.id) {
-                    db.collection('key_values').doc(this.$route.params.id).set(
+                if (this.kv_id) {
+                    db.collection('key_values').doc(this.kv_id).set(
                         this.form, { merge: true })
                         .then (doc => {
                             conssole.log('Work experience updated')
@@ -111,6 +117,7 @@ export default {
                         this.form)
                     .then (doc => {
                         conssole.log('Work experience added')
+                        this.kv_id = doc.id
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -120,21 +127,31 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$router.go(-1)
+            this.$emit(this.reason, this.fv_id)
+            this.$router.back()
+        },
+        fetchData() {
+            if (this.user && this.kv_id) {
+                // get object
+                db.collection('key_values').doc(this.kv_id)
+                .get()
+                .then ((docRef) => {
+                    if(docRef.exists) {
+                        this.form = docRef.data()
+                    }
+                })
+                .catch((error) => {
+                    console.error("WE Error fetching document: ", error);
+                });
+            }            
         }
+
     },
-    mounted() {
+    created() {
         this.user = firebase.auth().currentUser
-        if (this.user && this.$route.params.id) {
-            // get object
-            let ref = db.collection('key_values').doc(this.$route.params.id)
-            ref.get()
-            .then (doc => {
-                if(doc.exists) {
-                    this.form = doc.data()
-                }
-            })
-        }            
+        this.cert_id  = this.cid ? this.cid : this.$route.params.cid
+        this.kv_id = this.id ? this.id : this.$route.params.id
+        // this.fetchData()
     }
 }
 </script>
@@ -142,7 +159,6 @@ export default {
 <style>
 a {
     color: rgb(0,161,181);
-
 }
 b-button {
     margin-right: 2em;

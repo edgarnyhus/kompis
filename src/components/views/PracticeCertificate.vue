@@ -37,8 +37,8 @@
                         <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
                     </b-card-header>
 
-                    <b-collapse id="accordion1" v-if="selectedComponent" accordion="my-accordion" role="tabpanel">
-                        <component v-on:updtraining="onUpdatedTraining" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
+                    <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
+                        <component v-on:updtraining="onUpdatedTraining" :inline="true" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
                     </b-collapse>
 
                     <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
@@ -66,16 +66,24 @@
                 <b-card no-body class="mb-1">
                     <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
                         <h5 class="b-card-title">Nøkkelkompetanse
-                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'KeyValue', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
+                            <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'KeyValue'">Legg til emne</b-button>
                         </h5>
                         <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
                     </b-card-header>
+
+                    <b-collapse id="accordion3" v-if="selectedComponent == 'KeyValue'" accordion="my-accordion" role="tabpanel">
+                        <component v-on:updkey="onUpdatedKeyValue" :cid="cert_id" :id="id" :is="selectedComponent"></component>
+                    </b-collapse>
+
                     <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
                         <!-- present a card for each key values -->
                         <b-card-group v-for="elem in key_values" :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-subtitle text-muted">{{ elem.key_value }}</h5>
+                                    <h5 class="card-subtitle text-muted">{{ elem.key_value }}
+                                        <b-button class="btn-floating btn-secondary float-right" @click="updateKeyValue(elem)">Endre</b-button>
+                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeKeyValue(elem)">Slett</b-button>
+                                    </h5>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
                             </div>
@@ -88,16 +96,24 @@
                 <b-card no-body class="mb-1">
                     <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
                         <h5 class="b-card-title">Praktiske ferdigheter
-                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticalSkill', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
+                            <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'PracticalSkill'">Legg til emne</b-button>
                         </h5>
                         <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
                     </b-card-header>
+
+                    <b-collapse id="accordion4" v-if="selectedComponent == 'PracticalSkill'" accordion="my-accordion" role="tabpanel">
+                        <component v-on:updskill="onUpdatedSkill" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
+                    </b-collapse>
+
                     <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
                         <!-- present a card for each practical skill -->
                         <b-card-group v-for="elem in skills" :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-subtitle text-muted">{{ elem.skill }}</h5>
+                                    <h5 class="card-subtitle text-muted">{{ elem.skill }}
+                                        <b-button class="btn-floating btn-secondary float-right" @click="updateSkill(elem)">Endre</b-button>
+                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeSkill(elem)">Slett</b-button>
+                                    </h5>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
                             </div>
@@ -110,16 +126,24 @@
                 <b-card no-body class="mb-1">
                     <b-card-header header-tag="header" v-b-toggle.accordion7 role="tab">
                         <h5 class="b-card-title">Kontaktperson
-                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'Reference', params: { show: 'experiences', id: this.id } }">Legg til emne</b-button>
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'Reference'">Legg til emne</b-button>
                         </h5>
                         <p class="b-card-text" style="font-style: italic">Hvem er din kontaktperson ved dette praksisstedet?</p>
                     </b-card-header>
+
+                    <b-collapse id="accordion7" v-if="selectedComponent == 'Reference'" accordion="my-accordion" role="tabpanel">
+                        <component v-on:updref="onUpdatedReference" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
+                    </b-collapse>
+
                     <b-collapse id="accordion7" accordion="my-accordion" role="tabpanel">
                         <!-- present a card for each reference -->
                         <b-card-group v-for="elem in references" :key="elem.id">
                             <div class="card">
                                 <div class="card-body">
-                                    <h5 class="card-title">{{ elem.person }}</h5>
+                                    <h5 class="card-title">{{ elem.person }}
+                                        <b-button class="btn-floating btn-secondary float-right" @click="updateReference(elem)">Endre</b-button>
+                                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="removeReference(elem)">Slett</b-button>
+                                    </h5>
                                     <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
                                     <p class="card-text">{{elem.description}}</p>
                                 </div>
@@ -138,13 +162,19 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 import SubNavbar from '@/components/layout/SubNavbar'
 import WorkExperience from '@/components/views/WorkExperience'
+import KeyValue from '@/components/views/KeyValue'
+import PracticalSkill from '@/components/views/PracticalSkill'
+import Reference from '@/components/views/Reference'
 
 
 export default {
     name: 'PracticeCertificate',
     components: {
         SubNavbar,
-        WorkExperience
+        WorkExperience,
+        KeyValue,
+        PracticalSkill,
+        Reference
     },
     props: ['name', 'cid'],
     data () {
@@ -190,7 +220,6 @@ export default {
             this.$router.back()
         },
         removeTraining(elem) {
-            console.log("PC removeTraining", elem.id);
             db.collection('training').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
@@ -202,21 +231,112 @@ export default {
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing document: ", error);
+                console.error("PC Error removing praksissted: ", error);
             })
         },
         updateTraining(elem) {
-            console.log("PC updateTraining", elem.id);
             this.id = elem.id
             this.selectedComponent = 'WorkExperience'            
         },
         onUpdatedTraining(id) {
             // child component (slot) signaled finished
-            console.log('PC onUpdatedTraining: ID=',  id)
             this.selectedComponent = null
             if (id) {
                 this.fetchTraining()
             }
+        },
+        removeKeyValue(elem) {
+            db.collection('key_values').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                if (elem) {
+                    let ix = this.key_values.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.key_values.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing key value: ", error);
+            })
+        },
+        updateKeyValue(elem) {
+            console.log('updateKeyValue')
+            this.id = elem.id
+            this.selectedComponent = 'KeyValue'            
+        },
+        onUpdatedKeyValue(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchKeyValues()
+            }
+        },
+        removeSkill(elem) {
+            db.collection('skills').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                // this.fetchTraining()
+                if (elem) {
+                    let ix = this.skills.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.skills.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing skill,", error);
+            })
+        },
+        updateSkill(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'PracticalSkill'            
+        },
+        onUpdatedSkill(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchSkills()
+            }
+        },
+        removeReference(elem) {
+            db.collection('references').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                // this.fetchTraining()
+                if (elem) {
+                    let ix = this.references.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.skills.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing skill,", error);
+            })
+        },
+        updateReference(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'Reference'            
+        },
+        onUpdatedReference(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchReferences()
+            }
+        },
+        removeColl(elem) {
+            console.log("PC removeColl", elem.id);
+            db.collection(coll).doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                if (elem) {
+                    let ix = coll.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        coll.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing key value: ", error);
+            })
         },
         clearName () {
             this.oldName = this.employer

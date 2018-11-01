@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <slot>
         <div>
             <h4 class="g-title">Utdanning og kurs</h4>
             <p style="font-style: italic">Hvilke skole har du gått på? Har du tatt noe kurs på jobb, skole eller fritid?</p>
@@ -69,7 +70,7 @@
             </div>
 
         </b-form>
-
+        </slot>
     </div>
 </template>
 
@@ -115,10 +116,14 @@ export default {
                 month: null,
                 year: null
             },
-            user: null
+            user: null,
+            cert_id: null,
+            edu_id: null,
+            reason: 'updeducation'
         }
 
     },
+    props: ['cid', 'id'],
     components: {
 
     },
@@ -140,7 +145,7 @@ export default {
                 } catch (error) {
                     console.log('update excception: ', error)
                 }
-                if (this.$route.params.id) {
+                if (this.edu_id) {
                     db.collection('education').doc(this.$route.params.id).set(
                         this.form, { merge: true })
                         .then (doc => {
@@ -151,8 +156,9 @@ export default {
                     })
                 } else {
                     db.collection('education').add(this.form)
-                    .then (doc => {
+                    .then ((doc) => {
                         conssole.log('Education added')
+                        this.edu_id = doc.id
                      })
                     .catch(error => {
                         console.log('Firestore error: ', error)
@@ -162,14 +168,17 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$router.go(-1)
+            this.$emit(reason, this.edu_id)
+            this.$router.back()
         }
     },
-    mounted() {
+    created() {
+        this.form.cert_id  = this.cid ? this.cid : this.$route.params.cid
+        this.edu_id = this.id ? this.id : this.$route.params.id
         this.user = firebase.auth().currentUser
-        if (this.user && this.$route.params.id) {
+        if (this.user && this.edu_id) {
             // get object
-            ref = db.collection('education').doc(this.$route.params.id)
+            ref = db.collection('education').doc(this.edu_id)
             ref.get().
             then (doc => {
                 if(doc.exists) {

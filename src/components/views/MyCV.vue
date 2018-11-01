@@ -16,11 +16,17 @@
             <b-card no-body class="accordion mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
                     <h5 class="b-card-title">Arbeidserfaring
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'WorkExperience' }">Legg til emne</b-button>
+                        <!-- <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'WorkExperience' }">Legg til emne</b-button> -->
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
                     </h5>
                     <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
                 </b-card-header>
-                <b-collapse id="accordion1" :visible="false" accordion="my-accordion" role="tabpanel">
+
+                <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
+                    <component v-on:updtraining="onUpdatedTraining" :id="id" :is="selectedComponent"></component>
+                </b-collapse>
+
+                <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each job training/experience -->
                     <b-card-group v-for="elem in training" :key="elem.id">
                         <div class="card">
@@ -180,12 +186,26 @@
 import firebase from 'firebase'
 import db from '@/firebase/init'
 import SubNavbar from '@/components/layout/SubNavbar'
+import WorkExperience from '@/components/views/WorkExperience'
+import Education from '@/components/views/Education'
+import KeyValue from '@/components/views/KeyValue'
+import PracticalSkill from '@/components/views/PracticalSkill'
+import Volunteering from '@/components/views/Volunteering'
+import Language from '@/components/views/Language'
+import Reference from '@/components/views/Reference'
 
 
 export default {
     name: 'MyCV',
     components: {
-        SubNavbar
+        SubNavbar,
+        WorkExperience,
+        Education,
+        KeyValue,
+        PracticalSkill,
+        Volunteering,
+        Language,
+        Reference
     },
     data () {
         return {
@@ -205,7 +225,9 @@ export default {
             skills: [],
             volunteering: [],
             languages: [],
-            references: []
+            references: [],
+            selectedComponent: null,
+            id: null
         }
     },
     filters: {
@@ -215,6 +237,111 @@ export default {
 
     },
     methods: {
+        removeTraining(elem) {
+            db.collection('training').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                // this.fetchTraining()
+                if (elem) {
+                    let ix = this.training.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.training.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing praksissted: ", error);
+            })
+        },
+        updateTraining(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'WorkExperience'            
+        },
+        onUpdatedTraining(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchTraining()
+            }
+        },
+        removeKeyValue(elem) {
+            db.collection('key_values').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                if (elem) {
+                    let ix = this.key_values.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.key_values.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing key value: ", error);
+            })
+        },
+        updateKeyValue(elem) {
+            console.log('updateKeyValue')
+            this.id = elem.id
+            this.selectedComponent = 'KeyValue'            
+        },
+        onUpdatedKeyValue(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchKeyValues()
+            }
+        },
+        removeSkill(elem) {
+            db.collection('skills').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                // this.fetchTraining()
+                if (elem) {
+                    let ix = this.skills.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.skills.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing skill,", error);
+            })
+        },
+        updateSkill(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'PracticalSkill'            
+        },
+        onUpdatedSkill(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchSkills()
+            }
+        },
+        removeReference(elem) {
+            db.collection('references').doc(elem.id).delete()
+            .then(() => {
+                console.log("PC Document successfully deleted!");
+                // this.fetchTraining()
+                if (elem) {
+                    let ix = this.references.findIndex(e => e.id === elem.id)
+                    if (~ix) {
+                        this.skills.splice(ix, 1)
+                    }
+                }
+            }).catch(error => {
+                console.error("PC Error removing skill,", error);
+            })
+        },
+        updateReference(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'Reference'            
+        },
+        onUpdatedReference(id) {
+            // child component (slot) signaled finished
+            this.selectedComponent = null
+            if (id) {
+                this.fetchReferences()
+            }
+        },
+    
         fetchTraining() {
             if (this.user) {
                 db.collection('training').where('user_id', '==',firebase.auth().currentUser.uid)
@@ -225,6 +352,9 @@ export default {
                         elem.id = doc.id
                         this.training.push(elem)
                     })
+                })
+                .catch(err => {
+                    console.log('FMCetching training failed', err)
                 })
             }
         },
@@ -239,6 +369,9 @@ export default {
                         this.education.push(elem)
                     })
                 })
+                .catch(err => {
+                    console.log('MC Fetching education failed', err)
+                })
             }
         },
         fetchKeyValues() {
@@ -251,6 +384,9 @@ export default {
                         elem.id = doc.id
                         this.key_values.push(elem)
                     })
+                })
+                .catch(err => {
+                    console.log('MC Fetching key values failed', err)
                 })
             }
         },
@@ -265,6 +401,9 @@ export default {
                         this.skills.push(elem)
                     })
                 })
+                .catch(err => {
+                    console.log('MC Fetching skills failed', err)
+                })
             }
         },
         fetchVolunteering() {
@@ -278,9 +417,12 @@ export default {
                         this.volunteering.push(elem)
                     })
                 })
+                .catch(err => {
+                    console.log('MC Fetching volunteering failed', err)
+                })
             }
         },
-        fetchLanuages() {
+        fetchLanguages() {
             if (this.user) {
                 db.collection('languages').where('user_id', '==',firebase.auth().currentUser.uid)
                 .get()
@@ -290,6 +432,9 @@ export default {
                         elem.id = doc.id
                         this.languages.push(elem)
                     })
+                })
+                .catch(err => {
+                    console.log('MC Fetching languages failed', err)
                 })
             }
         },
@@ -303,6 +448,9 @@ export default {
                         elem.id = doc.id
                         this.references.push(elem)
                     })
+                })
+                .catch(err => {
+                    console.log('MC Fetching references  failed', err)
                 })
             }
         }
@@ -323,25 +471,25 @@ export default {
         })
 
         // fetch work experience/training
-        // this.fetchTraining()
+        this.fetchTraining()
 
         // fetch key values
-        // this.fetchEducation()
+        this.fetchEducation()
 
         // fetch key values
-        // this.fetchKeyValues()
+        this.fetchKeyValues()
 
         // fetch practical skills
-        // this.fetchSkills()
+        this.fetchSkills()
 
         // fetch practical skills
-        // this.fetchVolunteering()
+        this.fetchVolunteering()
 
         // fetch practical skills
         // this.fetchLanguages()
 
         // fetch references
-        // this.fetchReferences()
+        this.fetchReferences()
     }
 }
 </script>

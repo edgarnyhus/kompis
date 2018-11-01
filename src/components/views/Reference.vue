@@ -75,7 +75,10 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
-            user: null
+            user: null,
+            cert_id: null,
+            ref_id: null,
+            reason: 'updref'
         }
 
     },

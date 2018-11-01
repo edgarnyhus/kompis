@@ -158,7 +158,7 @@ export default {
         }
 
     },
-    props: ['employer', 'show', 'cid', 'id'],
+    props: ['inline', 'employer', 'show', 'cid', 'id'],
     components: {
 
     },
@@ -166,6 +166,8 @@ export default {
         cancel() {
             console.log("cancel")
             this.$emit(this.reason, null)
+            if (!this.inline)
+                this.$router.back()
         },
         addOrUpdate() {
             console.log('WE update training, ID=', this.wid)
@@ -186,7 +188,6 @@ export default {
                     db.collection("training").doc(this.wid).set(this.form, {merge: true})
                     .then((docRef) => {
                         console.log("Document updated with ID: ", this.wid);
-                        this.$emit(this.reason, this.wid)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -196,7 +197,6 @@ export default {
                     .then((docRef) => {
                         console.log("Document written with ID: ", docRef.id);
                         this.wid = docRef.id
-                        this.$emit(this.reason, this.wid)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -206,6 +206,9 @@ export default {
             else {
                 console.info('User not logged in???')
             }
+            this.$emit(this.reason, this.wid)
+            if (!this.inline)
+                this.$router.back()
         },
         fetchData() {
             if (this.user && this.wid) {

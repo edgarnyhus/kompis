@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <slot>
         <div>
             <h4 class="page-title">Praktisk ferdighet</h4>
             <p style="font-style: italic">Hva er dine praktiske evner? Noe du har lært på skole eller i jobb?</p>
@@ -54,7 +55,7 @@
             </div>
 
         </b-form>
-
+        </slot>
     </div>
 </template>
 
@@ -79,10 +80,14 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
+            cert_id,
+            ps_id: null,
+            reason: 'updskill',
             user: null
         }
 
     },
+    props: ['cid', 'id'],
     components: {
 
     },
@@ -91,19 +96,19 @@ export default {
             this.form.skill = value
         },
         cancel() {
-            this.$router.go(-1)
+            this.$emit(reason, null)
         },
         update() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
-                this.form.cert_id = this.$route.params.id
+                this.form.cert_id = this.cert_id
                 this.form.timestamp = Date.now()
-                if (this.$route.params.id) {
-                    db.collection('skills').doc(this.$route.params.id).set(
+                if (this.ps_id) {
+                    db.collection('skills').doc(this.ps_id).set(
                         this.form, { merge: true })
-                        .then (doc => {
-                            conssole.log('Work experience updated')
-                        })
+                    .then (doc => {
+                        conssole.log('Work experience updated')
+                    })
                     .catch(err => {
                         console.log('Firestore error: ', err)
                     })
@@ -111,8 +116,9 @@ export default {
                     // db.collection('training').add(
                     db.collection('skills').add(
                         this.form)
-                        .then (doc => {
-                            conssole.log('Work experience added')
+                    .then (doc => {
+                        conssole.log('Work experience added')
+                        this.ps_id = doc.id
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -122,21 +128,30 @@ export default {
             else {
                 console.log('User not logged in???')
             }
-            this.$router.go(-1)
-        }
-    },
-    mounted() {
-        this.user = firebase.auth().currentUser
-        if (this.user && this.$route.params.id) {
-            // get object
-            ref = db.collection('skills').doc(this.$route.params.id)
-            ref.get()
-            .then (doc => {
-                if(doc.exists) {
-                    this.form = doc.data()
-                }
-            })
+            this.$emit(reason, this.ps_id)
+        },
+        fetchData() {
+            if (this.user && this.ps_id) {
+                // get object
+                db.collection('skills').doc(this.ps_id)
+                .get()
+                .then (doc => {
+                    if(doc.exists) {
+                        this.form = doc.data()
+                    }
+                })
+                .catch(err => {
+                    console.log('Firestore error: ', err)
+                })
+            }
         }            
+    },
+    created() {
+        this.user = firebase.auth().currentUser
+        this.cert_id  = this.cid ? this.cid : this.$route.params.cid
+        this.ps_id = this.id ? this.id : this.$route.params.id
+        console.info('WE created, CID=', this.form.cert_id, "WID=", this.ps_id)
+        this.fetchData()
     }
 }
 </script>
