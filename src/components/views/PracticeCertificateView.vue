@@ -9,7 +9,7 @@
         <b-card-group v-for="elem in certificates" :key="elem.id">
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
-                    <b-link class="link-prop" href="#">{{ elem.employer }}
+                    <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { cid: elem.id  } }">{{ elem.employer }}
                         <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { cid: elem.id } }">Endre</b-button>
                         <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button>
                     </b-link>
@@ -57,6 +57,7 @@ export default {
             })
         },
         fetchCertificates() {
+            // fetch this practice certificates
             if (this.user) {
                 db.collection('certs').where('user_id', '==',firebase.auth().currentUser.uid)
                 .get()
@@ -71,15 +72,7 @@ export default {
         }
     },
     created() {
-        // current user
         this.user = firebase.auth().currentUser.uid
-        db.collection('users').doc(firebase.auth().currentUser.uid)
-        .get()
-        .then(doc => {
-            this.profile = doc.data()
-        })
-
-        // fetch this practice certificates
         this.fetchCertificates()
     }
 }

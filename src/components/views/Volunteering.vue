@@ -174,23 +174,32 @@ export default {
             else {
                 console.log('User not logged in???')
             }
+        },
+        fetchData() {
+            if (this.user && this.v_id) {
+                // get object
+                db.collection('volunteering').doc(this.v_id)
+                .get()
+                .then ((docRef) => {
+                    if(docRef.exists) {
+                        this.form = docRef.data()
+                        this.from.month = getMonth(this.form.from)
+                        this.from.year = getYear(this.form.from)
+                        this.to.month = getMonth(this.form.to)
+                        this.to.year = getYear(this.form.to)
+                    }
+                })
+                .catch((error) => {
+                    console.error("WE Error fetching document: ", error);
+                });
+            }
         }
     },
     created() {
         this.user = firebase.auth().currentUser
         this.form.cert_id  = this.cid
         this.v_id = this.id
-        // this.fetchData()
-        if (this.user && this.v_id) {
-            // get object
-            db.collection('volunteering').doc(this.v_id)
-            .get()
-            .then (doc => {
-                if(doc.exists) {
-                    this.form = doc.data()
-                }
-            })
-        }            
+        this.fetchData()
     }
 }
 </script>

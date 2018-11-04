@@ -95,7 +95,6 @@ export default {
         },
         cancel() {
             this.$emit(this.reason, null)
-            this.$router.back()
         },
         addOrUpdate() {
             if (this.user) {
@@ -105,7 +104,7 @@ export default {
                     db.collection('key_values').doc(this.kv_id).set(
                         this.form, { merge: true })
                         .then (doc => {
-                            conssole.log('Work experience updated')
+                            conssole.log('Key value updated')
                             this.$emit(this.reason, this.kv_id)
                         })
                     .catch(err => {
@@ -115,7 +114,7 @@ export default {
                     db.collection('key_values').add(
                         this.form)
                     .then (doc => {
-                        conssole.log('Work experience added')
+                        conssole.log('Key value added')
                         this.kv_id = doc.id
                         this.$emit(this.reason, this.kv_id)
                      })

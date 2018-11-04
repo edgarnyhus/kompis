@@ -7,9 +7,12 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import moment from 'moment'
+import firebase from 'firebase'
 
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false
+
+firebase.database.enableLogging(true)
 
 Vue.filter('formatDate', function(value) {
     if (value) {

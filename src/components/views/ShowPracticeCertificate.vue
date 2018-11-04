@@ -4,12 +4,11 @@
 
         <div class="container">
             <b-form @submit.prevent="update">
-                <h1 style="margin-top: 1em; margin-bottom: 0.2em">{{ employer }}
-                    <b-button class="btn-floating btn-info float-right" @click="back">Tilbake</b-button>
+                <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ employer }}
+                    <b-button class="btn-floating btn-info float-right" router-link :to="{ name: 'PracticeCertificate', params: { cid: cert_id  } }">Tilbake</b-button>
                 </h1>
                 <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
-                <b-link v-b-modal.modalPrevent  variant="info" class="info-color btn-mr"><strong>Endre</strong></b-link>
-                <b-link class="info-color btn-mr" router-link :to="{ name: 'ShowPracticeCertificate', params: { cid: cert_id  } }"><strong>Vis</strong></b-link>
+                <b-link v-b-modal.modalPrevent  variant="info" class="info-color"><strong>Endre</strong></b-link>
 
                 <!-- Modal Component -->
                 <b-modal id="modalPrevent"
@@ -28,132 +27,65 @@
 
             <!-- <b-progress class="mb-3" height="2em" :value="bar.value" variant="info" :max="max" show-progress></b-progress> -->
 
-            <fieldset :disabled="isDisabled">
-                <div style="margin-bottom: 2em"></div>
-                <b-card no-body class="accordion mb-1">
-                    <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
-                        <h5 class="b-card-title">Praksisted
-                            <b-button class="btn-floating btn-secondary float-right" v-show="training.length == 0"  @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
+            <div style="margin-bottom: 2em"></div>
+            <b-card class="shadow-none text-muted" title="Arbeidserfaring">
+                <!-- present a card for each job experiences/experience -->
+                <div v-for="elem in training"  :key="elem.id">
+                    <!-- <div class="card"> -->
+                        <div class="card-body">
+                            <h6 class="card-title">{{ elem.employer }}
+                                <b-link class="btn-floating float-right btn-sm info-color" @click="updateTraining(elem)">Endre</b-link>
+                            </h6>
+                            <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
+                            <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
+                            <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
+                                {{elem.place}}</P>
+                            <p class="card-text">{{elem.description}}</p>
+                        </div>
+                    <!-- </div> -->
+                </div>
+            </b-card>
+
+            <b-card class="shadow-none text-muted" title="Nøkkelkompetanse">
+                <!-- present a card for each job experiences/experience -->
+                <div v-for="elem in key_values"  :key="elem.id">
+                    <div class="card-body">
+                        <h5 class="card-subtitle text-muted">{{ elem.key_value }}
+                            <b-link class="btn-floating float-right btn-sm info-color" @click="updateKeyValue(elem)">Endre</b-link>
+                            <!-- <b-link class="btn-floating float-right btn-sm" @click="id = elem.id; selectedComponent = 'KeyValue'">Endre</b-link> -->
+                            <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeKeyValue(elem)">Slett</b-link>
                         </h5>
-                        <p class="b-card-text" style="font-style: italic">Hvor har du vært i praksis?</p>
-                    </b-card-header>
+                        <p class="card-text">{{elem.description}}</p>
+                    </div>
+                </div>
+            </b-card>
 
-                    <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
-                        <component v-on:updtraining="onUpdatedTraining" :inline="true" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
-                    </b-collapse>
-
-                    <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
-                        <!-- present a card for each job experiences/experience -->
-                        <b-card-group v-for="elem in training"  :key="elem.id">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6 class="card-title">{{ elem.employer }}
-                                        <b-link class="btn-floating float-right btn-sm info-color" @click="updateTraining(elem)">Endre</b-link>
-                                        <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeTraining(elem)">Slett</b-link>
-                                    </h6>
-                                    <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
-                                    <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
-                                    <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
-                                        {{elem.place}}</P>
-                                    <p class="card-text">{{elem.description}}</p>
-                                </div>
-                            </div>
-                        </b-card-group>
-                    </b-collapse>
-                </b-card>
-            </fieldset>
-
-            <fieldset :disabled="isDisabled">
-                <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
-                        <h5 class="b-card-title">Nøkkelkompetanse
-                            <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'KeyValue'">Legg til emne</b-button>
+            <b-card class="shadow-none text-muted" title="Praktiske ferdigheter">
+                <!-- present a card for each job experiences/experience -->
+                <div v-for="elem in skills" :key="elem.id">
+                    <div class="card-body">
+                        <h5 class="card-subtitle text-muted">{{ elem.skill }}
+                            <b-link class="btn-floating float-right btn-sm info-color" @click="updateSkill(elem)">Endre</b-link>
+                            <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeSkill(elem)">Slett</b-link>
                         </h5>
-                        <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper er bekreftet gjennom arbeidet på dette praksisstedet?</p>
-                    </b-card-header>
+                        <p class="card-text">{{elem.description}}</p>
+                    </div>
+                </div>
+            </b-card>
 
-                    <b-collapse id="accordion3" v-if="selectedComponent == 'KeyValue'" accordion="my-accordion" role="tabpanel">
-                        <component v-on:updkey="onUpdatedKeyValue" :cid="cert_id" :id="id" :is="selectedComponent"></component>
-                    </b-collapse>
-
-                    <b-collapse id="accordion3" accordion="my-accordion" role="tabpanel">
-                        <!-- present a card for each key values -->
-                        <b-card-group v-for="elem in key_values" :key="elem.id">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-subtitle text-muted">{{ elem.key_value }}
-                                        <b-link class="btn-floating float-right btn-sm info-color" @click="updateKeyValue(elem)">Endre</b-link>
-                                        <!-- <b-link class="btn-floating float-right btn-sm" @click="id = elem.id; selectedComponent = 'KeyValue'">Endre</b-link> -->
-                                        <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeKeyValue(elem)">Slett</b-link>
-                                    </h5>
-                                    <p class="card-text">{{elem.description}}</p>
-                                </div>
-                            </div>
-                        </b-card-group>
-                    </b-collapse>
-                </b-card>
-            </fieldset>
-
-            <fieldset :disabled="isDisabled">
-                <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
-                        <h5 class="b-card-title">Praktiske ferdigheter
-                            <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'PracticalSkill'">Legg til emne</b-button>
+            <b-card class="shadow-none text-muted" title="Kontaktperson">
+                <!-- present a card for each job experiences/experience -->
+                <div v-for="elem in references"  :key="elem.id">
+                    <div class="card-body">
+                        <h5 class="card-subtitle text-muted">{{ elem.person }}
+                            <b-link class="btn-floating float-right btn-sm info-color" @click="updateSkill(elem)">Endre</b-link>
+                            <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeSkill(elem)">Slett</b-link>
                         </h5>
-                        <p class="b-card-text" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
-                    </b-card-header>
+                        <p class="card-text">{{elem.description}}</p>
+                    </div>
+                </div>
+            </b-card>
 
-                    <b-collapse id="accordion4" v-if="selectedComponent == 'PracticalSkill'" accordion="my-accordion" role="tabpanel">
-                        <component v-on:updskill="onUpdatedSkill" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
-                    </b-collapse>
-
-                    <b-collapse id="accordion4" accordion="my-accordion" role="tabpanel">
-                        <!-- present a card for each practical skill -->
-                        <b-card-group v-for="elem in skills" :key="elem.id">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-subtitle text-muted">{{ elem.skill }}
-                                        <b-link class="btn-floating float-right btn-sm info-color" @click="updateSkill(elem)">Endre</b-link>
-                                        <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeSkill(elem)">Slett</b-link>
-                                    </h5>
-                                    <p class="card-text">{{elem.description}}</p>
-                                </div>
-                            </div>
-                        </b-card-group>
-                    </b-collapse>
-                </b-card>
-            </fieldset>
-
-            <fieldset :disabled="isDisabled">
-                <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" v-b-toggle.accordion7 role="tab">
-                        <h5 class="b-card-title">Kontaktperson
-                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'Reference'">Legg til emne</b-button>
-                        </h5>
-                        <p class="b-card-text" style="font-style: italic">Hvem er din kontaktperson ved dette praksisstedet?</p>
-                    </b-card-header>
-
-                    <b-collapse id="accordion7" v-if="selectedComponent == 'Reference'" accordion="my-accordion" role="tabpanel">
-                        <component v-on:updref="onUpdatedReference" :show="show" :employer="employer" :cid="cert_id" :id="id" :is="selectedComponent"></component>
-                    </b-collapse>
-
-                    <b-collapse id="accordion7" accordion="my-accordion" role="tabpanel">
-                        <!-- present a card for each reference -->
-                        <b-card-group v-for="elem in references" :key="elem.id">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ elem.person }}
-                                        <b-link class="btn-floating float-right btn-sm info-color" @click="updateReference(elem)">Endre</b-link>
-                                        <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeReference(elem)">Slett</b-link>
-                                    </h5>
-                                    <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
-                                    <p class="card-text">{{elem.description}}</p>
-                                </div>
-                            </div>
-                        </b-card-group>
-                    </b-collapse>
-                </b-card>
-            </fieldset>
         </div>
         <div class="g-bottom"></div>
     </div>
@@ -167,11 +99,10 @@ import WorkExperience from '@/components/views/WorkExperience'
 import KeyValue from '@/components/views/KeyValue'
 import PracticalSkill from '@/components/views/PracticalSkill'
 import Reference from '@/components/views/Reference'
-import ShowPracticeCertificate from '@/components/views/ShowPracticeCertificate'
 
 
 export default {
-    name: 'PracticeCertificate',
+    name: 'ShowPracticeCertificate',
     components: {
         SubNavbar,
         WorkExperience,
@@ -489,9 +420,8 @@ export default {
     },
     created() {
         this.user = firebase.auth().currentUser.uid
-        this.cert_id = this.cid ? this.cid : this.$route.params.cid
-        console.log('PC created event, ID=', this.cert_id )
-
+        this.cert_id = this.$route.params.cid
+        console.log('ShowPracticalCertificate created', this.cert_id)
         // current user
         if (this.user) {
             db.collection('users').doc(firebase.auth().currentUser.uid)
@@ -527,13 +457,10 @@ export default {
 .info-color {
     color: rgb(0,161,181);
 }
-.btn-mr {
-    margin-right: 1em;
-}
-small {
+  small {
     display: block;
-}
- .g-title {
+  }
+  .g-title {
     margin-top: 1em;
     margin-bottom: 1em;
 }
@@ -554,5 +481,13 @@ b-card-header {
 }
 .btn-outline-secondary {
     border-color: grey;
+}
+b-link {
+    color: rgb(0,161,181);
+
+}
+b-card {
+    border-color: lightgrey;
+
 }
 </style>

@@ -172,15 +172,19 @@ export default {
             if (this.user && this.edu_id) {
                 // get object
                 db.collection('education').doc(this.edu_id)
-                .get().
-                then (doc => {
-                    if(doc.exists) {
-                        this.form = doc.data()
+                .get()
+                .then ((docRef) => {
+                    if(docRef.exists) {
+                        this.form = docRef.data()
+                        this.from.month = getMonth(this.form.from)
+                        this.from.year = getYear(this.form.from)
+                        this.to.month = getMonth(this.form.to)
+                        this.to.year = getYear(this.form.to)
                     }
                 })
-                .catch(error => {
-                    console.log('Firestore error: ', error)
-                })
+                .catch((error) => {
+                    console.error("WE Error fetching document: ", error);
+                });
             }            
         }
     },
