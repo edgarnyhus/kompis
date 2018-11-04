@@ -1,7 +1,7 @@
 <template>
-    <div class="login g-frame container">
-        <b-card class="g-border">
-            <h4 class="g-title">Registrer deg</h4>
+    <div class="signup g-frame container">
+        <b-card>
+            <h3>Registrer deg</h3>
             <b-form  @submit="signup">
                 <b-form-group description="Vi vil aldri dele email adressen din med andre.">
                     <b-form-input id="email" type="email" v-model="form.email" required></b-form-input>
@@ -76,14 +76,10 @@ export default {
 </script>
 
 <style>
-.g-title {
-    margin-top: 1.2em;
-    margin-bottom: 0.7em;
-}
 .g-frame {
     margin-top: 2em;
-    width: 50%;
-    min-width: 30px;
+    width: 30%;
+    min-width: 400px;
     height: 480px;
     border-color: rgb(0,160,161);
 }

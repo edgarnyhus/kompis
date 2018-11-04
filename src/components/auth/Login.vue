@@ -1,8 +1,7 @@
 <template>
     <div class="login g-frame container">
-        <b-card class="g-border">
-            <h4 class="muted-text">Logg inn</h4>
-
+        <b-card>
+            <h3>Logg inn</h3>
             <b-form @submit.prevent="login">
                 <b-form-group>
                     <label for="email">Email</label>
@@ -20,7 +19,6 @@
 
             <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
         </b-card>
-
     </div>
 </template>
 
@@ -71,14 +69,13 @@ export default {
 </script>
 
 <style>
-.g-title {
-    margin-top: 1.2em;
-    margin-bottom: 0.7em;
+b-card {
+    border-color: rgb(0,160,161);
 }
 .g-frame {
     margin-top: 2em;
-    width: 50%;
-    min-width: 30px;
+    width: 30%;
+    min-width: 400px;
     height: 480px;
     border-color: rgb(0,160,161);
     align-self: center; 
