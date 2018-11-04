@@ -1,46 +1,27 @@
 <template>
-    <div class="container">
-        <b-container class="g-frame">
+    <div class="login g-frame container">
+        <b-card class="g-border">
             <h4 class="g-title">Registrer deg</h4>
-        <b-form  @submit="signup" v-if="show">
-            <b-form-group id="email"
-                    label="Din email adressse"
-                    label-for="email"
-                    description="We'll never share your email with anyone else.">
-                <b-form-input @change="reset()" id="email"
-                    type="email"
-                    v-model="form.email"
-                    required
-                    placeholder="">
-                </b-form-input>
-            </b-form-group>
-            <b-form-group>
-                <label for="password">Ditt passord</label>
-                <b-form-input @change="reset()" id="password"
-                    type="password"
-                    v-model="form.password"
-                    required
-                    placeholder="">
-                          
-                </b-form-input>
-            </b-form-group>
-            <b-form-group>
-                <label for="confirmPassword">Bekreft ditt passord</label>
-                <b-form-input id="confirmPassword"
-                            type="password"
-                            v-model="form.confirmPassword"
-                            required
-                            placeholder="">
-                </b-form-input>
-            </b-form-group>
-            <b-form-group class="g-m2">
-                <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
-                <b-link @click="login()" style="color: rgb(0,161,181)"><strong>Logg inn</strong></b-link>
-            </b-form-group>
+            <b-form  @submit="signup">
+                <b-form-group description="Vi vil aldri dele email adressen din med andre.">
+                    <b-form-input id="email" type="email" v-model="form.email" required></b-form-input>
+                </b-form-group>
+                <b-form-group>
+                    <label for="password">Ditt passord</label>
+                    <b-form-input id="password"  type="password" v-model="form.password" required></b-form-input>
+                </b-form-group>
+                <b-form-group>
+                    <label for="confirmPassword">Bekreft ditt passord</label>
+                    <b-form-input id="confirmPassword" type="password" v-model="form.confirmPassword" required></b-form-input>
+                </b-form-group>
+                <div class="g-m2">
+                    <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
+                    <b-link @click="login()" style="color: rgb(0,161,181)"><strong>Logg inn</strong></b-link>
+                </div>
 
-            <p v-if="feedback" style="color: red">{{ feedback }}</p>
-        </b-form>
-        </b-container>
+                <p v-if="feedback" style="margin/top> 1.5em color: red">{{ feedback }}</p>
+            </b-form>
+        </b-card>
     </div>
 </template>
 
@@ -79,7 +60,7 @@ export default {
             } 
             this.feedback = null
             firebase.auth().createUserWithEmailAndPassword(this.form.email, this.form.password)
-            .then(() => {
+            .then((user) => {
                 this.$router.push({ name: 'MyCV' })
             })
             .catch(err => {
@@ -104,7 +85,6 @@ export default {
     width: 50%;
     min-width: 30px;
     height: 480px;
-    border:5px solid;
     border-color: rgb(0,160,161);
 }
 .g-m2 {

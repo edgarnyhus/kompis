@@ -1,37 +1,26 @@
 <template>
-    <div class="container">
-        <b-container class="g-frame">
-            <h4 class="g-title">Logg inn</h4>
-        <b-form  @submit="login" v-if="show">
-            <b-form-group id="email"
-                    label="Din email adressse"
-                    label-for="email"
-                    description="">
-                <b-form-input @change="reset()" id="email"
-                    type="email"
-                    v-model="form.email"
-                    required
-                    placeholder="">
-                </b-form-input>
-            </b-form-group>
-            <b-form-group>
-                <label for="password">Ditt passord</label>
-                <b-form-input @change="reset()" id="password"
-                    type="password"
-                    v-model="form.password"
-                    required
-                    placeholder="">
-                          
-                </b-form-input>
-            </b-form-group>
-            <b-form-group class="g-m2">
-                <b-button class="g-span" type="submit" variant="info">Logg inn</b-button>
-                <b-link @click="signup()" style="color: rgb(0,161,181)"><strong>Registrer deg</strong></b-link>
-            </b-form-group>
+    <div class="login g-frame container">
+        <b-card class="g-border">
+            <h4 class="muted-text">Logg inn</h4>
 
-            <p v-if="feedback" style="color: red">{{ feedback }}</p>
-        </b-form>
-        </b-container>
+            <b-form @submit.prevent="login">
+                <b-form-group>
+                    <label for="email">Email</label>
+                    <b-form-input id="email" type="email" v-model="form.email"></b-form-input>
+                </b-form-group>
+                <b-form-group>
+                    <label for="password">Password</label>
+                    <b-form-input id="password" type="password" v-model="form.password"></b-form-input>
+                </b-form-group>
+                <div class="g-m2">
+                    <b-button class="g-span" type="submit" variant="info">Logg inn</b-button>
+                    <b-link @click="signup()" style="color: rgb(0,161,181)"><strong>Registrer deg</strong></b-link>
+                </div>
+            </b-form>
+
+            <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
+        </b-card>
+
     </div>
 </template>
 
@@ -67,6 +56,7 @@ export default {
                     this.$router.push({ name: 'MyCV' })
                 }).catch(err => {
                     this.feedback = err.message
+                    alert(err.message)
                 })
             } else {
                 this.feedback = 'Vær så snill å fylle inn begge feltene'
@@ -90,8 +80,8 @@ export default {
     width: 50%;
     min-width: 30px;
     height: 480px;
-    border:5px solid;
     border-color: rgb(0,160,161);
+    align-self: center; 
 }
 .g-m2 {
     margin-top: 1.5em;

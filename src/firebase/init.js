@@ -2,12 +2,12 @@ import firebase from 'firebase'
 import firestore from 'firebase/firestore'
 
 var config = {
-    apiKey: "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA",
-    authDomain: "cvue-bf9ec.firebaseapp.com",
-    databaseURL: "https://cvue-bf9ec.firebaseio.com",
-    projectId: "cvue-bf9ec",
-    storageBucket: "cvue-bf9ec.appspot.com",
-    messagingSenderId: "851848949486"
+    apiKey: "AIzaSyDhl6ntnga1OlaZVfvyhbUo7IXzwwUiBZ0",
+    authDomain: "kompis-1c826.firebaseapp.com",
+    databaseURL: "https://kompis-1c826.firebaseio.com",
+    projectId: "kompis-1c826",
+    storageBucket: "",
+    messagingSenderId: "866130525256"
 };
 
 const firebaseApp = firebase.initializeApp(config);
