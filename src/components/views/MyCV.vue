@@ -23,32 +23,13 @@
                 </b-card-header>
 
                 <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updtraining="onUpdatedTraining" :cid="cid" :id="id" :is="selectedComponent"></component>
+                    <!-- <component v-on:updtraining="onUpdatedTraining" :cid="cid" :id="id" :is="selectedComponent"></component> -->
+                    <work-experience v-on:updtraining="onUpdatedTraining" :cid="cid" :id="id" ></work-experience>
                 </b-collapse>
 
                 <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each job training/experience -->
-                    <b-card-group v-for="elem in training" :key="elem.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">{{ elem.employer }}
-                                    <!-- <md-button class="md-fab md-mini md-primary float-right" >
-                                        <menu-icon>edit</menu-icon>
-                                    </md-button>
-                                    <md-button class="md-fab md-mini md-primary float-right" >
-                                        <menu-icon>delete</menu-icon>
-                                    </md-button> -->
-                                    <b-link class="btn-floating float-right btn-sm" @click="updateTraining(elem)">Endre</b-link>
-                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeTraining(elem)">Slett</b-link>
-                                </h6>
-                                <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
-                                <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
-                                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
-                                    {{elem.place}}</P>
-                                <p class="card-text">{{elem.description}}</p>
-                            </div>
-                        </div>
-                    </b-card-group>
+                    <work-experience-list v-on:edittraining="editTraining" :training="training"></work-experience-list>
                 </b-collapse>
             </b-card>
             
@@ -242,19 +223,22 @@ import PracticalSkill from '@/components/views/PracticalSkill'
 import Volunteering from '@/components/views/Volunteering'
 import Language from '@/components/views/Language'
 import Reference from '@/components/views/Reference'
+import WorkExperienceList from './WorkExperienceList'
 
 
 export default {
     name: 'MyCV',
     components: {
         SubNavbar,
-        WorkExperience,
+        'work-experience': WorkExperience,
         Education,
         KeyValue,
         PracticalSkill,
         Volunteering,
         Language,
-        Reference
+        Reference,
+        'work-experience-list': WorkExperienceList
+
     },
     data () {
         return {
@@ -287,22 +271,12 @@ export default {
 
     },
     methods: {
-        removeTraining(elem) {
-            db.collection('training').doc(elem.id).delete()
-            .then(() => {
-                console.log("PC Document successfully deleted!");
-                if (elem) {
-                    let ix = this.training.findIndex(e => e.id === elem.id)
-                    if (~ix) {
-                        this.training.splice(ix, 1)
-                    }
-                }
-            }).catch(error => {
-                console.error("PC Error removing praksissted: ", error);
-            })
-        },
-        updateTraining(elem) {
-            this.id = elem.id; this.selectedComponent = 'WorkExperience'            
+        editTraining(id) {
+            console.log('edit event from child, ID=', id)
+            if (id) {
+                this.id = id
+                this.selectedComponent = 'WorkExperience'
+            }
         },
         onUpdatedTraining(id) {
             // child component (slot) signaled finished

@@ -1,6 +1,6 @@
 <template>
-    <div class="container">
-        <slot>
+    <div class="component" style="margin: 1em">
+        <!-- <slot> -->
         <div v-if="this.show == 'training'">
             <h4  class="g-title">Praksissted</h4>
             <p style="font-style: italic">Hvor har du vært i praksis?</p>
@@ -83,14 +83,29 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <b-form-group>
+            <!-- <b-form-group>
                 <p class="g-title2"><strong>Dokumentasjon</strong></p>
                 <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
                 <div class="g-group">
-                    <b-button class="g-span" variant="leight">Last opp</b-button>
-                    <b-button variant="leight">Lenke</b-button>
+                    <b-button class="g-span" @click="uploadFile()" variant="leight">Last opp</b-button>
+                    <b-button @click="addLink()" @variant="leight">Lenke</b-button>
                 </div>
-            </b-form-group>
+            </b-form-group> -->
+
+            <upload-file v-on:add_media="addMedia"></upload-file>
+ 
+            <ul class="list-unstyled" style="margin-top: 1em">
+                <b-media tag="li" v-for="elem in media" :key="elem.id">
+                    <b-img rounded slot="aside" blank blank-color="#777" width="64" alt="img" style="padding-top: 0"/>
+                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
+                    <b-form-textarea id="mdesc"
+                                    v-model="form.description"
+                                    placeholder="Beskriv litt om hva dette handler om."
+                                    :rows="2"
+                                    :max-rows="8">
+                    </b-form-textarea>
+                </b-media>
+            </ul>
 
             <div class="g-group4">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -98,7 +113,7 @@
             </div>
 
         </b-form>
-        </slot>
+        <!-- </slot> -->
     </div>
 </template>
 
@@ -106,6 +121,7 @@
 import firebase from 'firebase'
 import db from '@/firebase/init'
 import moment from 'moment'
+import UploadFile from '@/components/utils/UploadFile'
 
 export default {
     name: 'WorkExperience',
@@ -135,13 +151,13 @@ export default {
                 location: null,
                 job_type: null,
                 role: null,
+                ongoing: false,
                 from: null,
                 to: null,
-                ongoing: false,
                 description: null,
                 timestamp: null,
                 user_id: null,
-                cert_id: null
+                cert_id: null,
             },
             from: {
                 month: null,
@@ -151,6 +167,8 @@ export default {
                 month: null,
                 year: null
             },
+            links: [],
+            media: [],
             user: null,
             wid: null,
             disableWrite: false, 
@@ -160,9 +178,30 @@ export default {
     },
     props: ['inline', 'employer', 'show', 'cid', 'id'],
     components: {
-
+        'upload-file': UploadFile
     },
     methods: {
+        addMedia(obj) {
+            console.log('addMedia', obj)
+            this.media.push(obj.raw)
+        },
+        addLink: function() {
+
+        },
+        uploadFile: function() {
+            // Create a root reference
+            var storageRef = firebase.storage().ref();
+
+            // Create a reference to 'mountains.jpg'
+            var mountainsRef = storageRef.child('mountains.jpg');
+
+            // Create a reference to 'images/mountains.jpg'
+            var mountainImagesRef = storageRef.child('images/mountains.jpg');
+
+            // While the file names are the same, the references point to different files
+            mountainsRef.name === mountainImagesRef.name            // true
+            mountainsRef.fullPath === mountainImagesRef.fullPath    // false
+        },
         cancel() {
             console.log("cancel")
             this.$emit(this.reason, null)

@@ -72,9 +72,11 @@ global.toTimestamp = (month, year) => {
 //   }
 // })
 
-new Vue({
+const vm = new Vue({
   el: '#app',
   router,
   components: { App },
   template: '<App/>'
 })
+
+console.log(vm)
