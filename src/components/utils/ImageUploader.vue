@@ -1,64 +1,149 @@
 <template>
-    <div class="component">
-        <!-- slot for parent component to activate the file changer -->
-        <!-- <div @click="launchFilePicker()">
-            <slot name="activator"></slot>
-        </div> -->
-
-        <p style="margin-bottom: 0"><strong>Dokumentasjon</strong></p>
-        <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
-        <div class="g-group">
-            <b-button class="g-span" @click="launchFilePicker()" variant="secondary">Last opp</b-button>
-            <!-- <input type="file" style="display: none" @change="onFilePicked($event)" ref="fileInput" accept="image/*"> -->
-            <!-- image input: style is set to hidden and assigned a ref so that it can be triggered -->
-            <input type="file" ref="file" :name="uploadFieldName" @change="onFileChange($event.target.name, $event.target.files)" style="display:none">
-            <b-button @click="addLink()" variant="secondary">Lenke</b-button>
-            <p v-if="errorDialog" style="color: red">{{ errorText }}</p>
+  <div id="app">
+    <div class="container">
+      <!--UPLOAD-->
+      <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
+        <h1>Upload images</h1>
+        <div class="dropbox">
+          <input type="file" multiple :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
+            accept="image/*" class="input-file">
+            <p v-if="isInitial">
+              Drag your file(s) here to begin<br> or click to browse
+            </p>
+            <p v-if="isSaving">
+              Uploading {{ fileCount }} files...
+            </p>
         </div>
+      </form>
+      <!--SUCCESS-->
+      <div v-if="isSuccess">
+        <h2>Uploaded {{ uploadedFiles.length }} file(s) successfully.</h2>
+        <p>
+          <a href="javascript:void(0)" @click="reset()">Upload again</a>
+        </p>
+        <ul class="list-unstyled">
+          <li v-for="item in uploadedFiles">
+            <img :src="item.url" class="img-responsive img-thumbnail" :alt="item.originalName">
+          </li>
+        </ul>
+      </div>
+      <!--FAILED-->
+      <div v-if="isFailed">
+        <h2>Uploaded failed.</h2>
+        <p>
+          <a href="javascript:void(0)" @click="reset()">Try again</a>
+        </p>
+        <pre>{{ uploadError }}</pre>
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
+  // swap as you need
+  import { upload } from './file-upload.fake.service'; // fake service
+  // import { upload } from './file-upload.service';   // real service
+  import { wait } from './utils';
+
+  const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
+
   export default {
-    name: 'image-input',
-    data: ()=> ({
-      errorDialog: null,
-      errorText: '',
-      uploadFieldName: 'file',
-      maxSize: 1024
-    }),
-    props: {
-    // Use "value" to enable using v-model
-      value: Object,
+    name: 'app',
+    data() {
+      return {
+        uploadedFiles: [],
+        uploadError: null,
+        currentStatus: null,
+        uploadFieldName: 'photos'
+      }
+    },
+    computed: {
+      isInitial() {
+        return this.currentStatus === STATUS_INITIAL;
+      },
+      isSaving() {
+        return this.currentStatus === STATUS_SAVING;
+      },
+      isSuccess() {
+        return this.currentStatus === STATUS_SUCCESS;
+      },
+      isFailed() {
+        return this.currentStatus === STATUS_FAILED;
+      }
     },
     methods: {
-      launchFilePicker(){
-        this.$refs.file.click();
+      reset() {
+        // reset form to initial state
+        this.currentStatus = STATUS_INITIAL;
+        this.uploadedFiles = [];
+        this.uploadError = null;
       },
-      onFileChange(fieldName, file) {
-        const { maxSize } = this
-        let imageFile = file[0]
+      save(formData) {
+        // upload data to the server
+        this.currentStatus = STATUS_SAVING;
 
-        if (file.length>0) {
-          let size = imageFile.size / maxSize / maxSize
-          if (!imageFile.type.match('image.*')) {
-            // check whether the upload is an image
-            this.errorDialog = true
-            this.errorText = 'Please choose an image file'
-          } else if (size>1) {
-            // check whether the size is greater than the size limit
-            this.errorDialog = true
-            this.errorText = 'Your file is too big! Please select an image under 1MB'
-          } else {
-            // Append file into FormData and turn file into image URL
-            let formData = new FormData()
-            let imageURL = URL.createObjectURL(imageFile)
-            formData.append(fieldName, imageFile)
-            // Emit the FormData and image URL to the parent component
-            this.$emit('input', { formData, imageURL })
-          }
-        }
+        upload(formData)
+          .then(wait(1500)) // DEV ONLY: wait for 1.5s 
+          .then(x => {
+            this.uploadedFiles = [].concat(x);
+            this.currentStatus = STATUS_SUCCESS;
+          })
+          .catch(err => {
+            this.uploadError = err.response;
+            this.currentStatus = STATUS_FAILED;
+          });
+      },
+      filesChange(fieldName, fileList) {
+        // handle file changes
+        const formData = new FormData();
+
+        if (!fileList.length) return;
+
+        // append the files to FormData
+        Array
+          .from(Array(fileList.length).keys())
+          .map(x => {
+            formData.append(fieldName, fileList[x], fileList[x].name);
+          });
+
+        // save it
+        this.save(formData);
       }
-    }
+    },
+    mounted() {
+      this.reset();
+    },
   }
+
 </script>
+
+<style lang="scss">
+  .dropbox {
+    outline: 2px dashed grey; /* the dash box */
+    outline-offset: -10px;
+    background: lightcyan;
+    color: dimgray;
+    padding: 10px 10px;
+    min-height: 200px; /* minimum height */
+    position: relative;
+    cursor: pointer;
+  }
+  
+  .input-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    cursor: pointer;
+  }
+  
+  .dropbox:hover {
+    background: lightblue; /* when mouse over to the drop zone, change color */
+  }
+  
+  .dropbox p {
+    font-size: 1.2em;
+    text-align: center;
+    padding: 50px 0;
+  }
+</style>

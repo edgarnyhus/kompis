@@ -4,7 +4,7 @@
         <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
         <div class="g-group">
             <b-button class="g-span" @click="onPickFile()" variant="secondary">Last opp</b-button>
-            <input type="file" style="display: none" @change="onFilePicked($event)" ref="fileInput" accept="image/*">
+            <input type="file" style="display: none" @change="onFilePicked($event)" ref="fileInput" accept="*">
             <b-button @click="addLink()" variant="secondary">Lenke</b-button>
             <p v-if="errorMessage" style="color: red; margin-top: 0.4em"> {{ errorMessage }}</p>
         </div>
@@ -35,36 +35,6 @@ export default {
         onPickFile() {
             this.$refs.fileInput.click()
             this.errorMessage = ''
-        },
-        onFilePickedA(event) {
-            var file= event.target.files[0];
-            let url = null
-            var percentage = 0
-
-            //create storage ref to the firebase storage
-            var storageRef = firebase.storage().ref('media').child(file.name);
-            var task = storageRef.put(file)
-            task.on("state_changed", function(snapshot) {
-                var percentage = (snapshot.bytesTransferred/snapshot.totalBytes) * 100;
-                if (percentage == 100) {
-                    storageRef.getDownloadURL()
-                    .then(function(u) {
-                        url = u
-                        // You will get the Url here.
-                        // var firebaseRef = firebase.database().ref("media")
-                        // firebaseRef.push(url)
-                        // .then(() => {
-                        //     this.errorMessage ="Image Uploaded and also updated to the database"
-                        // })
-                        // .catch((error) => {
-                        //     console.log(error)
-                        //     this.errorMessage = error.message
-                        // })
-                    })
-                }
-            })
-            if (percentage >= 100)
-                this.$emit(this.reason, url)
         },
         onFilePicked(event) {
             const file = event.target.files[0]

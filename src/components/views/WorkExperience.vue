@@ -96,8 +96,8 @@
             <!-- <image-uploader v-on:input="addMedia"></image-uploader> -->
  
             <ul class="list-unstyled" style="margin-top: 1em">
-                <b-media tag="li" v-for="elem in media" :key="elem" sstyle="margin-bottom: 0.5em">
-                    <b-img src="elem" rounded slot="aside" blank blank-color="#777" width="64" alt="img" style="padding-top: 0"/>
+                <b-media tag="li" v-for="elem in media" :key="elem.url" style="margin-bottom: 0.5em">
+                    <b-img :src="elem.url" rounded slot="aside" width="64" height="64" alt="Media Aside" style="padding-top: 0"/>
                     <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
                     <b-form-textarea id="mdesc"
                                     v-model="form.description"
@@ -171,8 +171,8 @@ export default {
             },
             links: [{url: null}],
             // media: [{data: null, url: null}],
-            // media: [{url: null}],
-            media: [],
+            media: [{url: null}],
+            // media: [],
             user: null,
             wid: null,
             disableWrite: false, 
@@ -189,7 +189,7 @@ export default {
         addMedia(url) {
             console.log('addMedia', url)
             if (url) {
-                this.media.push(url)
+                this.media.push({url: url})
             }
         },
         addLink: function() {
