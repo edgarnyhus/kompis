@@ -1,6 +1,6 @@
 <template>
     <div class="g-m0">
-        <b-navbar v-if="user" toggleable="md" type="light" variant="light" 
+        <b-navbar v-if="user" id="subnavbar" toggleable="md" type="light" variant="light" 
             style="height: 70px; border-bottom: 1px solid rgb(232,233,232); padding-left: 3.5%; padding-right: 3.5%;">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
             <b-navbar-brand href="#"><strong>Ok, la oss komme igang!</strong></b-navbar-brand>
@@ -26,7 +26,8 @@ export default {
     name: 'SubNavbar',
     data(){
         return{
-            user: 'edgar@getacademy.no'
+            user: null,
+            show: false
         }
     },
     mounted() {
@@ -36,9 +37,6 @@ export default {
         firebase.auth().onAuthStateChanged((user) => {
             this.user = user;
         })
-    },
-    methods: {
-
     }
 }
 </script>

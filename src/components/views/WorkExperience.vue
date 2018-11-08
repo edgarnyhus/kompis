@@ -92,11 +92,12 @@
                 </div>
             </b-form-group> -->
 
-            <upload-file v-on:add_media="addMedia"></upload-file>
+            <upload-file v-on:input="addMedia" :uid="user.uid"></upload-file>
+            <!-- <image-uploader v-on:input="addMedia"></image-uploader> -->
  
             <ul class="list-unstyled" style="margin-top: 1em">
-                <b-media tag="li" v-for="elem in media" :key="elem.id">
-                    <b-img rounded slot="aside" blank blank-color="#777" width="64" alt="img" style="padding-top: 0"/>
+                <b-media tag="li" v-for="elem in media" :key="elem" sstyle="margin-bottom: 0.5em">
+                    <b-img src="elem" rounded slot="aside" blank blank-color="#777" width="64" alt="img" style="padding-top: 0"/>
                     <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
                     <b-form-textarea id="mdesc"
                                     v-model="form.description"
@@ -122,6 +123,7 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 import moment from 'moment'
 import UploadFile from '@/components/utils/UploadFile'
+import ImageUploader from '@/components/utils/ImageUploader'
 
 export default {
     name: 'WorkExperience',
@@ -167,7 +169,9 @@ export default {
                 month: null,
                 year: null
             },
-            links: [],
+            links: [{url: null}],
+            // media: [{data: null, url: null}],
+            // media: [{url: null}],
             media: [],
             user: null,
             wid: null,
@@ -178,12 +182,15 @@ export default {
     },
     props: ['inline', 'employer', 'show', 'cid', 'id'],
     components: {
-        'upload-file': UploadFile
+        'upload-file': UploadFile,
+        'image-uploader': ImageUploader
     },
     methods: {
-        addMedia(obj) {
-            console.log('addMedia', obj)
-            this.media.push(obj.raw)
+        addMedia(url) {
+            console.log('addMedia', url)
+            if (url) {
+                this.media.push(url)
+            }
         },
         addLink: function() {
 
