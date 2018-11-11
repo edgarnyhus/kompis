@@ -37,73 +37,24 @@
                 <b-input class="mb-2 mr-sm-2 mb-sm-0" id="role" placeholder="" v-model="form.role" />
             </b-form-group>
 
-            <b-form-group>
-                <!-- <div class="form-row">
-                    <div class="form-group col-md-6">
-                        <label><strong>Fra</strong></label>
-                        <b-input type='date' :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></b-input>
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label><strong>Til</strong></label>
-                        <b-input type='date' :bootstrap-styling=true :typeable=true format="MMMM yyyy" v-model="date"></b-input>
-                    </div>
-                </div> -->
-
-                <div class="g-m2 form-row">
-                    <b-form-group class="col-md-3">
-                        <label for="fromMonth"><strong>Fra</strong></label>
-                        <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="from.month" required />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="fromYear" style="color: white">(år) </label>
-                        <b-form-input id="fromYear" type="number" placeholder="Fra hvilket år?" v-model="from.year" required />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="toMonth"><strong>Til</strong></label>
-                        <b-form-select class="mb-3" :options="months" v-model="to.month" />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="toYear" style="color: white">(år) </label>
-                        <b-form-input  type="number" id="toYear" placeholder="Til hvilket år?" v-model="to.year" />
-                    </b-form-group>
-                </div>
-            </b-form-group>
-
-            <b-form-group v-if="show != 'training'" class="g-group3">
-                <b-form-checkbox v-model="form.ongoing">Jeg jobber her nå</b-form-checkbox>
-            </b-form-group>
 
             <b-form-group class="g-group">
                 <label for="description"><strong>Beskrivelse</strong> </label>
-                <b-form-textarea id="description"
-                                v-model="form.description"
-                                placeholder=""
-                                :rows="3"
-                                :max-rows="8">
+                <b-form-textarea id="description" v-model="form.description" placeholder="" :rows="3" :max-rows="8">
                 </b-form-textarea>
             </b-form-group>
             
-            <!-- <b-form-group>
-                <p class="g-title2"><strong>Dokumentasjon</strong></p>
-                <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
-                <div class="g-group">
-                    <b-button class="g-span" @click="uploadFile()" variant="leight">Last opp</b-button>
-                    <b-button @click="addLink()" @variant="leight">Lenke</b-button>
-                </div>
-            </b-form-group> -->
-
-            <upload-file v-on:input="addMedia" :uid="user.uid"></upload-file>
-            <!-- <image-uploader v-on:input="addMedia"></image-uploader> -->
+            <from-to @dateInput="dateInput" :from="from" :to="to"></from-to>
+            
+            <!-- <upload-file v-on:input="addMedia" :uid="User_id" :cid="form.cert_id"></upload-file> -->
+            <image-uploader v-on:input="addMedia" :uid="user_id" :cid="form.cert_id"> </image-uploader>
  
             <ul class="list-unstyled" style="margin-top: 1em">
-                <b-media tag="li" v-for="elem in media" :key="elem.url" style="margin-bottom: 0.5em">
-                    <b-img :src="elem.url" rounded slot="aside" width="64" height="64" alt="Media Aside" style="padding-top: 0"/>
+                <b-media tag="li" v-for="item in form.media" :key="item.url" style="margin-bottom: 0.5em">
+                    <!-- <b-img :src="elem.url" rounded slot="aside" we_idth="64" height="64" style="padding-top: 0"/> -->
+                    <img :src="item.url" rounded slot="aside" class="mg-thumbnail" we_idth="64" height="64" :alt="item.filename" style="padding-top: 0">
                     <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
-                    <b-form-textarea id="mdesc"
-                                    v-model="form.description"
-                                    placeholder="Beskriv litt om hva dette handler om."
-                                    :rows="2"
-                                    :max-rows="8">
+                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
                     </b-form-textarea>
                 </b-media>
             </ul>
@@ -122,31 +73,25 @@
 import firebase from 'firebase'
 import db from '@/firebase/init'
 import moment from 'moment'
-import UploadFile from '@/components/utils/UploadFile'
-import ImageUploader from '@/components/utils/ImageUploader'
+import UploadFile from '@/components/common/UploadFile'
+import ImageUploader from '@/components/common/ImageUploader'
+import FromTo from '@/components/common/FromTo'
+import { wait } from '@/components/utils/utils';
+
 
 export default {
     name: 'WorkExperience',
+    components: {
+        'from-to': FromTo,
+        'upload-file': UploadFile,
+        'image-uploader': ImageUploader
+    },
+    props: ['inline', 'employer', 'show', 'uid', 'cid', 'id'],
     data() {
         return {
             job_types: [
                 { text: 'Bedrift', value: 'Bedrift' },
                 { text: 'Frivillig organisasjon', value: 'Frivillig organisasjon' }
-            ],
-            months: [
-                { value: null, text: 'Velg en måned' },
-                { value: '01', text: 'januar' },
-                { value: '02', text: 'februar' },
-                { value: '03', text: 'mars' },
-                { value: '04', text: 'april' },
-                { value: '05', text: 'mai' },
-                { value: '06', text: 'juni' },
-                { value: '07', text: 'juli' },
-                { value: '08', text: 'august' },
-                { value: '09', text: 'september' },
-                { value: '10', text: 'oktober' },
-                { value: '11', text: 'november' },
-                { value: '12', text: 'desember' }
             ],
             form: {
                 employer: null,
@@ -160,6 +105,10 @@ export default {
                 timestamp: null,
                 user_id: null,
                 cert_id: null,
+                links: [{url: null}],
+                // media: [{data: null, url: null}],
+                // media: [{url: null}],
+                media: [],
             },
             from: {
                 month: null,
@@ -169,27 +118,51 @@ export default {
                 month: null,
                 year: null
             },
-            links: [{url: null}],
-            // media: [{data: null, url: null}],
-            media: [{url: null}],
-            // media: [],
             user: null,
-            wid: null,
+            user_id: null,
+            we_id: null,
             disableWrite: false, 
             reason: 'updtraining'
         }
 
     },
-    props: ['inline', 'employer', 'show', 'cid', 'id'],
-    components: {
-        'upload-file': UploadFile,
-        'image-uploader': ImageUploader
-    },
     methods: {
-        addMedia(url) {
-            console.log('addMedia', url)
-            if (url) {
-                this.media.push({url: url})
+        // reset() {
+        //     this.form.employer = null
+        //     this.form.location = null
+        //     this.form.job_type = null
+        //         role: null,
+        //         ongoing: false,
+        //         from: null,
+        //         to: null,
+        //         description: null,
+        //         timestamp: null,
+        //         user_id: null,
+        //         cert_id: null,
+        //         links: [{url: null}],
+        //         // media: [{data: null, url: null}],
+        //         // media: [{url: null}],
+        //         media: [],
+        // },
+        reset () {
+            // Object.assign(this.$data, this.$options.data())
+            // let json = JSON.stringify(this.$data);
+            // this.reset = () => {
+            //     Object.assign(this.$data, JSON.parse(json));
+            // };
+            // Object.assign(this.$data, this.initialData());
+            Object.assign(this.$data, this.$options.data.call(this));
+        },
+        dateInput(from, to, ongoing) {
+            conaole.log('dateInput', from, to, ongoing)
+            this.from = from
+            this.to = to
+            this.form.ongoing = ongoing
+        },
+        addMedia(formData) {
+            if (formData) {
+                const file = formData.get('media')
+                this.form.media.push({ filename: file.name, type: file.type, url: formData.get('url') })
             }
         },
         addLink: function() {
@@ -210,13 +183,12 @@ export default {
             mountainsRef.fullPath === mountainImagesRef.fullPath    // false
         },
         cancel() {
-            console.log("cancel")
             this.$emit(this.reason, null)
+            // this.$destroy()
         },
         addOrUpdate() {
-            console.log('WE update training, ID=', this.wid)
-            if (this.user) {
-                this.form.user_id = this.user.uid 
+            if (this.user_d) {
+                this.form.user_id = this.user_id 
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -227,11 +199,11 @@ export default {
                     console.error('update excception: ', error)
                 }
 
-                if (this.wid) {
-                    db.collection("training").doc(this.wid).set(this.form, {merge: true})
+                if (this.we_id) {
+                    db.collection("training").doc(this.we_id).set(this.form, {merge: true})
                     .then((docRef) => {
-                        console.log("Document updated with ID: ", this.wid);
-                        this.$emit(this.reason, this.wid)
+                        console.log("Document updated with ID: ", this.we_id);
+                        this.$emit(this.reason, this.we_id)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -240,8 +212,8 @@ export default {
                     db.collection("training").add(this.form)
                     .then((docRef) => {
                         console.log("Document written with ID: ", docRef.id);
-                        this.wid = docRef.id
-                        this.$emit(this.reason, this.wid)
+                        this.we_id = docRef.id
+                        this.$emit(this.reason, this.we_id)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -251,48 +223,70 @@ export default {
             else {
                 console.info('User not logged in???')
             }
+
+            // this.$destroy()
         },
         fetchData() {
-            if (this.user && this.wid) {
-                // get object
-                db.collection('training').doc(this.wid)
-                .get()
-                .then ((docRef) => {
-                    if(docRef.exists) {
-                        this.form = docRef.data()
-                        this.from.month = getMonth(this.form.from)
-                        this.from.year = getYear(this.form.from)
-                        this.to.month = getMonth(this.form.to)
-                        this.to.year = getYear(this.form.to)
-                    }
+            this.reset()
+            console.log('we reset', this.user_id, this.we_id)
+            if (this.user_id && this.we_id) {
+                wait(1500)
+                .then(() => {
+
+                    // get object
+                    db.collection('training').doc(this.we_id)
+                    .get()
+                    .then ((docRef) => {
+                        if(docRef.exists) {
+                            this.form = docRef.data()
+                            this.from.month = getMonth(this.form.from)
+                            this.from.year = getYear(this.form.from)
+                            this.to.month = getMonth(this.form.to)
+                            this.to.year = getYear(this.form.to)
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("WE Error fetching document: ", error);
+                    });
                 })
-                .catch((error) => {
-                    console.error("WE Error fetching document: ", error);
-                });
             }            
         }
     },
-    updated() {
-        console.log('WE updated event, ID=', this.wid)
-    },
-    activated() {
-        console.log('WE activated event, ID=', this.wid )
-    },
     mounted() {
-        console.log('WE mounted event, ID=', this.wid )
+        this.reset()
+        this.user = firebase.auth().currentUser
+        this.form.employer  = this.employer
+        this.form.cert_id  = this.cid
+        this.we_id = this.id
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = this.user.uid
+        }
         if (this.form.employer && this.cid) {
             this.disableWrite = true
         }
-    },
-    created() {
-        this.form.employer  = this.employer
-        this.form.cert_id  = this.cid
-        this.wid = this.id
-        this.user = firebase.auth().currentUser
-        console.info('WE created, CID=', this.form.cert_id, "WID=", this.wid)
-        this.fetchData()
-    }
+        console.log('we created:', this.we_id)
 
+        if (this.we_id) {
+            console.log('we get object', this.we_id)
+            // get object
+            db.collection('training').doc(this.we_id)
+            .get()
+            .then ((docRef) => {
+                if(docRef.exists) {
+                    this.form = docRef.data()
+                    this.from.month = getMonth(this.form.from)
+                    this.from.year = getYear(this.form.from)
+                    this.to.month = getMonth(this.form.to)
+                    this.to.year = getYear(this.form.to)
+                }
+            })
+            .catch((error) => {
+                console.error("WE Error fetching document: ", error);
+            });
+        }
+    }
 }
 </script>
 
@@ -302,5 +296,8 @@ a {
 }
 .g-span {
     margin-right: 1em;
+}
+img {
+    border-radius: 10px;
 }
 </style>

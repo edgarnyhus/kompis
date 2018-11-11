@@ -5,31 +5,31 @@
         <div class="container">
             <h1 class="g-title">Min CV</h1>
             
-            <b-progress class="mb-3" height="2em" :value="bar.value" variant="info" :max="max" show-progress></b-progress>
+            <!-- <b-progress class="mb-3" height="2em" :value="bar.value" variant="info" :max="max" show-progress></b-progress>
 
             <b-card class="g-practice">
                 <h5 class="b-card-title">Har du vært i arbeidspraksis?</h5>
                 <p class="b-card-text">Lag praksisattesten først, og dataene vil dukke opp i CVen din. Usikker på hvordan du skal gjære det, ta kontakt med veileder.</p>
                 <b-button  class="btn btn-info" router-link :to="{ name: 'PracticeCertificate' }">Lag ny praksisattest</b-button>
-            </b-card>
+            </b-card> -->
 
             <b-card no-body class="accordion mb-1">
-                <b-card-header header-tag="header" v-b-toggle.accordion1 role="tab">
-                    <h5 class="b-card-title">Arbeidserfaring
+                <b-card-header header-tag="header" role="tab">
+                    <b-btn class="" style="text-align: left" block href="#" v-b-toggle.accordion1 variant="light">Arbeidserfaring
                         <!-- <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'WorkExperience' }">Legg til emne</b-button> -->
-                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
-                    </h5>
-                    <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
+                    </b-btn>
+                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; selectedComponent = 'WorkExperience'">Legg til emne</b-button>
+                        <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
                 </b-card-header>
 
                 <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
-                    <!-- <component v-on:updtraining="onUpdatedTraining" :cid="cid" :id="id" :is="selectedComponent"></component> -->
-                    <work-experience v-on:updtraining="onUpdatedTraining" :cid="cid" :id="id" ></work-experience>
+                    <!-- <component v-on:updtraining="onUpdatedTraining" :uid="user_id" :id="id" :is="selectedComponent"></component> -->
+                    <work-experience v-on:updtraining="onUpdatedTraining" :uid="user_id" :cid="cert_id" :id="id"></work-experience>
                 </b-collapse>
 
                 <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each job training/experience -->
-                    <work-experience-list v-on:edittraining="editTraining" :training="training"></work-experience-list>
+                    <work-experience-list v-on:edittraining="editTraining" :training="training" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
                 </b-collapse>
             </b-card>
             
@@ -240,6 +240,7 @@ export default {
         'work-experience-list': WorkExperienceList
 
     },
+    props: ['uid'],
     data () {
         return {
             home: 'yes',
@@ -260,7 +261,8 @@ export default {
             languages: [],
             references: [],
             selectedComponent: null,
-            cid: null,
+            user_id: null,
+            cert_id: null,
             id: null
         }
     },
@@ -441,8 +443,8 @@ export default {
         },
     
         fetchTraining() {
-            if (this.user) {
-                db.collection('training').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('training').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -457,8 +459,8 @@ export default {
             }
         },
         fetchEducation() {
-            if (this.user) {
-                db.collection('education').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('education').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -473,8 +475,8 @@ export default {
             }
         },
         fetchKeyValues() {
-            if (this.user) {
-                db.collection('key_values').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('key_values').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -489,8 +491,8 @@ export default {
             }
         },
         fetchSkills() {
-            if (this.user) {
-                db.collection('skills').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('skills').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -505,8 +507,8 @@ export default {
             }
         },
         fetchVolunteering() {
-            if (this.user) {
-                db.collection('volunteering').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('volunteering').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -521,8 +523,8 @@ export default {
             }
         },
         fetchLanguages() {
-            if (this.user) {
-                db.collection('languages').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('languages').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -537,8 +539,8 @@ export default {
             }
         },
         fetchReferences() {
-            if (this.user) {
-                db.collection('references').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('references').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -558,36 +560,43 @@ export default {
     },
     created() {
         // current user
-        this.user = firebase.auth().currentUser.uid
-        db.collection('users').doc(firebase.auth().currentUser.uid)
-        .get()
-        .then(doc => {
-            this.profile = doc.data()
-        })
-        .catch(error => {
-            console.error('Firebase error: ', error)
-        })
+        this.user = firebase.auth().currentUser
+        if (this.uid) {
+            this.user_id = this.uid
+        } else if (this.user) {
+            this.user_id = this.user.uid
+        }
+        if (this.user_id) {
+            db.collection('users').doc(this.user_id)
+            .get()
+            .then(doc => {
+                this.profile = doc.data()
+            })
+            .catch(error => {
+                console.error('Firebase error: ', error)
+            })
 
-        // fetch work experience/training
-        this.fetchTraining()
+            // fetch work experience/training
+            this.fetchTraining()
 
-        // fetch key values
-        this.fetchEducation()
+            // fetch key values
+            this.fetchEducation()
 
-        // fetch key values
-        this.fetchKeyValues()
+            // fetch key values
+            this.fetchKeyValues()
 
-        // fetch practical skills
-        this.fetchSkills()
+            // fetch practical skills
+            this.fetchSkills()
 
-        // fetch practical skills
-        this.fetchVolunteering()
+            // fetch practical skills
+            this.fetchVolunteering()
 
-        // fetch practical skills
-        this.fetchLanguages()
+            // fetch practical skills
+            this.fetchLanguages()
 
-        // fetch references
-        this.fetchReferences()
+            // fetch references
+            this.fetchReferences()
+        }
     }
 }
 </script>

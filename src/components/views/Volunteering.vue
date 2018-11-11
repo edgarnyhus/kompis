@@ -64,8 +64,8 @@
                 <p><strong>Dokumentasjon</strong></p>
                 <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
                 <div class="button-group">
-                    <b-button class="button-span" variant="leight">Last opp</b-button>
-                    <b-button variant="leight">Lenke</b-button>
+                    <b-button class="button-span" variant="lght">Last opp</b-button>
+                    <b-button variant="lght">Lenke</b-button>
                 </div>
             </b-form-group>
 

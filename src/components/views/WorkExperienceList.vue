@@ -53,7 +53,6 @@ export default {
         edit: function(elem) {
             console.log('edit:', elem.id)
             this.$emit(this.reason, elem.id)
-            this.$emit(this.reason, this.wid)
         }
     }
 }
