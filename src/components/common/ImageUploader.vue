@@ -1,9 +1,9 @@
 <template>
     <div class="component">
-        <p class="g-title2"><strong>Dokumentasjon</strong></p>
+        <p class="g-header"><strong>Dokumentasjon</strong></p>
         <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
         <div class="g-group">
-            <b-button class="g-span" @click="reset(); isInitial=true" variant="secondary">Last opp</b-button>
+            <b-button class="g-span" @click="setInitial" variant="secondary">Last opp</b-button>
             <!-- <input type="file" style="display: none" @change="onFilePicked($event)" ref="fileInput" accept="*"> -->
             <b-button @click="addLink()" variant="secondary">Lenke</b-button>
             <p v-if="uploadError" style="color: red; margin-top: 0.4em"> {{ errorMessage }}</p>
@@ -16,15 +16,18 @@
                     <p v-if="isInitial">
                         Dra filen(e) hit<br> eller kilkk i rammen for å velge fil(er)
                     </p>
-                    <p v-if="isSaving">
+'                    <p v-if="isSaving">
                         Laster opp {{ fileCount }} filer...
                     </p>
+                    <!-- <div v-if="isSaving">
+                        <b-progress style="width: 200px; height: 10px" :value="progress" :max="max" variant="secondary" class="mb-2"></b-progress>
+                    </div> -->
                 </div>
             </form>
 
             <!--SUCCESS-->
             <div v-if="isSuccess">
-                <p>Lastet opp {{ fileCount }} fil(er)</p>
+                <!-- <p>Lastet opp {{ fileCount }} fil(er)</p> -->
                 <!-- <ul class="list-unstyled">
                     <li v-for="item in uploadedFiles">
                         <img :src="item.url" class="img-responsive img-thumbnail" :alt="item.originalName">
@@ -51,7 +54,7 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 import 'firebase/storage';
 
-  const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
+  const STATUS_NONE = 0, STATUS_INITIAL = 1, STATUS_SAVING = 2, STATUS_SUCCESS = 3, STATUS_FAILED = 4;
 
   export default {
     name: 'app',
@@ -62,6 +65,8 @@ import 'firebase/storage';
         uploadError: null,
         currentStatus: null,
         uploadFieldName: 'media',
+        progress: 20,
+        max: 100,
         reason: 'input'
       }
     },
@@ -82,10 +87,14 @@ import 'firebase/storage';
     methods: {
       reset() {
         // reset form to initial state
-        this.currentStatus = STATUS_INITIAL;
+        this.currentStatus = STATUS_NONE;
         this.uploadedFiles = [];
         this.uploadError = null;
         this.fileCount  = 0;
+      },
+      setInitial() {
+        //   this.reset()
+          this.currentStatus = STATUS_INITIAL;
       },
       upload(formData) {
         // upload data to the server
@@ -97,7 +106,6 @@ import 'firebase/storage';
         .then (() => {
             firebase.storage().ref('media').child(file.name).getDownloadURL()
             .then (url => {
-                this.fileCount++;
                 this.currentStatus = STATUS_SUCCESS;
                 formData.append('url', url)
                 console.log('upload, url=', url)
@@ -153,8 +161,9 @@ import 'firebase/storage';
 
 </script>
 
-<style>
-  .dropbox {
+<style scoped>
+.dropbox {
+    margin-top: 7px;
     outline: 2px dashed grey; /* the dash box */
     outline-offset: -10px;
     background: #f7f7f7;
@@ -163,23 +172,30 @@ import 'firebase/storage';
     min-height: 100px; /* minimum height */
     position: relative;
     cursor: pointer;
-  }
-  
-  .input-file {
+}
+
+.input-file {
     opacity: 0; /* invisible but it's there! */
     width: 100%;
     height: 200px;
     position: absolute;
     cursor: pointer;
-  }
-  
-  .dropbox:hover {
+}
+
+.dropbox:hover {
     background: #f2f2f2; /* when mouse over to the drop zone, change color */
-  }
-  
-  .dropbox p {
+}
+
+.dropbox p {
     font-size: 1.2em;
     text-align: center;
     padding: 50px 0;
-  }
+}
+b-progress {
+    height: 10px;
+    width: 300px;
+}
+.g-header {
+    margin-bottom: 0;
+}
 </style>

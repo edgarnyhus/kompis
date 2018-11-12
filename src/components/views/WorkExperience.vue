@@ -50,14 +50,16 @@
             <image-uploader v-on:input="onMedia" :uid="user_id" :cid="form.cert_id"> </image-uploader>
  
             <ul class="list-unstyled" style="margin-top: 1em">
-                <b-media tag="li" v-for="item in form.media" :key="item.url" style="margin-bottom: 0.5em">
-                    <!-- <b-img :src="elem.url" rounded slot="aside" we_idth="64" height="64" style="padding-top: 0"/> -->
-                    <img :src="item.url" rounded slot="aside" class="mg-thumbnail" we_idth="64" height="64" :alt="item.filename" style="padding-top: 0">
+                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
+                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
                     <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
+                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
                     <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
                     </b-form-textarea>
+
                 </b-media>
-            </ul>
+              </ul>
 
             <div class="g-group4">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -65,6 +67,10 @@
             </div>
 
         </b-form>
+
+        <b-modal  class="g-modal" ref="showmodal" size="lg" hide-footer title="Kompis">
+            <embed v-if="file" :src="file.url" frameborder="0" width="100%" height="900px">        
+        </b-modal>
         <!-- </slot> -->
     </div>
 </template>
@@ -105,10 +111,11 @@ export default {
                 timestamp: null,
                 user_id: null,
                 cert_id: null,
-                links: [{url: null}],
+                links: [],
                 // media: [{data: null, url: null}],
                 // media: [{url: null}],
-                media: [],
+                // media: [{ filename: null, type: null, url: null, description: null }]
+                media: []
             },
             from: {
                 month: null,
@@ -118,10 +125,13 @@ export default {
                 month: null,
                 year: null
             },
+            media: [],
+            links: [],
             user: null,
             user_id: null,
             we_id: null,
-            disableWrite: false, 
+            disableWrite: false,
+            file: null,
             reason: 'updtraining'
         }
 
@@ -129,34 +139,34 @@ export default {
     methods: {
         reset () {
             Object.assign(this.$data, this.$options.data.call(this));
+            // this.form.media = []
+            // this.form.links = []
         },
         onFromTo(from, to, ongoing) {
-            this.from = from
-            this.to = to
-            this.form.ongoing = ongoing
+            console.log('onFromTo', this.from, this.to)
+            // this.from = from
+            // this.to = to
+            // this.form.ongoing = ongoing
         },
         onMedia(formData) {
             if (formData) {
                 const file = formData.get('media')
-                this.form.media.push({ filename: file.name, type: file.type, url: formData.get('url') })
+                let elem = { filename: file.name, type: file.type, url: formData.get('url') }
+                console.log('onMedia', elem)
+                // this.form.media.push(elem)
+                this.media.push(elem)
             }
         },
         addLink: function() {
 
         },
-        uploadFile: function() {
-            // Create a root reference
-            var storageRef = firebase.storage().ref();
-
-            // Create a reference to 'mountains.jpg'
-            var mountainsRef = storageRef.child('mountains.jpg');
-
-            // Create a reference to 'images/mountains.jpg'
-            var mountainImagesRef = storageRef.child('images/mountains.jpg');
-
-            // While the file names are the same, the references point to different files
-            mountainsRef.name === mountainImagesRef.name            // true
-            mountainsRef.fullPath === mountainImagesRef.fullPath    // false
+        showFile(item) {
+            console.log('showFile', item.url)
+            this.file = item
+            // window.open(item.url)
+            const ref = this.$refs.showmodal
+            if(ref)
+                ref.show()
         },
         cancel() {
             this.$emit(this.reason, null)
@@ -171,6 +181,8 @@ export default {
                     if (this.to.month && this.to.year) {
                         this.form.to = toTimestamp(this.to.month, this.to.year)
                     }
+                    this.form.media = this.media
+                    this.form.links = this.links
                 } catch (error) {
                     console.error('update excception: ', error)
                 }
@@ -200,30 +212,6 @@ export default {
                 console.info('User not logged in???')
             }
             // this.$destroy()
-        },
-        fetchData() {
-            this.reset()
-            console.log('we reset', this.user_id, this.we_id)
-            if (this.user_id && this.we_id) {
-                wait(1500)
-                .then(() => {
-                    // get object
-                    db.collection('training').doc(this.we_id)
-                    .get()
-                    .then ((docRef) => {
-                        if(docRef.exists) {
-                            this.form = docRef.data()
-                            this.from.month = getMonth(this.form.from)
-                            this.from.year = getYear(this.form.from)
-                            this.to.month = getMonth(this.form.to)
-                            this.to.year = getYear(this.form.to)
-                        }
-                    })
-                    .catch((error) => {
-                        console.error("WE Error fetching document: ", error);
-                    });
-                })
-            }            
         }
     },
     mounted() {
@@ -254,6 +242,8 @@ export default {
                     this.from.year = getYear(this.form.from)
                     this.to.month = getMonth(this.form.to)
                     this.to.year = getYear(this.form.to)
+                    this.media = this.form.media
+                    this.links = this.form.links
                 }
             })
             .catch((error) => {
@@ -264,7 +254,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 a {
     color: rgb(0,161,181);
 }
@@ -272,6 +262,13 @@ a {
     margin-right: 1em;
 }
 img {
-    border-radius: 10px;
+    border: 1px;
+    border-color: rgb(242,242,242);
+    border-radius: 6px;
+    cursor: pointer;
 }
+img:hover {
+
+}
+
 </style>

@@ -33,7 +33,7 @@ global.getMonth = (value) => {
     if (value) {
         // return moment(String(value)).format('MM/DD/YYYY hh:mm')
         // let date = moment(value)
-        let n = moment.unix(value.seconds).month()
+        let n = moment.unix(value.seconds).month() + 1
         if (n < 10)
             return '0' + String(n)
         return String(n)

@@ -60,13 +60,15 @@ export default {
             //     },
             //     ongoing: false
             // },
+            reason: 'onFromTo',
             show: true
 
         }
     },
     methods: {
         changed() {
-            this.$emit('onFromTo', this.from, this.to, this.ongoing)
+            console.log('changed', this.from, this.to)
+            this.$emit(this.reason, this.from, this.to, this.ongoing)
         }
     },
     created() {
