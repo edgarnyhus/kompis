@@ -5,14 +5,6 @@
         <div class="container">
             <h1 class="g-title">Min CV</h1>
             
-            <!-- <b-progress class="mb-3" height="2em" :value="bar.value" variant="info" :max="max" show-progress></b-progress>
-
-            <b-card class="g-practice">
-                <h5 class="b-card-title">Har du vært i arbeidspraksis?</h5>
-                <p class="b-card-text">Lag praksisattesten først, og dataene vil dukke opp i CVen din. Usikker på hvordan du skal gjære det, ta kontakt med veileder.</p>
-                <b-button  class="btn btn-info" router-link :to="{ name: 'PracticeCertificate' }">Lag ny praksisattest</b-button>
-            </b-card> -->
-
             <b-card no-body class="accordion mb-1">
                 <b-card-header header-tag="header" role="tab">
                     <b-btn class="" style="text-align: left" block href="#" v-b-toggle.accordion1 variant="light">Arbeidserfaring

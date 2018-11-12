@@ -66,11 +66,11 @@ export default {
     },
     methods: {
         changed() {
-            this.$emit('dateInoout', this.from, this.to, this.ongoing)
+            this.$emit('onFromTo', this.from, this.to, this.ongoing)
         }
-
     },
     created() {
+        this.years = []
         let today = new Date()
         this.years.push('Velg et år')
         for (let y = 1940; y <= today.getFullYear(); y++) {

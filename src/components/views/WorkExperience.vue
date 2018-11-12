@@ -44,10 +44,10 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <from-to @dateInput="dateInput" :from="from" :to="to"></from-to>
+            <from-to @onFromTo="onFromTo" :from="from" :to="to"></from-to>
             
-            <!-- <upload-file v-on:input="addMedia" :uid="User_id" :cid="form.cert_id"></upload-file> -->
-            <image-uploader v-on:input="addMedia" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+            <!-- <upload-file v-on:input="onMedia" :uid="User_id" :cid="form.cert_id"></upload-file> -->
+            <image-uploader v-on:input="onMedia" :uid="user_id" :cid="form.cert_id"> </image-uploader>
  
             <ul class="list-unstyled" style="margin-top: 1em">
                 <b-media tag="li" v-for="item in form.media" :key="item.url" style="margin-bottom: 0.5em">
@@ -127,39 +127,15 @@ export default {
 
     },
     methods: {
-        // reset() {
-        //     this.form.employer = null
-        //     this.form.location = null
-        //     this.form.job_type = null
-        //         role: null,
-        //         ongoing: false,
-        //         from: null,
-        //         to: null,
-        //         description: null,
-        //         timestamp: null,
-        //         user_id: null,
-        //         cert_id: null,
-        //         links: [{url: null}],
-        //         // media: [{data: null, url: null}],
-        //         // media: [{url: null}],
-        //         media: [],
-        // },
         reset () {
-            // Object.assign(this.$data, this.$options.data())
-            // let json = JSON.stringify(this.$data);
-            // this.reset = () => {
-            //     Object.assign(this.$data, JSON.parse(json));
-            // };
-            // Object.assign(this.$data, this.initialData());
             Object.assign(this.$data, this.$options.data.call(this));
         },
-        dateInput(from, to, ongoing) {
-            conaole.log('dateInput', from, to, ongoing)
+        onFromTo(from, to, ongoing) {
             this.from = from
             this.to = to
             this.form.ongoing = ongoing
         },
-        addMedia(formData) {
+        onMedia(formData) {
             if (formData) {
                 const file = formData.get('media')
                 this.form.media.push({ filename: file.name, type: file.type, url: formData.get('url') })
