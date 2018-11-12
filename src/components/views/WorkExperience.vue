@@ -10,7 +10,7 @@
             <p style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
         </div>
 
-        <b-form @submit.prevent="addOrUpdate">
+        <b-form @submit.prevent="update">
             <b-form-group v-if="show == 'training'" style="font-weight: 650" label="Type arbeid">
                 <b-form-radio-group style="font-weight: 400" v-model="form.job_type"
                                     :options="job_types"
@@ -162,8 +162,8 @@ export default {
             this.$emit(this.reason, null)
             // this.$destroy()
         },
-        addOrUpdate() {
-            if (this.user_d) {
+        update() {
+            if (this.user_id) {
                 this.form.user_id = this.user_id 
                 this.form.timestamp = Date.now()
                 try {
@@ -199,7 +199,6 @@ export default {
             else {
                 console.info('User not logged in???')
             }
-
             // this.$destroy()
         },
         fetchData() {
@@ -208,7 +207,6 @@ export default {
             if (this.user_id && this.we_id) {
                 wait(1500)
                 .then(() => {
-
                     // get object
                     db.collection('training').doc(this.we_id)
                     .get()
