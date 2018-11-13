@@ -34,24 +34,11 @@
                 </b-card-header>
 
                 <b-collapse id="accordion2" v-if="selectedComponent == 'Education'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updeducation="onUpdatedEducation" :cid="cid" :id="id" :is="selectedComponent"></component>
+                    <education v-on:updeducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="id"></education>
                 </b-collapse>
 
                 <b-collapse id="accordion2" v-else accordion="my-accordion" role="tabpanel">
-                    <!-- present a card for each exam -->
-                    <b-card-group v-for="elem in education" :key="elem.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">{{ elem.school }}
-                                    <b-link class="btn-floating float-right btn-sm" @click="updateEducation(elem)">Endre</b-link>
-                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeEducation(elem)">Slett</b-link>
-                                </h6>
-                                <h5 class="card-subtitle text-muted">{{elem.study}}</h5>
-                                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}</p>
-                                <p class="card-text">{{elem.description}}</p>
-                            </div>
-                        </div>
-                    </b-card-group>
+                    <education-list v-on:editeducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="id"></education-list>
                 </b-collapse>
             </b-card>
 
@@ -216,6 +203,7 @@ import Volunteering from '@/components/views/Volunteering'
 import Language from '@/components/views/Language'
 import Reference from '@/components/views/Reference'
 import WorkExperienceList from './WorkExperienceList'
+import EducationList from './EducationList'
 
 
 export default {
@@ -223,13 +211,14 @@ export default {
     components: {
         SubNavbar,
         'work-experience': WorkExperience,
-        Education,
+        'work-experience-list': WorkExperienceList,
+        'education': Education,
+        'education-list': EducationList,
         KeyValue,
         PracticalSkill,
         Volunteering,
         Language,
         Reference,
-        'work-experience-list': WorkExperienceList
 
     },
     props: ['uid'],
@@ -281,20 +270,7 @@ export default {
                 this.fetchTraining()
             }
         },
-        removeEducation(elem) {
-            db.collection('education').doc(elem.id).delete()
-            .then(() => {
-                if (elem) {
-                    let ix = this.educaton.findIndex(e => e.id === elem.id)
-                    if (~ix) {
-                        this.education.splice(ix, 1)
-                    }
-                }
-            }).catch(error => {
-                console.error("pc error removing praksissted: ", error);
-            })
-        },
-        updateEducation(elem) {
+        editEducation(elem) {
             this.id = elem.id
             this.selectedComponent = 'Education'            
         },
@@ -452,7 +428,9 @@ export default {
             }
         },
         fetchEducation() {
+            console.log('user_id=' + this.user_id)
             if (this.user_id) {
+                this.education = []
                 db.collection('education').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
@@ -460,11 +438,13 @@ export default {
                         let elem = doc.data()
                         elem.id = doc.id
                         this.education.push(elem)
+                        console.log('education elem added', elem)
                     })
                 })
                 .catch(err => {
                     console.log('mc fetching education failed', err)
                 })
+                console.log('fetchEducaiton finished', this.education.length)
             }
         },
         fetchKeyValues() {

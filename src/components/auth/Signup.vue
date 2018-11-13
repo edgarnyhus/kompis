@@ -62,20 +62,27 @@ export default {
                 return
             } 
             this.feedback = null
-            this.slug = slugify(this.alias, { replacement: '-', remove: /[$*_+~.()'"!\-:@]/g, lower: true })
-            let ref = db.collection('users').doc(this.slug)
+            let slug = slugify(this.alias, { replacement: '-', remove: /[$*_+~.()'"!\-:@]/g, lower: true })
+            let ref = db.collection('users').doc(slug)
             ref.get()
             .then(doc => {
                 if (doc.exists) {
                     this.feedback = 'Dette brukernavnet er allerede i bruk. Velg et annet.'
                 } else {
+                    let user = null;
                     firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
                     .then(cred => {
+                        data = cred.user
                         return ref.set({
                             alias: this.alias,
-                            user_id: cred.user.uid
+                            user_id: user.uid
                         })
                     }).then(() => {
+                        // db.collection("slugs").doc(user.uid).set({slug: slug})
+                        // .then(() => {
+                        //     console.log('signup ok')
+                        //     this.$router.push({ name: 'MyCV' })
+                        // })
                         console.log('signup ok')
                         this.$router.push({ name: 'MyCV' })
                     })

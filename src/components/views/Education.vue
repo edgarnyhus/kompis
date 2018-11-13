@@ -1,6 +1,5 @@
 <template>
-    <div class="container">
-        <slot>
+    <div class="component" style="margin: 1em">
         <div>
             <h4 class="g-title">Utdanning og kurs</h4>
             <p style="font-style: italic">Hvilke skole har du gått på? Har du tatt noe kurs på jobb, skole eller fritid?</p>
@@ -10,7 +9,7 @@
             <b-form-group>
                 <div class="form-row">
                     <div class="col">
-                        <label for="school"><strong>Nav på skole/kurs</strong></label>
+                        <label for="school"><strong>Navn på skole/kurs</strong></label>
                         <b-input class="mb-2 mr-sm-2 mb-sm-0" id="employer" type="text" v-model="form.school" required />
                     </div>
                     <div class="col">
@@ -20,49 +19,26 @@
                 </div>
             </b-form-group>
 
-            <b-form-group>
-                <div class="g-m2 form-row">
-                    <b-form-group class="col-md-3">
-                        <label for="fromMonth"><strong>Fra</strong></label>
-                        <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="from.month" required />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="fromYear" style="color: white">(år) </label>
-                        <b-form-input id="fromYear" type="number" placeholder="Årstall" v-model="from.year" required />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="toMonth"><strong>Til</strong></label>
-                        <b-form-select class="mb-3" :options="months" v-model="to.month" />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="toYear" style="color: white">(år) </label>
-                        <b-form-input  type="number" id="toYear" placeholder="Årstall" v-model="to.year" />
-                    </b-form-group>
-                </div>
-            </b-form-group>
-
-            <b-form-group class="">
-                <b-form-checkbox v-model="form.ongoing">Jeg går her nå</b-form-checkbox>
-            </b-form-group>
-
             <b-form-group class="g-group">
                 <label for="description"><strong>Beskrivelse</strong> </label>
-                <b-form-textarea id="description"
-                                v-model="form.description"
-                                placeholder=""
-                                :rows="3"
-                                :max-rows="8">
+                <b-form-textarea id="description" v-model="form.description" placeholder="" :rows="3" :max-rows="8">
                 </b-form-textarea>
             </b-form-group>
+
+            <from-to @onFromTo="onFromTo" :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg går her nå'"></from-to>
             
-            <b-form-group>
-                <p><strong>Dokumentasjon</strong></p>
-                <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
-                <div class="button-group">
-                    <b-button class="button-span" variant="light">Last opp</b-button>
-                    <b-button variant="light">Lenke</b-button>
-                </div>
-            </b-form-group>
+            <!-- <upload-file v-on:input="onMedia" :uid="User_id" :cid="form.cert_id"></upload-file> -->
+            <image-uploader v-on:input="onMedia" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+ 
+            <ul class="list-unstyled" style="margin-top: 1em">
+                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
+                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
+                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
+                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
+                    </b-form-textarea>
+                </b-media>
+            </ul>
 
             <div class="button-group">
                 <b-button class="button-span" type="submit" variant="info">Lagre</b-button>
@@ -70,16 +46,26 @@
             </div>
 
         </b-form>
-        </slot>
     </div>
 </template>
 
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
+import moment from 'moment'
+import UploadFile from '@/components/common/UploadFile'
+import ImageUploader from '@/components/common/ImageUploader'
+import FromTo from '@/components/common/FromTo'
+
 
 export default {
     name: 'Education',
+    components: {
+        'from-to': FromTo,
+        'upload-file': UploadFile,
+        'image-uploader': ImageUploader
+    },
+    props: ['school', 'cid', 'id'],
     data() {
         return {
             months: [
@@ -108,6 +94,8 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
+            media: [],
+            links: [],
             from: {
                 month: null,
                 year: null
@@ -117,23 +105,35 @@ export default {
                 year: null
             },
             user: null,
+            user_id: null,
             edu_id: null,
+            disableWrite: false,
             reason: 'updeducation'
         }
-
-    },
-    props: ['cid', 'id'],
-    components: {
-
     },
     methods: {
+        reset () {
+            Object.assign(this.$data, this.$options.data.call(this));
+        },
         cancel() {
             console.log("cancel")
             this.$emit(this.reason, null)
         },
+        onFromTo(from, to, ongoing) {
+            console.log('onFromTo', this.from, this.to)
+        },
+        onMedia(formData) {
+            if (formData) {
+                const file = formData.get('media')
+                let elem = { filename: file.name, type: file.type, url: formData.get('url') }
+                console.log('onMedia', elem)
+                // this.form.media.push(elem)
+                this.media.push(elem)
+            }
+        },
         update() {
-            if (this.user) {
-                this.form.user_id = this.user.uid 
+            if (this.user_id) {
+                this.form.user_id = this.user_id 
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -169,7 +169,8 @@ export default {
             }
         },
         fetchData() {
-            if (this.user && this.edu_id) {
+            if (this.edu_id) {
+                console.log('edu get object', this.edu_id)
                 // get object
                 db.collection('education').doc(this.edu_id)
                 .get()
@@ -180,40 +181,51 @@ export default {
                         this.from.year = getYear(this.form.from)
                         this.to.month = getMonth(this.form.to)
                         this.to.year = getYear(this.form.to)
+                        // this.media = this.form.media
+                        // this.links = this.form.links
                     }
                 })
                 .catch((error) => {
-                    console.error("WE Error fetching document: ", error);
+                    console.error("edu error fetching document: ", error);
                 });
-            }            
+            }
         }
     },
-    created() {
+    mounted() {
+        this.user = firebase.auth().currentUser
         this.form.cert_id  = this.cid
         this.edu_id = this.id
-        this.user = firebase.auth().currentUser
-
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = this.user.uid
+        }
+        if (this.school && this.cid) {
+            this.disableWrite = true
+        }
         this.fetchData()
+        console.log('edu mounted:', this.we_id)
     }
 }
 </script>
 
 <style>
 .g-title {
-    margin-top: 2em;
-    margin-bottom: 0em;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 a {
     color: rgb(0,161,181);
 }
-b-button {
-    margin-right: 2em;
-}
 .button-group {
     margin-top: 1.5em;
-    margin-bottom: 2em;
+    margin-bottom: 0em;
 }
 .button-span {
     margin-right: 1em;
 }
+.g-span {
+    margin-right: 1em;
+}
+
 </style>

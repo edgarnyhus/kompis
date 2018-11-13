@@ -44,10 +44,10 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <from-to @onFromTo="onFromTo" :from="from" :to="to"></from-to>
+            <from-to @onFromTo="onFromTo" :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg jobber her nå'"></from-to>
             
             <!-- <upload-file v-on:input="onMedia" :uid="User_id" :cid="form.cert_id"></upload-file> -->
-            <image-uploader v-on:input="onMedia" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
  
             <ul class="list-unstyled" style="margin-top: 1em">
                 <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
@@ -212,6 +212,28 @@ export default {
                 console.info('User not logged in???')
             }
             // this.$destroy()
+        },
+        fetchData() {
+            if (this.we_id) {
+                console.log('we get object', this.we_id)
+                // get object
+                db.collection('experience').doc(this.we_id)
+                .get()
+                .then ((docRef) => {
+                    if(docRef.exists) {
+                        this.form = docRef.data()
+                        this.from.month = getMonth(this.form.from)
+                        this.from.year = getYear(this.form.from)
+                        this.to.month = getMonth(this.form.to)
+                        this.to.year = getYear(this.form.to)
+                        this.media = this.form.media
+                        this.links = this.form.links
+                    }
+                })
+                .catch((error) => {
+                    console.error("we error fetching document: ", error);
+                });
+            }
         }
     },
     mounted() {
@@ -228,28 +250,9 @@ export default {
         if (this.form.employer && this.cid) {
             this.disableWrite = true
         }
-        console.log('we created:', this.we_id)
 
-        if (this.we_id) {
-            console.log('we get object', this.we_id)
-            // get object
-            db.collection('experience').doc(this.we_id)
-            .get()
-            .then ((docRef) => {
-                if(docRef.exists) {
-                    this.form = docRef.data()
-                    this.from.month = getMonth(this.form.from)
-                    this.from.year = getYear(this.form.from)
-                    this.to.month = getMonth(this.form.to)
-                    this.to.year = getYear(this.form.to)
-                    this.media = this.form.media
-                    this.links = this.form.links
-                }
-            })
-            .catch((error) => {
-                console.error("we error fetching document: ", error);
-            });
-        }
+        this.fetchData()
+        console.log('we created:', this.we_id)
     }
 }
 </script>
