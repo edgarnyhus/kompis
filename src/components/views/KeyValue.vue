@@ -1,27 +1,26 @@
 <template>
-    <div class="container">
-        <slot>
+    <div class="component" style="margin: 1em">
         <div>
-            <h4 class="page-title">Nøkkelkompetanse</h4>
+            <h4 class="g-title page-title">Nøkkelkompetanse</h4>
             <p style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
         </div>
 
-        <b-form @submit.prevent="addOrUpdate">
-            <b-form-group>
+        <b-form @submit.prevent="update">
+            <b-form-group class="g-group">
                 <div class="input-group mb-3">
-                    <div class="input-group-prepend">
+                    <!-- <div class="input-group-prepend">
                         <b-dropdown id="skill" text="Nøkkelkompetanse" class="mr-sm-2 mb-sm-0">
                             <b-dropdown-item-button @click="form.key_value = 'Pålitelig'">Pålitelig</b-dropdown-item-button>
                             <b-dropdown-item-button @click="form.key_value = 'Tar initiativ'">Tar initiativ</b-dropdown-item-button>
                             <b-dropdown-item-button @click="form.key_value = 'Loyal'">Loyal</b-dropdown-item-button>
                             <b-dropdown-item-button @click="form.key_value = 'Ansvarlig'">Ansvarlig</b-dropdown-item-button>
                         </b-dropdown>
-                    </div>
+                    </div> -->
                     <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.key_value" required>
                 </div>
             </b-form-group>
 
-            <b-form-group>
+            <b-form-group class="g-group">
                 <label for="description"><strong>Beskrivelse</strong> </label>
                 <b-form-textarea id="description"
                                 v-model="form.description"
@@ -31,14 +30,18 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <b-form-group>
-                <p><strong>Dokumentasjon</strong></p>
-                <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
-                <div class="button-group">
-                    <b-button class="button-span" variant="light">Last opp</b-button>
-                    <b-button variant="light">Lenke</b-button>
-                </div>
-            </b-form-group>
+            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+ 
+            <ul class="list-unstyled" style="margin-top: 1em">
+                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
+                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
+                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
+                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
+                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
+                    </b-form-textarea>
+                </b-media>
+            </ul>
 
             <b-form-group>
                 <p><strong>Bekreftelse</strong></p>
@@ -54,16 +57,22 @@
             </div>
 
         </b-form>
-        </slot>
     </div>
 </template>
 
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
+import ImageUploader from '@/components/common/ImageUploader'
+import FromTo from '@/components/common/FromTo'
 
 export default {
     name: 'KeyValue',
+    components: {
+        'from-to': FromTo,
+        'image-uploader': ImageUploader
+    },
+    props: ['uid', 'cid', 'id'],
     data() {
         return {
             values: [
@@ -80,28 +89,38 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
+            media: [],
+            links: [],
+            user_id: null,
+            cert_id: null,
             kv_id: null,
-            reason: 'updkey',
+            reason: 'onUpdatedKeyValue',
             user: null
         }
     },
-    props: ['cid', 'id'],
-    components: {
-
-    },
     methods: {
-        setKey(value) {
-            this.form.key_value = value
+        reset () {
+            Object.assign(this.$data, this.$options.data.call(this));
         },
         cancel() {
             this.$emit(this.reason, null)
         },
-        addOrUpdate() {
+        onMedia(formData) {
+            if (formData) {
+                const file = formData.get('media')
+                let elem = { filename: file.name, type: file.type, url: formData.get('url') }
+                console.log('onMedia', elem)
+                // this.form.media.push(elem)
+                this.media.push(elem)
+            }
+        },
+        update() {
             if (this.user) {
                 this.form.user_id = this.user.uid 
+                this.form.cert_id = this.cert_id
                 this.form.timestamp = Date.now()
                 if (this.kv_id) {
-                    db.collection('key_values').doc(this.kv_id).set(
+                    db.collection('keyvalues').doc(this.kv_id).set(
                         this.form, { merge: true })
                         .then (doc => {
                             conssole.log('Key value updated')
@@ -111,7 +130,7 @@ export default {
                         console.log('Firestore error: ', err)
                     })
                 } else {
-                    db.collection('key_values').add(
+                    db.collection('keyvalues').add(
                         this.form)
                     .then (doc => {
                         conssole.log('Key value added')
@@ -128,9 +147,9 @@ export default {
             }
         },
         fetchData() {
-            if (this.user && this.kv_id) {
+            if (this.kv_id) {
                 // get object
-                db.collection('key_values').doc(this.kv_id)
+                db.collection('keyvalues').doc(this.kv_id)
                 .get()
                 .then ((docRef) => {
                     if(docRef.exists) {
@@ -144,16 +163,30 @@ export default {
         }
 
     },
-    created() {
+    mounted() {
+        this.reset()
         this.user = firebase.auth().currentUser
-        this.form.cert_id  = this.cid
+        this.cert_id  = this.cid
         this.kv_id = this.id
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = this.user.uid
+        }
+
         this.fetchData()
     }
 }
 </script>
 
 <style>
+.g-title {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.g-group {
+    margin-top: 0;
+} 
 a {
     color: rgb(0,161,181);
 }

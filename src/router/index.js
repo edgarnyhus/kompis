@@ -23,7 +23,7 @@ const router = new Router({
     base: process.env.BASE_URL,
     routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login
     },
@@ -33,7 +33,7 @@ const router = new Router({
       component: Signup
     },
     {
-      path: '/home',
+      path: '/',
       name: 'MyCV',
       component: MyCV,
       meta: {
@@ -130,6 +130,7 @@ const router = new Router({
     }
   ]
 })
+router.replace({ path: '*', redirect: '/' })
 
 // router guards
 router.beforeEach((to, from, next) => {

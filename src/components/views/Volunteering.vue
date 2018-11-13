@@ -1,6 +1,5 @@
 <template>
-    <div class="container">
-        <slot>
+    <div class="component" style="margin: 1em">
         <div>
             <h4 class="g-title">Frivillig arbeid</h4>
             <p style="font-style: italic">Hvilke frivillig verv har du tatt på deg?</p>
@@ -25,31 +24,7 @@
                 <b-input class="mb-2 mr-sm-2 mb-sm-0" id="role" placeholder="" v-model="form.role" />
             </b-form-group>
 
-            <b-form-group>
-                <div class="g-m2 form-row">
-                    <b-form-group class="col-md-3">
-                        <label for="fromMonth"><strong>Fra</strong></label>
-                        <b-form-select id="fromMonth" class="mb-3" :options="months" v-model="from.month" required />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="fromYear" style="color: white">(år) </label>
-                        <b-form-input id="fromYear" type="number" placeholder="Fra hvilket år?" v-model="from.year" required />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="toMonth"><strong>Til</strong></label>
-                        <b-form-select class="mb-3" :options="months" v-model="to.month" />
-                    </b-form-group>
-                    <b-form-group class="col-md-3">
-                        <label for="toYear" style="color: white">(år) </label>
-                        <b-form-input  type="number" id="toYear" placeholder="Til hvilket år?" v-model="to.year" />
-                    </b-form-group>
-                </div>
-            </b-form-group>
-
-            <b-form-group class="">
-                <b-form-checkbox v-model="form.ongoing">Jeg har det vervet nå</b-form-checkbox>
-            </b-form-group>
-
+            
             <b-form-group class="g-group">
                 <label for="description"><strong>Beskrivelse</strong> </label>
                 <b-form-textarea id="description"
@@ -60,14 +35,20 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <b-form-group>
-                <p><strong>Dokumentasjon</strong></p>
-                <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
-                <div class="button-group">
-                    <b-button class="button-span" variant="lght">Last opp</b-button>
-                    <b-button variant="lght">Lenke</b-button>
-                </div>
-            </b-form-group>
+            <from-to @onFromTo="onFromTo" :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg har det vervet nå'"></from-to>
+
+            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+ 
+            <ul class="list-unstyled" style="margin-top: 1em">
+                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
+                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
+                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
+                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
+                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
+                    </b-form-textarea>
+                </b-media>
+              </ul>
 
             <div class="button-group">
                 <b-button class="button-span" type="submit" variant="info">Lagre</b-button>
@@ -75,7 +56,6 @@
             </div>
 
         </b-form>
-        </slot>
     </div>
 </template>
 
@@ -85,23 +65,12 @@ import db from '@/firebase/init'
 
 export default {
     name: 'Volunteering',
+    components: {
+
+    },
+    props: ['uid', 'cid', 'id'],
     data() {
         return {
-            months: [
-                { value: null, text: 'Velg en måned' },
-                { value: '01', text: 'januar' },
-                { value: '02', text: 'februar' },
-                { value: '03', text: 'mars' },
-                { value: '04', text: 'april' },
-                { value: '05', text: 'mai' },
-                { value: '06', text: 'juni' },
-                { value: '07', text: 'juli' },
-                { value: '08', text: 'august' },
-                { value: '09', text: 'september' },
-                { value: '10', text: 'oktober' },
-                { value: '11', text: 'november' },
-                { value: '12', text: 'desember' }
-            ],
             form: {
                 org: null,
                 location: null,
@@ -114,6 +83,8 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
+            media: [],
+            links: [],
             from: {
                 month: null,
                 year: null
@@ -124,22 +95,22 @@ export default {
             },
             user: null,
             v_id: null,
-            reason: 'updvol'
+            reason: 'onUpdatedVolunteering'
         }
 
     },
-    props: ['cid', 'id'],
-    components: {
-
-    },
     methods: {
+        reset () {
+            Object.assign(this.$data, this.$options.data.call(this));
+        },
         cancel() {
             console.log("cancel")
             this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
-                this.form.user_id = this.user.uid 
+                this.form.user_id = this.user_id 
+                this.form.cert_id = this.cert_id 
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -176,7 +147,7 @@ export default {
             }
         },
         fetchData() {
-            if (this.user && this.v_id) {
+            if (this.v_id) {
                 // get object
                 db.collection('volunteering').doc(this.v_id)
                 .get()
@@ -195,19 +166,26 @@ export default {
             }
         }
     },
-    created() {
+    mounted() {
+        this.reset()
         this.user = firebase.auth().currentUser
-        this.form.cert_id  = this.cid
+        this.cert_id  = this.cid
         this.v_id = this.id
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = this.user.uid
+        }
         this.fetchData()
+        console.log('vol mounted:', this.v_id)
     }
 }
 </script>
 
 <style>
 .g-title {
-    margin-top: 2em;
-    margin-bottom: 0em;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 a {
     color: rgb(0,161,181);

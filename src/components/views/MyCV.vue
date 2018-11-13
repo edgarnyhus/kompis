@@ -5,6 +5,7 @@
         <div class="container">
             <h1 class="g-title">Min CV</h1>
             
+            <!-- ARBEIDSERFARING -->
             <b-card no-body class="accordion mb-1">
                 <b-card-header header-tag="header" role="tab">
                     <b-btn class="" style="text-align: left" block href="#" v-b-toggle.accordion1 variant="light">Arbeidserfaring
@@ -15,16 +16,16 @@
                 </b-card-header>
 
                 <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
-                    <!-- <component v-on:updtraining="onUpdatedTraining" :uid="user_id" :id="id" :is="selectedComponent"></component> -->
-                    <work-experience v-on:updtraining="onUpdatedTraining" :uid="user_id" :cid="cert_id" :id="id"></work-experience>
+                    <!-- <component v-on:updtraining="onUpdatedExperience" :uid="user_id" :id="id" :is="selectedComponent"></component> -->
+                    <work-experience v-on:onUpdatedExperience="onUpdatedExperience" :uid="user_id" :cid="cert_id" :id="id"></work-experience>
                 </b-collapse>
 
                 <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
-                    <!-- present a card for each job training/experience -->
-                    <work-experience-list v-on:edittraining="editTraining" :experience="experience" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
+                    <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
                 </b-collapse>
             </b-card>
             
+            <!-- UTDANNING OG KURS -->
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion2 role="tab">
                     <h5 class="b-card-title">Utdanning og kurs
@@ -34,14 +35,15 @@
                 </b-card-header>
 
                 <b-collapse id="accordion2" v-if="selectedComponent == 'Education'" accordion="my-accordion" role="tabpanel">
-                    <education v-on:updeducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="id"></education>
+                    <education v-on:onUpdatedEducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="id"></education>
                 </b-collapse>
 
                 <b-collapse id="accordion2" v-else accordion="my-accordion" role="tabpanel">
-                    <education-list v-on:editeducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="id"></education-list>
+                    <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="id"></education-list>
                 </b-collapse>
             </b-card>
 
+            <!-- NØKKELKOMPETANSE -->
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion3 role="tab">
                     <h5 class="b-card-title">Nøkkelkompetanse
@@ -51,25 +53,15 @@
                 </b-card-header>
 
                 <b-collapse id="accordion3" v-if="selectedComponent == 'KeyValue'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updkey="onUpdatedKeyValue" :cid="cid" :id="id" :is="selectedComponent"></component>
+                    <key-value v-on:onUpdatedKeyValue="onUpdatedKeyValue" :uid="user_id" :cid="cert_id" :id="id" :is="selectedComponent"></key-value>
                 </b-collapse>
 
                 <b-collapse id="accordion3" v-else accordion="my-accordion" role="tabpanel">
-                    <!-- present a card for each ekey competence -->
-                    <b-card-group v-for="elem in key_values" :key="elem.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-subtitle text-muted">{{ elem.key_value }}
-                                    <b-link class="btn-floating float-right btn-sm" @click="updateKeyValue(elem)">Endre</b-link>
-                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeKeyValue(elem)">Slett</b-link>
-                                </h5>
-                                <p class="card-text">{{elem.description}}</p>
-                            </div>
-                        </div>
-                    </b-card-group>
+                    <key-value-list v-on:editKeyValue="editKeyValue" :keyvalues="keyvalues" :uid="user_id" :cid="cert_id" :id="id"></key-value-list>
                 </b-collapse>
             </b-card>
 
+            <!-- PRAKTISKE FERDIGHETER -->
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion4 role="tab">
                     <h5 class="b-card-title">Praktiske ferdigheter
@@ -79,25 +71,15 @@
                 </b-card-header>
 
                 <b-collapse id="accordion4" v-if="selectedComponent == 'PracticalSkill'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updskill="onUpdatedSkill" :cid="cid" :id="id" :is="selectedComponent"></component>
+                    <practical-skill v-on:onUpdatedSkill="onUpdatedSkill" :cid="cid" :id="id" :is="selectedComponent"></practical-skill>
                 </b-collapse>
 
                 <b-collapse id="accordion4" v-else accordion="my-accordion" role="tabpanel">
-                    <!-- present a card for each practical skill -->
-                    <b-card-group v-for="elem in skills" :key="elem.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-subtitle text-muted">{{ elem.skill }}
-                                    <b-link class="btn-floating float-right btn-sm" @click="updateSkill(elem)">Endre</b-link>
-                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeSkill(elem)">Slett</b-link>
-                                </h5>
-                                <p class="card-text">{{elem.description}}</p>
-                            </div>
-                        </div>
-                    </b-card-group>
+                    <practical-skill-list v-on:editExperience="editExperience" :skills="skills" :uid="user_id" :cid="cert_id" :id="id"></practical-skill-list>
                 </b-collapse>
             </b-card>
 
+            <!-- FRIVILLIG ARBEID OG VERV -->
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion5 role="tab">
                     <h5 class="b-card-title">Frivillig arbeid og verv
@@ -107,28 +89,15 @@
                 </b-card-header>
 
                 <b-collapse id="accordion5" v-if="selectedComponent == 'Volunteering'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updvol="onUpdatedVolunteering" :cid="cid" :id="id" :is="selectedComponent"></component>
+                    <volunteering v-on:onUpdatedVolunteering="onUpdatedVolunteering" :cid="cid" :id="id" :is="selectedComponent"></volunteering>
                 </b-collapse>
 
                 <b-collapse id="accordion5" v-else accordion="my-accordion" role="tabpanel">
-                    <!-- present a card for each  -->
-                    <b-card-group v-for="elem in volunteering" :key="elem.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">{{ elem.org }}
-                                    <b-link class="btn-floating float-right btn-sm"  @click="updateVolunteering(elem)">Endre</b-link>
-                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeVolunteering(elem)">Slett</b-link>
-                                </h6>
-                                <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
-                                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
-                                    {{elem.location}}</P>
-                                <p class="card-text">{{elem.description}}</p>
-                            </div>
-                        </div>
-                    </b-card-group>
+                    <volunteering-list v-on:editExperience="editExperience" :volunteering="volunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering-list>
                 </b-collapse>
             </b-card>
 
+            <!-- SPRÅK -->
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion6 role="tab">
                     <h5 class="b-card-title">Språk
@@ -138,26 +107,15 @@
                 </b-card-header>
 
                 <b-collapse id="accordion6" v-if="selectedComponent == 'Language'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updlang="onUpdatedLanguage" :cid="cid" :id="id" :is="selectedComponent"></component>
+                    <language v-on:onUpdatedLanguage="onUpdatedLanguage" :uid="user_id" :cid="cert_id" :id="id"></language>
                 </b-collapse>
 
                 <b-collapse id="accordion6" v-else accordion="my-accordion" role="tabpanel">
-                    <!-- present a card for each language -->
-                    <b-card-group v-for="elem in languages" :key="elem.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ elem.language }}
-                                    <b-link class="btn-floating float-right btn-sm" @click="updateLanguage(elem)">Endre</b-link>
-                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeLanguage(elem)">Slett</b-link>
-                                </h5>
-                                <h6 class="card-subtitle text-muted">{{ elem.proficiency }}</h6>
-                                <p class="card-text">{{elem.description}}</p>
-                            </div>
-                        </div>
-                    </b-card-group>
+                    <language-list v-on:editLanguage="editLanguage" :languages="languages" :uid="user_id" :cid="cert_id" :id="id"></language-list>
                 </b-collapse>
             </b-card>
 
+            <!-- REFERANSER -->
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" v-b-toggle.accordion7 role="tab">
                     <h5 class="b-card-title">Referanser
@@ -167,23 +125,11 @@
                 </b-card-header>
 
                 <b-collapse id="accordion7" v-if="selectedComponent == 'Reference'" accordion="my-accordion" role="tabpanel">
-                    <component v-on:updref="onUpdatedReference" :cid="cid" :id="id" :is="selectedComponent"></component>
+                    <reference v-on:onUpdatedReference="onUpdatedReference" :cid="cid" :id="id" :is="selectedComponent"></reference>
                 </b-collapse>
 
                 <b-collapse id="accordion7" v-else accordion="my-accordion" role="tabpanel">
-                    <!-- present a card for each reference -->
-                    <b-card-group v-for="elem in references" :key="elem.id">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">{{ elem.person }}
-                                    <b-link class="btn-floating float-right btn-sm" @click="updateReference(elem)">Endre</b-link>
-                                    <b-link class="button-span btn-floating float-right btn-sm" @click="removeReference(elem)">Slett</b-link>
-                                </h5>
-                                <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
-                                <p class="card-text">{{elem.description}}</p>
-                            </div>
-                        </div>
-                    </b-card-group>
+                    <reference-list v-on:editExperience="editExperience" :references="references" :uid="user_id" :cid="cert_id" :id="id"></reference-list>
                 </b-collapse>
             </b-card>
         </div>
@@ -204,22 +150,31 @@ import Language from '@/components/views/Language'
 import Reference from '@/components/views/Reference'
 import WorkExperienceList from './WorkExperienceList'
 import EducationList from './EducationList'
+import KeyValueList from './KeyValueList'
+import PracticalSkillList from './PracticalSkillList'
+import LanguageList from './LanguageList'
+import ReferenceList from './ReferenceList'
+import VolunteeringList from './VolunteeringList'
 
 
 export default {
     name: 'MyCV',
     components: {
         SubNavbar,
-        'work-experience': WorkExperience,
-        'work-experience-list': WorkExperienceList,
-        'education': Education,
-        'education-list': EducationList,
+        WorkExperience,
+        WorkExperienceList,
+        Education,
+        EducationList,
         KeyValue,
+        KeyValueList,
         PracticalSkill,
+        PracticalSkillList,
         Volunteering,
+        VolunteeringList,
         Language,
+        LanguageList,
         Reference,
-
+        ReferenceList
     },
     props: ['uid'],
     data () {
@@ -236,7 +191,7 @@ export default {
             profile: null,
             experience: [],
             education: [],
-            key_values: [],
+            keyvalues: [],
             skills: [],
             volunteering: [],
             languages: [],
@@ -255,19 +210,19 @@ export default {
 
     },
     methods: {
-        editTraining(id) {
+        editExperience(id) {
             console.log('edit event from child, ID=', id)
             if (id) {
                 this.id = id
                 this.selectedComponent = 'WorkExperience'
             }
         },
-        onUpdatedTraining(id) {
+        onUpdatedExperience(id) {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             this.selectedComponent = null
             if (id) {
-                this.fetchTraining()
+                this.fetchExperience()
             }
         },
         editEducation(elem) {
@@ -282,22 +237,7 @@ export default {
                 this.fetchEducation()
             }
         },
-        removeKeyValue(elem) {
-            db.collection('key_values').doc(elem.id).delete()
-            .then(() => {
-                console.log("pc document successfully deleted!");
-                if (elem) {
-                    let ix = this.key_values.findIndex(e => e.id === elem.id)
-                    if (~ix) {
-                        this.key_values.splice(ix, 1)
-                    }
-                }
-            }).catch(error => {
-                console.error("pc error removing key value: ", error);
-            })
-        },
-        updateKeyValue(elem) {
-            console.log('updateKeyValue')
+        editKeyValue(elem) {
             this.id = elem.id
             this.selectedComponent = 'KeyValue'            
         },
@@ -309,20 +249,7 @@ export default {
                 this.fetchKeyValues()
             }
         },
-        removeSkill(elem) {
-            db.collection('skills').doc(elem.id).delete()
-            .then(() => {
-                if (elem) {
-                    let ix = this.skills.findIndex(e => e.id === elem.id)
-                    if (~ix) {
-                        this.skills.splice(ix, 1)
-                    }
-                }
-            }).catch(error => {
-                console.error("pc error removing skill,", error);
-            })
-        },
-        updateSkill(elem) {
+        editSkill(elem) {
             this.id = elem.id
             this.selectedComponent = 'PracticalSkill'            
         },
@@ -334,21 +261,7 @@ export default {
                 this.fetchSkills()
             }
         },
-        removeVolunteering(elem) {
-            db.collection('volunteering').doc(elem.id).delete()
-            .then(() => {
-                console.log("PC Document successfully deleted!");
-                if (elem) {
-                    let ix = this.volunteering.findIndex(e => e.id === elem.id)
-                    if (~ix) {
-                        this.volunteering.splice(ix, 1)
-                    }
-                }
-            }).catch(error => {
-                console.error("pc error removing praksissted: ", error);
-            })
-        },
-        updateVolunteering(elem) {
+        editVolunteering(elem) {
             this.id = elem.id
             this.selectedComponent = 'Volunteering'            
         },
@@ -360,21 +273,7 @@ export default {
                 this.fetchVolunteering()
             }
         },
-        removeLanguage(elem) {
-            db.collection('languages').doc(elem.id).delete()
-            .then(() => {
-                console.log("pc document successfully deleted!");
-                if (elem) {
-                    let ix = this.languages.findIndex(e => e.id === elem.id)
-                    if (~ix) {
-                        this.skills.splice(ix, 1)
-                    }
-                }
-            }).catch(error => {
-                console.error("pc error removing skill,", error);
-            })
-        },
-        updateLanguage(elem) {
+        editLanguage(elem) {
             this.id = elem.id
             this.selectedComponent = 'Language'            
         },
@@ -385,23 +284,9 @@ export default {
                 this.fetchLanguages()
             }
         },
-        removeReference(elem) {
-            db.collection('references').doc(elem.id).delete()
-            .then(() => {
-                console.log("PC Document successfully deleted!");
-                // this.fetchTraining()
-                if (elem) {
-                    let ix = this.references.findIndex(e => e.id === elem.id)
-                    if (~ix) {
-                        this.skills.splice(ix, 1)
-                    }
-                }
-            }).catch(error => {
-                console.error("pc error removing skill,", error);
-            })
-        },
-        updateReference(elem) {
-            this.id = elem.id; this.selectedComponent = 'Reference'            
+        editReference(elem) {
+            this.id = elem.id
+            this.selectedComponent = 'Reference'            
         },
         onUpdatedReference(id) {
             // child component (slot) signaled finished
@@ -411,7 +296,7 @@ export default {
             }
         },
     
-        fetchTraining() {
+        fetchExperience() {
             if (this.user_id) {
                 db.collection('experience').where('user_id', '==',this.user_id)
                 .get()
@@ -449,13 +334,13 @@ export default {
         },
         fetchKeyValues() {
             if (this.user_id) {
-                db.collection('key_values').where('user_id', '==',this.user_id)
+                db.collection('keyvalues').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        this.key_values.push(elem)
+                        this.keyvalues.push(elem)
                     })
                 })
                 .catch(err => {
@@ -550,7 +435,7 @@ export default {
             })
 
             // fetch work experience/training
-            this.fetchTraining()
+            this.fetchExperience()
 
             // fetch key values
             this.fetchEducation()

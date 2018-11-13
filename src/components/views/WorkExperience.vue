@@ -1,6 +1,5 @@
 <template>
     <div class="component" style="margin: 1em">
-        <!-- <slot> -->
         <div v-if="this.show == 'training'">
             <h4  class="g-title">Praksissted</h4>
             <p style="font-style: italic">Hvor har du vært i praksis?</p>
@@ -45,8 +44,6 @@
             </b-form-group>
             
             <from-to @onFromTo="onFromTo" :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg jobber her nå'"></from-to>
-            
-            <!-- <upload-file v-on:input="onMedia" :uid="User_id" :cid="form.cert_id"></upload-file> -->
             <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
  
             <ul class="list-unstyled" style="margin-top: 1em">
@@ -57,7 +54,6 @@
                     <p style="margin-bottom: 5px">{{ item.filename }}</p>
                     <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
                     </b-form-textarea>
-
                 </b-media>
               </ul>
 
@@ -71,7 +67,6 @@
         <b-modal  class="g-modal" ref="showmodal" size="lg" hide-footer title="Kompis">
             <embed v-if="file" :src="file.url" frameborder="0" width="100%" height="900px">        
         </b-modal>
-        <!-- </slot> -->
     </div>
 </template>
 
@@ -111,11 +106,6 @@ export default {
                 timestamp: null,
                 user_id: null,
                 cert_id: null,
-                links: [],
-                // media: [{data: null, url: null}],
-                // media: [{url: null}],
-                // media: [{ filename: null, type: null, url: null, description: null }]
-                media: []
             },
             from: {
                 month: null,
@@ -129,24 +119,17 @@ export default {
             links: [],
             user: null,
             user_id: null,
+            cert_id: null,
             we_id: null,
             disableWrite: false,
             file: null,
-            reason: 'updtraining'
+            reason: 'onUpdatedWorkExperience'
         }
 
     },
     methods: {
         reset () {
             Object.assign(this.$data, this.$options.data.call(this));
-            // this.form.media = []
-            // this.form.links = []
-        },
-        onFromTo(from, to, ongoing) {
-            console.log('onFromTo', this.from, this.to)
-            // this.from = from
-            // this.to = to
-            // this.form.ongoing = ongoing
         },
         onMedia(formData) {
             if (formData) {
@@ -175,6 +158,7 @@ export default {
         update() {
             if (this.user_id) {
                 this.form.user_id = this.user_id 
+                this.form.cert_id = this.cert_id 
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -239,16 +223,12 @@ export default {
     mounted() {
         this.reset()
         this.user = firebase.auth().currentUser
-        this.form.employer  = this.employer
-        this.form.cert_id  = this.cid
+        this.cert_id  = this.cid
         this.we_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
-        }
-        if (this.form.employer && this.cid) {
-            this.disableWrite = true
         }
 
         this.fetchData()
@@ -258,6 +238,10 @@ export default {
 </script>
 
 <style scoped>
+.g-title {
+    margin-top: 0;
+    margin-bottom: 0;
+}
 a {
     color: rgb(0,161,181);
 }

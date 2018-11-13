@@ -106,6 +106,7 @@ export default {
             },
             user: null,
             user_id: null,
+            cert_id: null,
             edu_id: null,
             disableWrite: false,
             reason: 'updeducation'
@@ -192,6 +193,7 @@ export default {
         }
     },
     mounted() {
+        this.reset()
         this.user = firebase.auth().currentUser
         this.form.cert_id  = this.cid
         this.edu_id = this.id
@@ -199,9 +201,6 @@ export default {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
-        }
-        if (this.school && this.cid) {
-            this.disableWrite = true
         }
         this.fetchData()
         console.log('edu mounted:', this.we_id)

@@ -1,6 +1,5 @@
 <template>
-    <div class="container">
-        <slot>
+    <div class="component">
         <div>
             <h4 class="g-title">Språk</h4>
             <p style="font-style: italic">Hvilke språk kan du snakke?</p>
@@ -27,14 +26,18 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <b-form-group>
-                <p><strong>Dokumentasjon</strong></p>
-                <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
-                <div class="button-group">
-                    <b-button class="button-span" variant="light">Last opp</b-button>
-                    <b-button variant="light">Lenke</b-button>
-                </div>
-            </b-form-group>
+            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+ 
+            <ul class="list-unstyled" style="margin-top: 1em">
+                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
+                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
+                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
+                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
+                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
+                    </b-form-textarea>
+                </b-media>
+            </ul>
 
             <div class="button-group">
                 <b-button class="button-span" type="submit" variant="info">Lagre</b-button>
@@ -42,7 +45,6 @@
             </div>
 
         </b-form>
-        </slot>
     </div>
 </template>
 
@@ -52,11 +54,14 @@ import db from '@/firebase/init'
 
 export default {
     name: 'Education',
+    components: {
+
+    },
+    props: ['cid', 'id'],
     data() {
         return {
             proficiency: [
                 { value: null, text: 'Velg ferdighetsnivå' },
-                { value: 'Elemetær', text: 'Elemetær' },
                 { value: 'Begrenset', text: 'Begrenset' },
                 { value: 'Profesjonelt', text: 'Profesjonelt' },
                 { value: 'Innfødt og tospråklig', text: 'Innfødt og tospråklig' }
@@ -73,10 +78,6 @@ export default {
             l_id: null,
             reason: 'updlang'
         }
-
-    },
-    props: ['cid', 'id'],
-    components: {
 
     },
     methods: {

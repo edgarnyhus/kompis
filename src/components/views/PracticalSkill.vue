@@ -1,6 +1,5 @@
 <template>
-    <div class="container">
-        <slot>
+    <div class="component" style="margin: 1em">
         <div>
             <h4 class="page-title">Praktisk ferdighet</h4>
             <p style="font-style: italic">Hva er dine praktiske evner? Noe du har lært på skole eller i jobb?</p>
@@ -32,14 +31,18 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <b-form-group>
-                <p><strong>Dokumentasjon</strong></p>
-                <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
-                <div class="button-group">
-                    <b-button class="button-span" variant="light">Last opp</b-button>
-                    <b-button variant="light">Lenke</b-button>
-                </div>
-            </b-form-group>
+            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+ 
+            <ul class="list-unstyled" style="margin-top: 1em">
+                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
+                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
+                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
+                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
+                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
+                    </b-form-textarea>
+                </b-media>
+              </ul>
 
             <b-form-group>
                 <p><strong>Bekreftelse</strong></p>
@@ -55,7 +58,6 @@
             </div>
 
         </b-form>
-        </slot>
     </div>
 </template>
 
@@ -65,6 +67,10 @@ import db from '@/firebase/init'
 
 export default {
     name: 'PracticalSkill',
+    components: {
+
+    },
+    props: ['uid', 'cid', 'id'],
     data() {
         return {
             skills: [
@@ -86,11 +92,10 @@ export default {
         }
 
     },
-    props: ['cid', 'id'],
-    components: {
-
-    },
     methods: {
+        reset () {
+            Object.assign(this.$data, this.$options.data.call(this));
+        },
         setSkill(value) {
             this.form.skill = value
         },
@@ -98,8 +103,9 @@ export default {
             this.$emit(this.reason, null)
         },
         update() {
-            if (this.user) {
-                this.form.user_id = this.user.uid 
+            if (this.user_id) {
+                this.form.user_id = this.user_id 
+                this.form.cert_id = this.cert_ud 
                 this.form.timestamp = Date.now()
                 if (this.ps_id) {
                     db.collection('skills').doc(this.ps_id).set(
@@ -129,7 +135,7 @@ export default {
             }
         },
         fetchData() {
-            if (this.user && this.ps_id) {
+            if (this.ps_id) {
                 // get object
                 db.collection('skills').doc(this.ps_id)
                 .get()
@@ -144,16 +150,28 @@ export default {
             }
         }            
     },
-    created() {
+    mounted() {
+        this.reset()
         this.user = firebase.auth().currentUser
-        this.form.cert_id  = this.cid
+        this.cert_id  = this.cid
         this.ps_id = this.id
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = this.user.uid
+        }
+
         this.fetchData()
+        console.log('created:', this.ps_id)
     }
 }
 </script>
 
 <style>
+.g-title {
+    margin-top: 0;
+    margin-bottom: 0;
+}
 a {
     color: rgb(0,161,181);
 

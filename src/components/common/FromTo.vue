@@ -49,26 +49,12 @@ export default {
                 { value: '12', text: 'desember' }
             ],
             years: [],
-            // form: {
-            //     from: {
-            //         month: null,
-            //         year: null
-            //     },
-            //     to: {
-            //         month: null,
-            //         year: null
-            //     },
-            //     ongoing: false
-            // },
-            reason: 'onFromTo',
             show: true
-
         }
     },
     methods: {
         changed() {
             console.log('changed', this.from, this.to)
-            this.$emit(this.reason, this.from, this.to, this.ongoing)
         }
     },
     created() {
