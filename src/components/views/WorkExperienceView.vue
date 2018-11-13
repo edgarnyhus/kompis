@@ -2,7 +2,7 @@
     <div>
         <slot>
         <!-- present a card for each job training/experience -->
-        <b-card-group v-for="elem in training" :key="elem.id">
+        <b-card-group v-for="elem in experience" :key="elem.id">
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title">{{ elem.employer }}
@@ -35,7 +35,7 @@ export default {
     name: 'WorkExperienceView',
     data() {
         return {
-            training: [],
+            experience: [],
             user: null,
             cert_id: null,
             wid: null
@@ -48,17 +48,17 @@ export default {
             this.$emit(this.reason, null)
         },
         removeTraining(elem) {
-            db.collection('training').doc(elem.id).delete()
+            db.collection('experience').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                console.log("pc document successfully deleted!");
                 if (elem) {
-                    let ix = this.training.findIndex(e => e.id === elem.id)
+                    let ix = this.experience.findIndex(e => e.id === elem.id)
                     if (~ix) {
-                        this.training.splice(ix, 1)
+                        this.experience.splice(ix, 1)
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing praksissted: ", error);
+                console.error("pc error removing praksissted: ", error);
             })
         },
         updateTraining(elem) {
@@ -75,7 +75,7 @@ export default {
         fetchData() {
             if (this.user && this.wid) {
                 // get object
-                db.collection('training').doc(this.wid)
+                db.collection('experience').doc(this.wid)
                 .get()
                 .then ((docRef) => {
                     if(docRef.exists) {

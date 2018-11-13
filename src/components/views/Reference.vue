@@ -105,7 +105,6 @@ export default {
                         console.log('Firestore error: ', err)
                     })
                 } else {
-                    // db.collection('training').add(
                     db.collection('references').add(
                         this.form)
                     .then (doc => {

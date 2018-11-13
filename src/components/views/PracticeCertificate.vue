@@ -197,7 +197,7 @@ export default {
             oldName: null,
             user: null,
             profile: null,
-            training: [],
+            experience: [],
             key_values: [],
             skills: [],
             references: [],
@@ -223,14 +223,14 @@ export default {
             this.$router.back()
         },
         removeTraining(elem) {
-            db.collection('training').doc(elem.id).delete()
+            db.collection('experience').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
                 // this.fetchTraining()
                 if (elem) {
-                    let ix = this.training.findIndex(e => e.id === elem.id)
+                    let ix = this.experience.findIndex(e => e.id === elem.id)
                     if (~ix) {
-                        this.training.splice(ix, 1)
+                        this.experience.splice(ix, 1)
                     }
                 }
             }).catch(error => {
@@ -278,7 +278,6 @@ export default {
             db.collection('skills').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
-                // this.fetchTraining()
                 if (elem) {
                     let ix = this.skills.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -304,11 +303,10 @@ export default {
             db.collection('references').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
-                // this.fetchTraining()
                 if (elem) {
                     let ix = this.references.findIndex(e => e.id === elem.id)
                     if (~ix) {
-                        this.skills.splice(ix, 1)
+                        this.references.splice(ix, 1)
                     }
                 }
             }).catch(error => {
@@ -327,10 +325,10 @@ export default {
             }
         },
         removeColl(elem) {
-            console.log("PC removeColl", elem.id);
+            console.log("pc removeColl", elem.id);
             db.collection(coll).doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                console.log("pc document successfully deleted!");
                 if (elem) {
                     let ix = coll.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -338,7 +336,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing key value: ", error);
+                console.error("pc error removing key value: ", error);
             })
         },
         clearName () {
@@ -364,7 +362,7 @@ export default {
             }
         },
         handleSubmit () {
-            console.log('PC handleSumit, cert_id=',  this.cert_id)
+            console.log('pc handleSumit, cert_id=',  this.cert_id)
             this.$refs.modal.hide()
             this.user = firebase.auth().currentUser
             if (this.user) {
@@ -410,15 +408,15 @@ export default {
         },
         fetchTraining() {
             if (this.user && this.cert_id) {
-                this.training.length = 0
-                db.collection('training').where('cert_id', '==',this.cert_id)
+                this.experience.length = 0
+                db.collection('experience').where('cert_id', '==',this.cert_id)
                 .where('user_id', '==',firebase.auth().currentUser.uid)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        this.training.push(elem)
+                        this.experience.push(elem)
                     })
                 })
                 .catch(err => {

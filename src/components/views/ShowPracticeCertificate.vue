@@ -30,7 +30,7 @@
             <div style="margin-bottom: 2em"></div>
             <b-card class="shadow-none text-muted" title="Arbeidserfaring">
                 <!-- present a card for each job experiences/experience -->
-                <div v-for="elem in training"  :key="elem.id">
+                <div v-for="elem in experience"  :key="elem.id">
                     <!-- <div class="card"> -->
                         <div class="card-body">
                             <h6 class="card-title">{{ elem.employer }}
@@ -128,7 +128,7 @@ export default {
             oldName: null,
             user: null,
             profile: null,
-            training: [],
+            experience: [],
             key_values: [],
             skills: [],
             references: [],
@@ -154,14 +154,14 @@ export default {
             this.$router.back()
         },
         removeTraining(elem) {
-            db.collection('training').doc(elem.id).delete()
+            db.collection('experience').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
                 // this.fetchTraining()
                 if (elem) {
-                    let ix = this.training.findIndex(e => e.id === elem.id)
+                    let ix = this.experience.findIndex(e => e.id === elem.id)
                     if (~ix) {
-                        this.training.splice(ix, 1)
+                        this.experience.splice(ix, 1)
                     }
                 }
             }).catch(error => {
@@ -209,7 +209,6 @@ export default {
             db.collection('skills').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
-                // this.fetchTraining()
                 if (elem) {
                     let ix = this.skills.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -235,7 +234,6 @@ export default {
             db.collection('references').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
-                // this.fetchTraining()
                 if (elem) {
                     let ix = this.references.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -341,15 +339,15 @@ export default {
         },
         fetchTraining() {
             if (this.user && this.cert_id) {
-                this.training.length = 0
-                db.collection('training').where('cert_id', '==',this.cert_id)
+                this.experience.length = 0
+                db.collection('experience').where('cert_id', '==',this.cert_id)
                 .where('user_id', '==',firebase.auth().currentUser.uid)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        this.training.push(elem)
+                        this.experience.push(elem)
                     })
                 })
                 .catch(err => {

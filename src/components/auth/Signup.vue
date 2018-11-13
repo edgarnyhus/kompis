@@ -2,24 +2,29 @@
     <div class="signup g-frame container">
         <b-card>
             <h3>Registrer deg</h3>
-            <b-form  @submit="signup">
+            <b-form  @submit.prevent="signup">
+                <b-form-group>
+                    <label for="alias">Velg et brukernavn</label>
+                    <b-form-input id="alias" type="text" @change="feedback = null" v-model="alias" required></b-form-input>
+                </b-form-group>
                 <b-form-group description="Vi vil aldri dele email adressen din med andre.">
-                    <b-form-input id="email" type="email" v-model="form.email" required></b-form-input>
+                    <label for="email">Din email-adresse</label>
+                    <b-form-input id="email" type="email"  @change="feedback = null" v-model="email" required></b-form-input>
                 </b-form-group>
                 <b-form-group>
                     <label for="password">Ditt passord</label>
-                    <b-form-input id="password"  type="password" v-model="form.password" required></b-form-input>
+                    <b-form-input id="password"  type="password" @change="feedback = null" v-model="password" required></b-form-input>
                 </b-form-group>
                 <b-form-group>
                     <label for="confirmPassword">Bekreft ditt passord</label>
-                    <b-form-input id="confirmPassword" type="password" v-model="form.confirmPassword" required></b-form-input>
+                    <b-form-input id="confirmPassword" type="password" @change="feedback = null" v-model="confirmPassword" required></b-form-input>
                 </b-form-group>
                 <div class="g-m2">
                     <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
-                    <b-link @click="login()" style="color: rgb(0,161,181)"><strong>Logg inn</strong></b-link>
+                    <router-link :to="{ name: 'Login' }" style="color: rgb(0,161,181)"><strong>Logg inn</strong></router-link>
                 </div>
 
-                <p v-if="feedback" style="margin/top> 1.5em color: red">{{ feedback }}</p>
+                <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
             </b-form>
         </b-card>
     </div>
@@ -27,51 +32,63 @@
 
 <script>
 import db from '@/firebase/init'
-// import slugify from 'slugify'
 import firebase from 'firebase'
+import slugify from 'slugify'
 
 export default {
     name: 'Signup',
     data() {
         return {
-            form: {
-                email: '',
-                password: '',
-                confirmPassword: ''
-            },
-            feedback: '',
-            show: true
+            alias: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            feedback: ''
         }
     },
     methods: {
         reset() {
-            console.log('reset..')
             this.feedback = null
         },
-        signup (evt) {
+        signup() {
             console.log('signup...')
-            if (!this.form.email || !this.form.password) {
-                this.feedback = 'Fyll ut alle feltene'
+
+            if (!this.alias || !this.email || !this.password) {
+                this.feedback = 'Vær vennlig og fyll ut alle feltene'
                 return
             }
-            if (this.form.password !== this.form.confirmPassword) {
+            if (this.password !== this.confirmPassword) {
                 this.feedback = "Passordene er ikke like. Prøv igjen."
                 return
             } 
             this.feedback = null
-            firebase.auth().createUserWithEmailAndPassword(this.form.email, this.form.password)
-            .then((user) => {
-                this.$router.push({ name: 'MyCV' })
+            this.slug = slugify(this.alias, { replacement: '-', remove: /[$*_+~.()'"!\-:@]/g, lower: true })
+            let ref = db.collection('users').doc(this.slug)
+            ref.get()
+            .then(doc => {
+                if (doc.exists) {
+                    this.feedback = 'Dette brukernavnet er allerede i bruk. Velg et annet.'
+                } else {
+                    firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+                    .then(cred => {
+                        return ref.set({
+                            alias: this.alias,
+                            user_id: cred.user.uid
+                        })
+                    }).then(() => {
+                        console.log('signup ok')
+                        this.$router.push({ name: 'MyCV' })
+                    })
+                    .catch(err => {
+                        this.feedback = err.message
+                    })
+                }
             })
             .catch(err => {
                 this.feedback = err.message
             })
-        },
-        login() {
-            this.$router.push({ name: 'Login' })
         }
     }
-
 }
 </script>
 

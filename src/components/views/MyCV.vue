@@ -21,7 +21,7 @@
 
                 <b-collapse id="accordion1" v-else accordion="my-accordion" role="tabpanel">
                     <!-- present a card for each job training/experience -->
-                    <work-experience-list v-on:edittraining="editTraining" :training="training" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
+                    <work-experience-list v-on:edittraining="editTraining" :experience="experience" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
                 </b-collapse>
             </b-card>
             
@@ -245,7 +245,7 @@ export default {
             },
             user: null,
             profile: null,
-            training: [],
+            experience: [],
             education: [],
             key_values: [],
             skills: [],
@@ -255,7 +255,8 @@ export default {
             selectedComponent: null,
             user_id: null,
             cert_id: null,
-            id: null
+            id: null,
+            show: ''
         }
     },
     filters: {
@@ -284,13 +285,13 @@ export default {
             db.collection('education').doc(elem.id).delete()
             .then(() => {
                 if (elem) {
-                    let ix = this.training.findIndex(e => e.id === elem.id)
+                    let ix = this.educaton.findIndex(e => e.id === elem.id)
                     if (~ix) {
-                        this.training.splice(ix, 1)
+                        this.education.splice(ix, 1)
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing praksissted: ", error);
+                console.error("pc error removing praksissted: ", error);
             })
         },
         updateEducation(elem) {
@@ -308,7 +309,7 @@ export default {
         removeKeyValue(elem) {
             db.collection('key_values').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                console.log("pc document successfully deleted!");
                 if (elem) {
                     let ix = this.key_values.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -316,7 +317,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing key value: ", error);
+                console.error("pc error removing key value: ", error);
             })
         },
         updateKeyValue(elem) {
@@ -342,7 +343,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing skill,", error);
+                console.error("pc error removing skill,", error);
             })
         },
         updateSkill(elem) {
@@ -364,11 +365,11 @@ export default {
                 if (elem) {
                     let ix = this.volunteering.findIndex(e => e.id === elem.id)
                     if (~ix) {
-                        this.training.splice(ix, 1)
+                        this.volunteering.splice(ix, 1)
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing praksissted: ", error);
+                console.error("pc error removing praksissted: ", error);
             })
         },
         updateVolunteering(elem) {
@@ -386,7 +387,7 @@ export default {
         removeLanguage(elem) {
             db.collection('languages').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                console.log("pc document successfully deleted!");
                 if (elem) {
                     let ix = this.languages.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -394,7 +395,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing skill,", error);
+                console.error("pc error removing skill,", error);
             })
         },
         updateLanguage(elem) {
@@ -420,7 +421,7 @@ export default {
                     }
                 }
             }).catch(error => {
-                console.error("PC Error removing skill,", error);
+                console.error("pc error removing skill,", error);
             })
         },
         updateReference(elem) {
@@ -436,17 +437,17 @@ export default {
     
         fetchTraining() {
             if (this.user_id) {
-                db.collection('training').where('user_id', '==',this.user_id)
+                db.collection('experience').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        this.training.push(elem)
+                        this.experience.push(elem)
                     })
                 })
                 .catch(err => {
-                    console.log('FMCetching training failed', err)
+                    console.log('mc fetching experience failed', err)
                 })
             }
         },
@@ -462,7 +463,7 @@ export default {
                     })
                 })
                 .catch(err => {
-                    console.log('MC Fetching education failed', err)
+                    console.log('mc fetching education failed', err)
                 })
             }
         },

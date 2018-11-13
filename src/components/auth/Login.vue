@@ -5,11 +5,11 @@
             <b-form @submit.prevent="login">
                 <b-form-group>
                     <label for="email">Email</label>
-                    <b-form-input id="email" type="email" v-model="form.email"></b-form-input>
+                    <b-form-input id="email" type="email" @change="feedback = ''" v-model="email"></b-form-input>
                 </b-form-group>
                 <b-form-group>
                     <label for="password">Password</label>
-                    <b-form-input id="password" type="password" v-model="form.password"></b-form-input>
+                    <b-form-input id="password" type="password" @change="feedback = ''" v-model="password"></b-form-input>
                 </b-form-group>
                 <div class="g-m2">
                     <b-button class="g-span" type="submit" variant="info">Logg inn</b-button>
@@ -31,10 +31,8 @@ export default {
     name: 'Login',
     data() {
         return {
-            form: {
-                email: '',
-                password: ''
-            },
+            email: '',
+            password: '',
             feedback: '',
             show: true
         }
@@ -44,20 +42,18 @@ export default {
             console.log('reset..')
             this.feedback = null
         },
-        login (evt) {
-            console.log('login...')
-            if(this.form.email && this.form.password){
+        login(){
+            if (this.email && this.password) {
                 this.feedback = null
-                firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password)
+                firebase.auth().signInWithEmailAndPassword(this.email, this.password)
                 .then(user => {
                     //console.log(user)
                     this.$router.push({ name: 'MyCV' })
                 }).catch(err => {
                     this.feedback = err.message
-                    alert(err.message)
                 })
             } else {
-                this.feedback = 'Vær så snill å fylle inn begge feltene'
+                this.feedback = 'Vær vennlig og fyll ut begge feltene'
             }
         },
         signup() {

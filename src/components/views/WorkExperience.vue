@@ -188,7 +188,7 @@ export default {
                 }
 
                 if (this.we_id) {
-                    db.collection("training").doc(this.we_id).set(this.form, {merge: true})
+                    db.collection("experience").doc(this.we_id).set(this.form, {merge: true})
                     .then((docRef) => {
                         console.log("Document updated with ID: ", this.we_id);
                         this.$emit(this.reason, this.we_id)
@@ -197,7 +197,7 @@ export default {
                         console.error("Error adding document: ", error);
                     });
                 } else {
-                    db.collection("training").add(this.form)
+                    db.collection("experience").add(this.form)
                     .then((docRef) => {
                         console.log("Document written with ID: ", docRef.id);
                         this.we_id = docRef.id
@@ -233,7 +233,7 @@ export default {
         if (this.we_id) {
             console.log('we get object', this.we_id)
             // get object
-            db.collection('training').doc(this.we_id)
+            db.collection('experience').doc(this.we_id)
             .get()
             .then ((docRef) => {
                 if(docRef.exists) {
@@ -247,7 +247,7 @@ export default {
                 }
             })
             .catch((error) => {
-                console.error("WE Error fetching document: ", error);
+                console.error("we error fetching document: ", error);
             });
         }
     }
