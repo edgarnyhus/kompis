@@ -14,6 +14,7 @@ import ShowPracticeCertificate from '@/components/views/ShowPracticeCertificate'
 import PersonalGoal from '@/components/views/PersonalGoal'
 import Signup from '@/components/auth/Signup'
 import Login from '@/components/auth/Login'
+import ShowMedia from '@/components/common/ShowMedia'
 import firebase from 'firebase'
 
 Vue.use(Router)
@@ -113,17 +114,25 @@ const router = new Router({
       }
     },
     {
-        path: '/certificate',
-        name: 'ShowPracticeCertificate',
-        component: ShowPracticeCertificate,
-        meta: {
-          requiresAuth: true
-        }
-      },
-      {
+      path: '/certview',
+      name: 'ShowPracticeCertificate',
+      component: ShowPracticeCertificate,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/goal',
       name: 'PersonalGoal',
       component: PersonalGoal,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/media',
+      name: 'ShowMedia',
+      component: ShowMedia,
       meta: {
         requiresAuth: true
       }

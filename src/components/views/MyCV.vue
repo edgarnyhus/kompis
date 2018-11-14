@@ -11,7 +11,7 @@
                     <b-btn class="" style="text-align: left" block href="#" v-b-toggle.accordion1 variant="light">Arbeidserfaring
                         <!-- <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'WorkExperience' }">Legg til emne</b-button> -->
                     </b-btn>
-                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; selectedComponent = 'WorkExperience'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
                         <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
                 </b-card-header>
 
@@ -71,7 +71,7 @@
                 </b-card-header>
 
                 <b-collapse id="accordion4" v-if="selectedComponent == 'PracticalSkill'" accordion="my-accordion" role="tabpanel">
-                    <practical-skill v-on:onUpdatedSkill="onUpdatedSkill" :cid="cid" :id="id" :is="selectedComponent"></practical-skill>
+                    <practical-skill v-on:onUpdatedSkill="onUpdatedSkill" :uid="user_id" :cid="cert_id" :id="id" :is="selectedComponent"></practical-skill>
                 </b-collapse>
 
                 <b-collapse id="accordion4" v-else accordion="my-accordion" role="tabpanel">
@@ -89,7 +89,7 @@
                 </b-card-header>
 
                 <b-collapse id="accordion5" v-if="selectedComponent == 'Volunteering'" accordion="my-accordion" role="tabpanel">
-                    <volunteering v-on:onUpdatedVolunteering="onUpdatedVolunteering" :cid="cid" :id="id" :is="selectedComponent"></volunteering>
+                    <volunteering v-on:onUpdatedVolunteering="onUpdatedVolunteering" :uid="user_id" :cid="cert_id" :id="id" :is="selectedComponent"></volunteering>
                 </b-collapse>
 
                 <b-collapse id="accordion5" v-else accordion="my-accordion" role="tabpanel">
@@ -125,7 +125,7 @@
                 </b-card-header>
 
                 <b-collapse id="accordion7" v-if="selectedComponent == 'Reference'" accordion="my-accordion" role="tabpanel">
-                    <reference v-on:onUpdatedReference="onUpdatedReference" :cid="cid" :id="id" :is="selectedComponent"></reference>
+                    <reference v-on:onUpdatedReference="onUpdatedReference" :uid="user_id" :cid="cert_id" :id="id" :is="selectedComponent"></reference>
                 </b-collapse>
 
                 <b-collapse id="accordion7" v-else accordion="my-accordion" role="tabpanel">
@@ -225,8 +225,8 @@ export default {
                 this.fetchExperience()
             }
         },
-        editEducation(elem) {
-            this.id = elem.id
+        editEducation(id) {
+            this.id = id
             this.selectedComponent = 'Education'            
         },
         onUpdatedEducation(id) {
@@ -237,8 +237,8 @@ export default {
                 this.fetchEducation()
             }
         },
-        editKeyValue(elem) {
-            this.id = elem.id
+        editKeyValue(id) {
+            this.id = id
             this.selectedComponent = 'KeyValue'            
         },
         onUpdatedKeyValue(id) {
@@ -249,8 +249,8 @@ export default {
                 this.fetchKeyValues()
             }
         },
-        editSkill(elem) {
-            this.id = elem.id
+        editSkill(id) {
+            this.id = id
             this.selectedComponent = 'PracticalSkill'            
         },
         onUpdatedSkill(id) {
@@ -261,8 +261,8 @@ export default {
                 this.fetchSkills()
             }
         },
-        editVolunteering(elem) {
-            this.id = elem.id
+        editVolunteering(id) {
+            this.id = id
             this.selectedComponent = 'Volunteering'            
         },
         onUpdatedVolunteering(id) {
@@ -273,8 +273,8 @@ export default {
                 this.fetchVolunteering()
             }
         },
-        editLanguage(elem) {
-            this.id = elem.id
+        editLanguage(id) {
+            this.id = id
             this.selectedComponent = 'Language'            
         },
         onUpdatedLanguage(id) {
@@ -284,8 +284,8 @@ export default {
                 this.fetchLanguages()
             }
         },
-        editReference(elem) {
-            this.id = elem.id
+        editReference(id) {
+            this.id = id
             this.selectedComponent = 'Reference'            
         },
         onUpdatedReference(id) {
@@ -460,26 +460,26 @@ export default {
 </script>
 
 <style>
-  small {
+small {
     display: block;
-  }
-  .g-title {
+}
+a {
+    color: rgb(0,161,181);
+}
+a:hover {
+    color: rgb(0,161,181);
+}
+.g-title {
     margin-top: 1em;
     margin-bottom: 1em;
 }
-.g-practice {
-    margin-top: 3em;
-    margin-bottom: 1em;
-    background-color: rgb(242,242,242);
+.g-header {
+    margin-bottom: 0;
 }
-.accordion {
-    margin-top: 1em;
-    margin-bottom: 5em;
+.g-group {
+    margin-top: 2em;
 }
-b-card-header {
-  cursor: wait;
-}
-.g-bottom {
-    margin-bottom: 2em;
+.g-span {
+    margin-right: 1em;
 }
 </style>

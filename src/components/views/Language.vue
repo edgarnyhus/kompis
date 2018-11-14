@@ -1,5 +1,5 @@
 <template>
-    <div class="component">
+    <div class="component" style="margin: 1em">
         <div>
             <h4 class="g-title">Språk</h4>
             <p style="font-style: italic">Hvilke språk kan du snakke?</p>
@@ -11,36 +11,24 @@
                 <b-input class="mb-2 mr-sm-2 mb-sm-0" id="employer" type="text" v-model="form.language" required />
             </b-form-group>
 
-            <b-form-group>
+            <b-form-group class="g-header">
                 <label for="place"><strong>Hvor godt snakker du språket?</strong></label>
                 <b-form-select id="fromMonth" class="mb-3" :options="proficiency" v-model="form.proficiency" required />
             </b-form-group>
 
-            <b-form-group class="g-group">
+            <b-form-group>
                 <label for="description"><strong>Beskrivelse</strong> </label>
-                <b-form-textarea id="description"
-                                v-model="form.description"
-                                placeholder=""
-                                :rows="3"
-                                :max-rows="8">
+                <b-form-textarea id="description" v-model="form.description" 
+                    placeholder="" :rows="3" :max-rows="8">
                 </b-form-textarea>
             </b-form-group>
             
-            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+            <image-uploader :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
  
-            <ul class="list-unstyled" style="margin-top: 1em">
-                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
-                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
-                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
-                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
-                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
-                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
-                    </b-form-textarea>
-                </b-media>
-            </ul>
+            <uploaded-media-list :media="media" :links="links"></uploaded-media-list>
 
-            <div class="button-group">
-                <b-button class="button-span" type="submit" variant="info">Lagre</b-button>
+            <div class="g-group">
+                <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
                 <b-link @click="cancel()" href="#" variant="foreground-color: rgb(0,161,181)"><strong>Avbyt</strong></b-link>
             </div>
 
@@ -51,11 +39,14 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
+import ImageUploader from '@/components/common/ImageUploader'
+import UploadedMediaList from '@/components/common/UploadedMediaList'
 
 export default {
     name: 'Education',
     components: {
-
+        ImageUploader,
+        UploadedMediaList
     },
     props: ['cid', 'id'],
     data() {
@@ -74,20 +65,28 @@ export default {
                 cert_id: null,
                 timestamp: null
             },
+            media: [],
+            links: [],
             user: null,
+            user_id: null,
+            cert_id: null,
             l_id: null,
-            reason: 'updlang'
+            reason: 'onUpdatedLanguage'
         }
 
     },
     methods: {
+        reset () {
+            Object.assign(this.$data, this.$options.data.call(this));
+        },
         cancel() {
             console.log("cancel")
             this.$emit(this.reason, null)
         },
         update() {
             if (this.user) {
-                this.form.user_id = this.user.uid 
+                this.form.user_id = this.user_id 
+                this.form.cert_id = this.cert_id 
                 this.form.timestamp = Date.now()
                 if (this.l_id) {
                     db.collection('languages').doc(this.l_id).set(
@@ -117,11 +116,17 @@ export default {
         }
     },
     created() {
+        this.reset()
         this.user = firebase.auth().currentUser
-        this.form.cert_id  = this.cid
+        this.cert_id  = this.cid
         this.l_id = this.id
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = this.user.uid
+        }
         // this.fetchData()
-        if (this.user && this.l_id) {
+        if (this.l_id) {
             // get object
             db.collection('languages').doc(this.l_id)
             .get()
@@ -136,21 +141,23 @@ export default {
 </script>
 
 <style>
-.g-title {
-    margin-top: 2em;
-    margin-bottom: 0em;
-}
 a {
     color: rgb(0,161,181);
 }
-b-button {
-    margin-right: 2em;
+a:hover {
+    color: rgb(0,161,181);
 }
-.button-group {
-    margin-top: 1.5em;
-    margin-bottom: 2em;
+.g-title {
+    margin-top: 0;
+    margin-bottom: 0;
 }
-.button-span {
+.g-header {
+    margin-bottom: 0;
+}
+.g-group {
+    margin-top: 2em;
+}
+.g-span {
     margin-right: 1em;
 }
 </style>

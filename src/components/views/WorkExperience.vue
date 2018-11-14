@@ -12,13 +12,11 @@
         <b-form @submit.prevent="update">
             <b-form-group v-if="show == 'training'" style="font-weight: 650" label="Type arbeid">
                 <b-form-radio-group style="font-weight: 400" v-model="form.job_type"
-                                    :options="job_types"
-                                    stacked
-                                    name="where">
+                                    :options="job_types" stacked name="where">
                 </b-form-radio-group>
             </b-form-group>
 
-            <b-form-group class="g-group">
+            <b-form-group>
                 <div class="form-row">
                     <div class="col">
                         <label for="employer"><strong>Arbeidsgiver</strong></label>
@@ -31,33 +29,24 @@
                 </div>
             </b-form-group>
 
-            <b-form-group class="g-group">
+            <b-form-group >
                 <label for="role"><strong>Min rolle</strong></label>
                 <b-input class="mb-2 mr-sm-2 mb-sm-0" id="role" placeholder="" v-model="form.role" />
             </b-form-group>
 
 
-            <b-form-group class="g-group">
+            <b-form-group>
                 <label for="description"><strong>Beskrivelse</strong> </label>
                 <b-form-textarea id="description" v-model="form.description" placeholder="" :rows="3" :max-rows="8">
                 </b-form-textarea>
             </b-form-group>
             
-            <from-to @onFromTo="onFromTo" :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg jobber her nå'"></from-to>
-            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+            <from-to :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg jobber her nå'"></from-to>
+            <image-uploader :parent="'exp'" :uid="user_id" :cid="form.cert_id" :media="media" :links="links"> </image-uploader>
  
-            <ul class="list-unstyled" style="margin-top: 1em">
-                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
-                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
-                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
-                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
-                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
-                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
-                    </b-form-textarea>
-                </b-media>
-              </ul>
+            <uploaded-media-list :media="media" :links="links"></uploaded-media-list>
 
-            <div class="g-group4">
+            <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
                 <b-link @click="cancel()" href="#" variant="color: info"><strong>Avbyt</strong></b-link>
             </div>
@@ -78,6 +67,7 @@ import UploadFile from '@/components/common/UploadFile'
 import ImageUploader from '@/components/common/ImageUploader'
 import FromTo from '@/components/common/FromTo'
 import { wait } from '@/components/utils/utils';
+import UploadedMediaList from '@/components/common/UploadedMediaList'
 
 
 export default {
@@ -85,9 +75,11 @@ export default {
     components: {
         'from-to': FromTo,
         'upload-file': UploadFile,
-        'image-uploader': ImageUploader
+        'image-uploader': ImageUploader,
+        'uploaded-media-list': UploadedMediaList
+
     },
-    props: ['inline', 'employer', 'show', 'uid', 'cid', 'id'],
+    props: ['show', 'uid', 'cid', 'id'],
     data() {
         return {
             job_types: [
@@ -123,7 +115,7 @@ export default {
             we_id: null,
             disableWrite: false,
             file: null,
-            reason: 'onUpdatedWorkExperience'
+            reason: 'onUpdatedExperience'
         }
 
     },
@@ -131,29 +123,9 @@ export default {
         reset () {
             Object.assign(this.$data, this.$options.data.call(this));
         },
-        onMedia(formData) {
-            if (formData) {
-                const file = formData.get('media')
-                let elem = { filename: file.name, type: file.type, url: formData.get('url') }
-                console.log('onMedia', elem)
-                // this.form.media.push(elem)
-                this.media.push(elem)
-            }
-        },
-        addLink: function() {
-
-        },
-        showFile(item) {
-            console.log('showFile', item.url)
-            this.file = item
-            // window.open(item.url)
-            const ref = this.$refs.showmodal
-            if(ref)
-                ref.show()
-        },
         cancel() {
             this.$emit(this.reason, null)
-            // this.$destroy()
+            this.$destroy()
         },
         update() {
             if (this.user_id) {
@@ -238,24 +210,23 @@ export default {
 </script>
 
 <style scoped>
+a {
+    color: rgb(0,161,181);
+}
+a:hover {
+    color: rgb(0,161,181);
+}
 .g-title {
     margin-top: 0;
     margin-bottom: 0;
 }
-a {
-    color: rgb(0,161,181);
+.g-header {
+    margin-bottom: 0;
+}
+.g-group {
+    margin-top: 2em;
 }
 .g-span {
     margin-right: 1em;
 }
-img {
-    border: 1px;
-    border-color: rgb(242,242,242);
-    border-radius: 6px;
-    cursor: pointer;
-}
-img:hover {
-
-}
-
 </style>

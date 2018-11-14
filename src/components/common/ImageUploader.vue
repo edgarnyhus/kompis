@@ -37,7 +37,7 @@
 
             <!--FAILED-->
             <div v-if="isFailed">
-                <p style="color: red">opplastingen feileg.</p>
+                <p style="color: red">Opplastingen feilet.</p>
                 <p>
                 <a href="javascript:void(0)" @click="reset()">Prøv igjen</a>
                 </p>
@@ -58,7 +58,7 @@ import 'firebase/storage';
 
   export default {
     name: 'app',
-    props: ['uid', 'cid'],
+    props: ['uid', 'cid', 'media', 'links'],
     data() {
       return {
         fileCount: 0,
@@ -96,6 +96,15 @@ import 'firebase/storage';
         //   this.reset()
           this.currentStatus = STATUS_INITIAL;
       },
+      add(formData) {
+        if (formData) {
+            const file = formData.get('media')
+            let elem = { filename: file.name, type: file.type, url: formData.get('url'), description: '' }
+            console.log('add media', elem)
+            // this.form.media.push(elem)
+            this.media.push(elem)
+        }
+      },
       upload(formData) {
         // upload data to the server
         this.currentStatus = STATUS_SAVING;
@@ -109,20 +118,21 @@ import 'firebase/storage';
                 this.currentStatus = STATUS_SUCCESS;
                 formData.append('url', url)
                 console.log('upload, url=', url)
-                this.$emit(this.reason, formData)
+                // this.$emit(this.reason, formData)
+                this.add(formData)
             })
             .catch((error) => {
                 console.log(error)
                 this.uploadError = error.response;
                 this.currentStatus = STATUS_FAILED;
-                this.$emit(this.reason, null)
+                // this.$emit(this.reason, null)
             })
         })
         .catch((error) => {
             console.log(error)
             this.uploadError = error.response;
             this.currentStatus = STATUS_FAILED;
-            this.$emit(this.reason, null)
+            // this.$emit(this.reason, null)
         })
 
         // const BASE_URL = 'http://localhost:3001';

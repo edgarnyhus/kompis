@@ -1,0 +1,101 @@
+<template>
+    <div class="component">
+        <ul class="list-unstyled" style="margin-top: 1em">
+            <p v-if="media.length > 0"><strong>Opplastet dokumentasjon</strong></p>
+            <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                <img :src="item.url" @click="show(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
+                <p>{{ item.filename }}</p>
+                <p>{{ item.description }}</p>
+            </b-media>
+            <show-media v-if="showFile" v-on:onFileClose="onFileClose" :file="file"></show-media>
+
+            <p v-if="links.length > 0"><strong>Linker</strong></p>
+            <b-media tag="li" v-for="item in links" :key="item.url" style="margin-bottom: 0.5em">
+                <b-link href="item.url">Link</b-link>
+                <p style="margin-bottom: 5px">{{ item.description }}</p>
+            </b-media>
+        </ul>
+    </div>
+</template>
+
+<script>
+import ShowMedia from '@/components/common/ShowMedia'
+
+export default {
+    name: 'UploadedMediaList',
+    components: {
+        ShowMedia
+    },
+    props: ['uid', 'cid', 'id', 'media', 'links'],
+    data() {
+        return {
+            file: null,
+            showFile: false
+        }
+    },
+    methods: {
+        // show(file) {
+        //     console.log('show', file.url)
+        //     // this.file = item
+        //     // // window.open(item.url)
+        //     // const ref = this.$refs.showmodal
+        //     // if(ref)
+        //     //     ref.show()
+        //     // this.$router.push({name: 'ShowMedia', params: { file: file }})
+        //     const ref = this.$refs.ShowFile
+        //     this.$set(ref, 'file', file)
+        //     this.$router.push({name: 'ShowMedia'})
+        //}
+        show(item) {
+            this.file = item
+            console.log('show', this.file)
+            this.showFile = true
+        },
+        onFileClose() {
+            this.showFile = false
+        }
+    },
+    mounted() {
+
+    }
+}
+</script>
+
+<style scoped>
+img {
+    border: 1px;
+    border-color: rgb(242,242,242);
+    border-radius: 6px;
+    cursor: pointer;
+}
+.dropbox {
+    margin-top: 7px;
+    outline: 2px dashed grey; /* the dash box */
+    outline-offset: -10px;
+    background: #f7f7f7;
+    color: dimgray;
+    padding: 10px 10px;
+    min-height: 100px; /* minimum height */
+    position: relative;
+    cursor: pointer;
+}
+
+.input-file {
+    opacity: 0; /* invisible but it's there! */
+    width: 100%;
+    height: 200px;
+    position: absolute;
+    cursor: pointer;
+}
+
+.dropbox:hover {
+    background: #f2f2f2; /* when mouse over to the drop zone, change color */
+}
+
+.dropbox p {
+    font-size: 1.2em;
+    text-align: center;
+    padding: 50px 0;
+}
+</style>
+

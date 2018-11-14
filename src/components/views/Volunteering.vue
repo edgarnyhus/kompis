@@ -19,39 +19,27 @@
                 </div>
             </b-form-group>
 
-            <b-form-group class="g-group">
+            <b-form-group>
                 <label for="role"><strong>Min rolle</strong></label>
                 <b-input class="mb-2 mr-sm-2 mb-sm-0" id="role" placeholder="" v-model="form.role" />
             </b-form-group>
 
             
-            <b-form-group class="g-group">
+            <b-form-group>
                 <label for="description"><strong>Beskrivelse</strong> </label>
-                <b-form-textarea id="description"
-                                v-model="form.description"
-                                placeholder=""
-                                :rows="3"
-                                :max-rows="8">
+                <b-form-textarea id="description" v-model="form.description"
+                                placeholder="" :rows="3" :max-rows="8">
                 </b-form-textarea>
             </b-form-group>
             
-            <from-to @onFromTo="onFromTo" :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg har det vervet nå'"></from-to>
+            <from-to :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg har det vervet nå'"></from-to>
 
-            <image-uploader v-on:input="onMedia" :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+            <image-uploader :parent="'vol'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
  
-            <ul class="list-unstyled" style="margin-top: 1em">
-                <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
-                    <!-- <b-img :src="elem.url" rounded slot="aside" width="64" height="64" style="padding-top: 0"/> -->
-                    <img :src="item.url" @click="showFile(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
-                    <!-- <p class="mt-0 mb-1"><strong>Kommentar</strong></p> -->
-                    <p style="margin-bottom: 5px">{{ item.filename }}</p>
-                    <b-form-textarea id="mdesc" v-model="item.description" placeholder="Beskriv litt om hva dette handler om." :rows="2" :max-rows="8">
-                    </b-form-textarea>
-                </b-media>
-              </ul>
+            <uploaded-media-list :media="media" :links="links"></uploaded-media-list>
 
-            <div class="button-group">
-                <b-button class="button-span" type="submit" variant="info">Lagre</b-button>
+            <div class="g-group">
+                <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
                 <b-link @click="cancel()" href="#" variant="foreground-color: rgb(0,161,181)"><strong>Avbyt</strong></b-link>
             </div>
 
@@ -62,11 +50,18 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
+import UploadFile from '@/components/common/UploadFile'
+import ImageUploader from '@/components/common/ImageUploader'
+import FromTo from '@/components/common/FromTo'
+import UploadedMediaList from '@/components/common/UploadedMediaList'
 
 export default {
     name: 'Volunteering',
     components: {
-
+        FromTo,
+        UploadFile,
+        ImageUploader,
+        UploadedMediaList
     },
     props: ['uid', 'cid', 'id'],
     data() {
@@ -94,6 +89,8 @@ export default {
                 year: null
             },
             user: null,
+            user_id: null,
+            cert_id: null,
             v_id: null,
             reason: 'onUpdatedVolunteering'
         }
@@ -108,7 +105,7 @@ export default {
             this.$emit(this.reason, null)
         },
         update() {
-            if (this.user) {
+            if (this.user_id) {
                 this.form.user_id = this.user_id 
                 this.form.cert_id = this.cert_id 
                 this.form.timestamp = Date.now()
@@ -146,10 +143,10 @@ export default {
                 console.log('User not logged in???')
             }
         },
-        fetchData() {
-            if (this.v_id) {
+        fetchData(id) {
+            if (id) {
                 // get object
-                db.collection('volunteering').doc(this.v_id)
+                db.collection('volunteering').doc(id)
                 .get()
                 .then ((docRef) => {
                     if(docRef.exists) {
@@ -176,28 +173,30 @@ export default {
         } else {
             this.user_id = this.user.uid
         }
-        this.fetchData()
+        this.fetchData(this.v_id)
         console.log('vol mounted:', this.v_id)
     }
 }
 </script>
 
 <style>
+a {
+    color: rgb(0,161,181);
+}
+a:hover {
+    color: rgb(0,161,181);
+}
 .g-title {
     margin-top: 0;
     margin-bottom: 0;
 }
-a {
-    color: rgb(0,161,181);
+.g-header {
+    margin-bottom: 0;
 }
-b-button {
-    margin-right: 2em;
+.g-group {
+    margin-top: 2em;
 }
-.button-group {
-    margin-top: 1.5em;
-    margin-bottom: 2em;
-}
-.button-span {
+.g-span {
     margin-right: 1em;
 }
 </style>
