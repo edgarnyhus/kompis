@@ -6,14 +6,16 @@
             <h1 class="g-title">Min CV</h1>
             
             <!-- ARBEIDSERFARING -->
-            <b-card no-body class="accordion mb-1">
+            <work-experience-card></work-experience-card>
+
+            <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
-                    <b-btn class="" style="text-align: left" block href="#" v-b-toggle.accordion1 variant="light">Arbeidserfaring
-                        <!-- <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'WorkExperience' }">Legg til emne</b-button> -->
-                    </b-btn>
-                    <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
-                        <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
+                    <h5 class="b-card-title">Arbeidserfaring
+                        <b-button class="btn-floating btn-secondary float-right" @click="selectedComponent = 'WorkExperience'">Legg til emne</b-button>
+                    </h5>
+                    <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
                 </b-card-header>
+
 
                 <b-collapse id="accordion1" v-if="selectedComponent == 'WorkExperience'" accordion="my-accordion" role="tabpanel">
                     <!-- <component v-on:updtraining="onUpdatedExperience" :uid="user_id" :id="id" :is="selectedComponent"></component> -->
@@ -155,7 +157,9 @@ import PracticalSkillList from './PracticalSkillList'
 import LanguageList from './LanguageList'
 import ReferenceList from './ReferenceList'
 import VolunteeringList from './VolunteeringList'
+import WorkExperienceCard from '@/components/views/WorkExperienceCard'
 
+const EXPR=0, EDU=1, KV=2, SKIL=3, LAN=4, VOL=5, REF=6
 
 export default {
     name: 'MyCV',
@@ -174,7 +178,8 @@ export default {
         Language,
         LanguageList,
         Reference,
-        ReferenceList
+        ReferenceList,
+        WorkExperienceCard,
     },
     props: ['uid'],
     data () {
@@ -187,6 +192,7 @@ export default {
                 variant: 'success', 
                 value: 25
             },
+            showList: [REF+1],
             user: null,
             profile: null,
             experience: [],
@@ -207,7 +213,9 @@ export default {
 
     },
     computed: {
-
+        hasExperience() {
+            return (experience.length > 0)
+        }
     },
     methods: {
         editExperience(id) {
@@ -481,5 +489,13 @@ a:hover {
 }
 .g-span {
     margin-right: 1em;
+}
+.g-link {
+    color: rgb(62,65,67);
+    font-size: 16px;
+}
+.g-link:hover {
+    color: rgb(70,72,74);
+    font-size: 16px;
 }
 </style>

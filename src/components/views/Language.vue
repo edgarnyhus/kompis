@@ -23,9 +23,9 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <image-uploader :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+            <upload-media :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </upload-media>
  
-            <uploaded-media-list :media="media" :links="links"></uploaded-media-list>
+            <media-list :media="media" :links="links"></media-list>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -39,14 +39,14 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
-import ImageUploader from '@/components/common/ImageUploader'
-import UploadedMediaList from '@/components/common/UploadedMediaList'
+import UploadMedia from '@/components/common/UploadMedia'
+import MediaList from '@/components/common/MediaList'
 
 export default {
     name: 'Education',
     components: {
-        ImageUploader,
-        UploadedMediaList
+        UploadMedia,
+        MediaList
     },
     props: ['cid', 'id'],
     data() {

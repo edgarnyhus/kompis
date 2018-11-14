@@ -22,7 +22,7 @@
 import ShowMedia from '@/components/common/ShowMedia'
 
 export default {
-    name: 'UploadedMediaList',
+    name: 'MediaList',
     components: {
         ShowMedia
     },

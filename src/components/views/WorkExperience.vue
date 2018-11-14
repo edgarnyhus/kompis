@@ -42,9 +42,9 @@
             </b-form-group>
             
             <from-to :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg jobber her nå'"></from-to>
-            <image-uploader :parent="'exp'" :uid="user_id" :cid="form.cert_id" :media="media" :links="links"> </image-uploader>
+            <upload-media :parent="'exp'" :uid="user_id" :cid="form.cert_id" :media="media" :links="links"> </upload-media>
  
-            <uploaded-media-list :media="media" :links="links"></uploaded-media-list>
+            <media-list :media="media" :links="links"></media-list>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -63,20 +63,18 @@
 import firebase from 'firebase'
 import db from '@/firebase/init'
 import moment from 'moment'
-import UploadFile from '@/components/common/UploadFile'
-import ImageUploader from '@/components/common/ImageUploader'
+import UploadMedia from '@/components/common/UploadMedia'
 import FromTo from '@/components/common/FromTo'
 import { wait } from '@/components/utils/utils';
-import UploadedMediaList from '@/components/common/UploadedMediaList'
+import MediaList from '@/components/common/MediaList'
 
 
 export default {
     name: 'WorkExperience',
     components: {
         'from-to': FromTo,
-        'upload-file': UploadFile,
-        'image-uploader': ImageUploader,
-        'uploaded-media-list': UploadedMediaList
+        'upload-media': UploadMedia,
+        'media-list': MediaList
 
     },
     props: ['show', 'uid', 'cid', 'id'],

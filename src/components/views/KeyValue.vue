@@ -22,9 +22,9 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <image-uploader :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </image-uploader>
+            <upload-media :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </upload-media>
  
-            <uploaded-media-list :media="media" :links="links"></uploaded-media-list>
+            <media-list :media="media" :links="links"></media-list>
 
             <b-form-group>
                 <p class="g-header"><strong>Bekreftelse</strong></p>
@@ -46,16 +46,16 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
-import ImageUploader from '@/components/common/ImageUploader'
+import UploadMedia from '@/components/common/UploadMedia'
 import FromTo from '@/components/common/FromTo'
-import UploadedMediaList from '@/components/common/UploadedMediaList'
+import MediaList from '@/components/common/MediaList'
 
 export default {
     name: 'KeyValue',
     components: {
         FromTo,
-        ImageUploader,
-        UploadedMediaList
+        UploadMedia,
+        MediaList
     },
     props: ['uid', 'cid', 'id'],
     data() {
