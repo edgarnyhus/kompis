@@ -135,8 +135,6 @@ export default {
                     if (this.to.month && this.to.year) {
                         this.form.to = toTimestamp(this.to.month, this.to.year)
                     }
-                    this.form.media = this.media
-                    this.form.links = this.links
                 } catch (error) {
                     console.error('update excception: ', error)
                 }
@@ -144,6 +142,7 @@ export default {
                 if (this.we_id) {
                     db.collection("experience").doc(this.we_id).set(this.form, {merge: true})
                     .then((docRef) => {
+                        updateMedia()
                         console.log("Document updated with ID: ", this.we_id);
                         this.$emit(this.reason, this.we_id)
                     })
@@ -167,11 +166,36 @@ export default {
             }
             // this.$destroy()
         },
-        fetchData() {
-            if (this.we_id) {
-                console.log('we get object', this.we_id)
+        updateMedia() {
+            this.media.forEach(element => {
+                if (element.id) {
+                    element.user_id = this.user_id
+                    element.cert_id = this.cert_id
+                    element.timestamp = Date.now()
+                    db.collection("media").doc(element.id).set(element, {merge: true})
+                    .then((docRef) => {
+                        console.log("media updated with ID: ", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("error adding media: ", error);
+                    });
+                } else {
+                    db.collection("experience").add(element)
+                    .then((docRef) => {
+                        console.log("media written with ID: ", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                    });
+                }
+            });
+
+        },
+        fetchData(id) {
+            if (id) {
+                console.log('we get object', id)
                 // get object
-                db.collection('experience').doc(this.we_id)
+                db.collection('experience').doc(id)
                 .get()
                 .then ((docRef) => {
                     if(docRef.exists) {
@@ -188,6 +212,28 @@ export default {
                     console.error("we error fetching document: ", error);
                 });
             }
+            this.fetchMedia()
+        },
+        fetchMedia() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('media').where('cert_i', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('media').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.media.push(elem)
+                    })
+                })
+                .catch(err => {
+                    console.log('mc fetching experience failed', err)
+                })
+            }
         }
     },
     mounted() {
@@ -201,7 +247,7 @@ export default {
             this.user_id = this.user.uid
         }
 
-        this.fetchData()
+        this.fetchData(this.we_id)
         console.log('we created:', this.we_id)
     }
 }

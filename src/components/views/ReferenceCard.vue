@@ -19,7 +19,7 @@
             </div>
 
             <b-collapse class="mt-2"  id="editExp" :visible="!showList">
-                <reference v-on:onUpdatedReference="onUpdatedReference" :uid="user_id" :cid="cert_id" :id="ref_id"></reference>
+                <reference v-on:onUpdatedReference="onUpdatedReference" :uid="user_id" :cid="cert_id" :id="id"></reference>
             </b-collapse>
         </b-card>
     </div>
@@ -44,14 +44,14 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            ref_id: null,
+            id: null,
             showList: true
         }
     },
     methods: {
         editReference(id) {
             if (id) {
-                this.ref_id = id
+                this.id = id
                 this.showList = false
             }
         },

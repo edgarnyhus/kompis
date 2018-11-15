@@ -14,12 +14,12 @@
                         <b-link class="g-link float-right" @click="showList=false"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <volunteering-list v-on:editVolunteering="editVolunteering" :volunteering="volunteering" :uid="user_id" :cid="cert_id" :id="edu_id"></volunteering-list>
+                    <volunteering-list v-on:editVolunteering="editVolunteering" :volunteering="volunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering-list>
                 </b-collapse>
             </div>
 
             <b-collapse class="mt-2"  id="editEdu" :visible="!showList">
-                <volunteering v-on:onUpdatedVolunteering="onUpdatedVolunteering" :uid="user_id" :cid="cert_id" :id="edu_id"></volunteering>
+                <volunteering v-on:onUpdatedVolunteering="onUpdatedVolunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering>
             </b-collapse>
         </b-card>
     </div>
@@ -44,14 +44,14 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            edu_id: null,
+            id: null,
             showList: true
         }
     },
     methods: {
         editVolunteering(id) {
             if (id) {
-                this.edu_id = id
+                this.id = id
                 this.showList = false
             }
         },

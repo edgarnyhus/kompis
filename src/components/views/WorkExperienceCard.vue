@@ -14,12 +14,12 @@
                         <b-link class="g-link float-right" @click="showList=false"><strong>Legg til arbeidserfaring</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="w_id"></work-experience-list>
+                    <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
                 </b-collapse>
             </div>
 
             <b-collapse class="mt-2"  id="editExp" :visible="!showList">
-                <work-experience v-on:onUpdatedExperience="onUpdatedExperience" :uid="user_id" :cid="cert_id" :id="w_id"></work-experience>
+                <work-experience v-on:onUpdatedExperience="onUpdatedExperience" :uid="user_id" :cid="cert_id" :id="id"></work-experience>
             </b-collapse>
         </b-card>
     </div>
@@ -41,10 +41,12 @@ export default {
     data() {
         return {
             experience: [],
+            media: [],
+            links: [],
             user: null,
             user_id: null,
             cert_id: null,
-            w_id: null,
+            id: null,
             showList: true
         }
     },
@@ -72,6 +74,28 @@ export default {
                         let elem = doc.data()
                         elem.id = doc.id
                         this.experience.push(elem)
+                    })
+                })
+                .catch(err => {
+                    console.log('mc fetching experience failed', err)
+                })
+            }
+            this.fetchMedia()
+        },
+        fetchMedia() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('media').where('cert_i', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('media').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.media.push(elem)
                     })
                 })
                 .catch(err => {

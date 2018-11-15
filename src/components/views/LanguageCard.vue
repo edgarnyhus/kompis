@@ -14,12 +14,12 @@
                         <b-link class="g-link float-right" @click="showList=false"><strong>Legg til arbeidserfaring</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <language-list v-on:editLanguage="editLanguage" :languages="languages" :uid="user_id" :cid="cert_id" :id="l_id"></language-list>
+                    <language-list v-on:editLanguage="editLanguage" :languages="languages" :uid="user_id" :cid="cert_id" :id="id"></language-list>
                 </b-collapse>
             </div>
 
             <b-collapse class="mt-2"  id="editExp" :visible="!showList">
-                <language v-on:onUpdatedLanguge="onUpdatedLanguage" :uid="user_id" :cid="cert_id" :id="l_id"></language>
+                <language v-on:onUpdatedLanguge="onUpdatedLanguage" :uid="user_id" :cid="cert_id" :id="id"></language>
             </b-collapse>
         </b-card>
     </div>
@@ -44,14 +44,14 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            l_id: null,
+            id: null,
             showList: true
         }
     },
     methods: {
         editLanguage(id) {
             if (id) {
-                this.l_id = id
+                this.id = id
                 this.showList = false
             }
         },

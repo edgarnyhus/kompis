@@ -19,7 +19,7 @@
             </div>
 
             <b-collapse class="mt-2"  id="editExp" :visible="!showList">
-                <practical-skill v-on:onUpdatedSkill="onUpdatedSkill" :uid="user_id" :cid="cert_id" :id="w_id"></practical-skill>
+                <practical-skill v-on:onUpdatedSkill="onUpdatedSkill" :uid="user_id" :cid="cert_id" :id="id"></practical-skill>
             </b-collapse>
         </b-card>
     </div>
@@ -44,7 +44,7 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            w_id: null,
+            id: null,
             showList: true
         }
     },
