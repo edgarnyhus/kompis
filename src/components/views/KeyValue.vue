@@ -1,5 +1,5 @@
 <template>
-    <div class="component" style="margin: 1em">
+    <div class="component">
         <div>
             <h4 class="g-title">Nøkkelkompetanse</h4>
             <p style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
@@ -8,17 +8,15 @@
         <b-form @submit.prevent="update">
             <b-form-group>
                 <div class="input-group mb-3">
-                    <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.key_value" required>
+                    <input type="text" class="form-control" placeholder="Nøkkelkompetanse (f.eks. Pålitelig eller Tar initiativ)" v-model="form.keyvalue" required>
                 </div>
             </b-form-group>
 
             <b-form-group>
                 <label for="description"><strong>Beskrivelse</strong> </label>
-                <b-form-textarea id="description"
-                                v-model="form.description"
+                <b-form-textarea id="description" v-model="form.description"
                                 placeholder="Hvordan kommer denne nøkkelkompetansen til uttrykk?"
-                                :rows="3"
-                                :max-rows="8">
+                                :rows="3" :max-rows="8">
                 </b-form-textarea>
             </b-form-group>
             
@@ -68,7 +66,7 @@ export default {
                 { value: 'Ansvarlig', text: 'Ansvarlig' }
             ],
             form: {
-                key_value: null,
+                keyvalue: null,
                 description: null,
                 user_id: null,
                 cert_id: null,
@@ -96,20 +94,22 @@ export default {
                 this.form.cert_id = this.cert_id
                 this.form.timestamp = Date.now()
                 if (this.kv_id) {
+                    console.log('db.set', this.form)
                     db.collection('keyvalues').doc(this.kv_id).set(
                         this.form, { merge: true })
                         .then (doc => {
-                            conssole.log('Key value updated')
+                            console.log('Key value updated')
                             this.$emit(this.reason, this.kv_id)
                         })
                     .catch(err => {
                         console.log('Firestore error: ', err)
                     })
                 } else {
+                    console.log('db.add', this.form)
                     db.collection('keyvalues').add(
                         this.form)
                     .then (doc => {
-                        conssole.log('Key value added')
+                        console.log('Key value added')
                         this.kv_id = doc.id
                         this.$emit(this.reason, this.kv_id)
                      })

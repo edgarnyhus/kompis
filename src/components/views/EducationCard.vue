@@ -1,25 +1,25 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!experience[0] && showList" >
-                <h5 class="text-muted">Arbeidserfaring
+            <div v-if="!education[0] && showList" >
+                <h5 class="text-muted">Utdanning og kurs
                     <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
                 </h5>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listExp" :visible="showList">
-                    <h5 class="text-muted">Arbeidserfaring
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til arbeidserfaring</strong></b-link>
+                <b-collapse class="mt-2" id="listEdu" :visible="showList">
+                    <h5 class="text-muted">Utdanning og kurs
+                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="w_id"></work-experience-list>
+                    <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="edu_id"></education-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editExp" :visible="!showList">
-                <work-experience v-on:onUpdatedExperience="onUpdatedExperience" :uid="user_id" :cid="cert_id" :id="w_id"></work-experience>
+            <b-collapse class="mt-2"  id="editEdu" :visible="!showList">
+                <education v-on:onUpdatedEducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="edu_id"></education>
             </b-collapse>
         </b-card>
     </div>
@@ -28,54 +28,54 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
-import WorkExperience from '@/components/views/WorkExperience'
-import WorkExperienceList from './WorkExperienceList'
+import Education from '@/components/views/Education'
+import EducationList from './EducationList'
 
 export default {
-    name: 'WorkExperienceCard',
+    name: 'EducationCard',
     components: {
-        WorkExperience,
-        WorkExperienceList
+        Education,
+        EducationList
     },
     props: ['uid', 'cid'],
     data() {
         return {
-            experience: [],
+            education: [],
             user: null,
             user_id: null,
             cert_id: null,
-            w_id: null,
+            edu_id: null,
             showList: true
         }
     },
     methods: {
-        editExperience(id) {
+        editEducation(id) {
             if (id) {
-                this.id = id
+                this.edu_id = id
                 this.showList = false
             }
         },
-        onUpdatedExperience(id) {
+        onUpdatedEducation(id) {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchExperience()
+                this.fetchiEducation()
             }
             this.showList = true
         },
-        fetchExperience() {
+        fetchEducation() {
             if (this.user) {
-                db.collection('experience').where('user_id', '==',this.user_id)
+                db.collection('education').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        this.experience.push(elem)
+                        this.education.push(elem)
                     })
                 })
                 .catch(err => {
-                    console.log('mc fetching experience failed', err)
+                    console.log('ec fetching educaion failed', err)
                 })
             }
         }
@@ -91,8 +91,8 @@ export default {
             this.user_id = this.user.uid
         }
         if (this.user) {
-            // fetch work experience/training
-            this.fetchExperience()
+            // fetch work education
+            this.fetchEducation()
         }
     }
     

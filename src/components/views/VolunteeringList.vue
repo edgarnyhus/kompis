@@ -1,7 +1,8 @@
 <template>
     <div class="component">
-        <b-card-group v-for="elem in volunteering" :key="elem.id">
-            <div class="card">
+        <!-- <b-card-group v-for="elem in volunteering" :key="elem.id"> -->
+        <div v-for="elem in volunteering" :key="elem.id">
+            <!-- <div class="card"> -->
                 <div class="card-body">
                     <h6 class="card-title text-muted">{{ elem.org }}
                         <b-link class="btn-floating float-right btn-sm"  @click="edit(elem)">Endre</b-link>
@@ -12,8 +13,8 @@
                         {{elem.location}}</P>
                     <p class="card-text">{{elem.description}}</p>
                 </div>
-            </div>
-        </b-card-group>
+            <!-- </div> -->
+        </div>
     </div>
 </template>
 

@@ -101,7 +101,7 @@ export default {
                     db.collection('skills').doc(this.ps_id).set(
                         this.form, { merge: true })
                     .then (doc => {
-                        conssole.log('Work experience updated')
+                        console.log('Work experience updated')
                         this.$emit(this.reason, this.ps_id)
                     })
                     .catch(err => {
@@ -111,7 +111,7 @@ export default {
                     db.collection('skills').add(
                         this.form)
                     .then (doc => {
-                        conssole.log('Work experience added')
+                        console.log('Work experience added')
                         this.ps_id = doc.id
                         this.$emit(this.reason, this.ps_id)
                      })

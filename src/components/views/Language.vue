@@ -92,7 +92,7 @@ export default {
                     db.collection('languages').doc(this.l_id).set(
                         this.form, { merge: true })
                     .then (doc => {
-                        conssole.log('Language updated')
+                        console.log('Language updated')
                         this.$emit(this.reason, this.l_id)
                     })
                     .catch(err => {
@@ -101,7 +101,7 @@ export default {
                 } else {
                     db.collection('languages').add(this.form)
                     .then (doc => {
-                        conssole.log('Language added')
+                        console.log('Language added')
                         this.l_id = doc.id
                         this.$emit(this.reason, this.l_id)
                      })

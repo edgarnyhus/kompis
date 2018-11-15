@@ -1,7 +1,7 @@
 <template>
     <div class="component">
-        <b-card-group v-for="elem in skills" :key="elem.id">
-            <div class="card">
+        <div v-for="elem in skills" :key="elem.id">
+            <!-- <div class="card"> -->
                 <div class="card-body">
                     <h5 class="card-subtitle">{{ elem.skill }}
                         <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
@@ -9,8 +9,8 @@
                     </h5>
                     <p class="card-text">{{elem.description}}</p>
                 </div>
-            </div>
-        </b-card-group> 
+            <!-- </div> -->
+        </div> 
    </div>
 </template>
 

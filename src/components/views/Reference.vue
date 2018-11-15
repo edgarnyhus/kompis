@@ -101,7 +101,7 @@ export default {
                     db.collection('references').doc(this.$route.params.id).set(
                         this.form, { merge: true })
                     .then (doc => {
-                        conssole.log('Work experience updated')
+                        console.log('Work experience updated')
                         this.$emit(this.reason, this.ref_id)
                     })
                     .catch(err => {
@@ -111,7 +111,7 @@ export default {
                     db.collection('references').add(
                         this.form)
                     .then (doc => {
-                        conssole.log('Work experience added')
+                        console.log('Work experience added')
                         this.ref_id = doc.id
                         this.$emit(this.reason, this.ref_id)
                      })

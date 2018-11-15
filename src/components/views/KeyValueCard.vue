@@ -1,25 +1,25 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!experience[0] && showList" >
-                <h5 class="text-muted">Arbeidserfaring
+            <div v-if="!keyvalues[0] && showList" >
+                <h5 class="text-muted">UNøkkelkompetanse
                     <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
+                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
                 </h5>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listExp" :visible="showList">
-                    <h5 class="text-muted">Arbeidserfaring
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til arbeidserfaring</strong></b-link>
+                <b-collapse class="mt-2" id="listKey    " :visible="showList">
+                    <h5 class="text-muted">Nøkkelkompetanse
+                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="w_id"></work-experience-list>
+                    <key-value-list v-on:editKeyValue="editKeyValue" :keyvalues="keyvalues" :uid="user_id" :cid="cert_id" :id="kv_id"></key-value-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editExp" :visible="!showList">
-                <work-experience v-on:onUpdatedExperience="onUpdatedExperience" :uid="user_id" :cid="cert_id" :id="w_id"></work-experience>
+            <b-collapse class="mt-2"  id="editKey" :visible="!showList">
+                <key-value v-on:onUpdatedKeyValue="onUpdatedKeyValue" :uid="user_id" :cid="cert_id" :id="kv_id"></key-value>
             </b-collapse>
         </b-card>
     </div>
@@ -28,54 +28,54 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
-import WorkExperience from '@/components/views/WorkExperience'
-import WorkExperienceList from './WorkExperienceList'
+import KeyValue from '@/components/views/KeyValue'
+import KeyValueList from './KeyValueList'
 
 export default {
-    name: 'WorkExperienceCard',
+    name: 'KeyValueCard',
     components: {
-        WorkExperience,
-        WorkExperienceList
+        KeyValue,
+        KeyValueList
     },
     props: ['uid', 'cid'],
     data() {
         return {
-            experience: [],
+            keyvalues: [],
             user: null,
             user_id: null,
             cert_id: null,
-            w_id: null,
+            kv_id: null,
             showList: true
         }
     },
     methods: {
-        editExperience(id) {
+        editKeyValue(id) {
             if (id) {
-                this.id = id
+                this.kv_id = id
                 this.showList = false
             }
         },
-        onUpdatedExperience(id) {
+        onUpdatedKeyValue(id) {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchExperience()
+                this.fetchKeyValues()
             }
             this.showList = true
         },
-        fetchExperience() {
+        fetchKeyValues() {
             if (this.user) {
-                db.collection('experience').where('user_id', '==',this.user_id)
+                db.collection('keyvalues').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        this.experience.push(elem)
+                        this.keyvalues.push(elem)
                     })
                 })
                 .catch(err => {
-                    console.log('mc fetching experience failed', err)
+                    console.log('fetching key values failed', err)
                 })
             }
         }
@@ -91,8 +91,8 @@ export default {
             this.user_id = this.user.uid
         }
         if (this.user) {
-            // fetch work experience/training
-            this.fetchExperience()
+            // fetch work keyvalues
+            this.fetchKeyValues()
         }
     }
     

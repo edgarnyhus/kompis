@@ -123,7 +123,7 @@ export default {
         },
         cancel() {
             this.$emit(this.reason, null)
-            this.$destroy()
+            // this.$destroy()
         },
         update() {
             if (this.user_id) {

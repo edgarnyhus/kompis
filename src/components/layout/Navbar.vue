@@ -52,6 +52,12 @@ export default {
     methods: {
         showPracticeCertificateView() {
             this.$router.push({ name: 'PracticeCertificateView' })
+        },
+        isMobile() {
+            if( screen.width <= 480 ) {
+                return true
+            }
+            return false
         }
     },
     mounted() {

@@ -1,7 +1,8 @@
 <template>
     <div class="component">
-        <b-card-group v-for="elem in references" :key="elem.id">
-            <div class="card">
+        <!-- <b-card-group v-for="elem in references" :key="elem.id"> -->
+        <div v-for="elem in references" :key="elem.id">
+            <!-- <div class="card"> -->
                 <div class="card-body">
                     <h5 class="card-title">{{ elem.person }}
                         <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
@@ -10,8 +11,8 @@
                     <h6 class="card-subtitle text-muted">{{ elem.about }}</h6>
                     <p class="card-text">{{elem.description}}</p>
                 </div>
-            </div>
-        </b-card-group>
+            <!-- </div> -->
+        </div>
     </div>
 </template>
 

@@ -119,7 +119,7 @@ export default {
                     db.collection('volunteering').doc(this.v_id).set(
                         this.form, { merge: true })
                     .then (doc => {
-                        conssole.log('Volunteering updated')
+                        console.log('Volunteering updated')
                         this.$emit(this.reason, this.v_id)
                     })
                     .catch(err => {
@@ -128,7 +128,7 @@ export default {
                 } else {
                     db.collection('volunteering').add(this.form)
                     .then (doc => {
-                        conssole.log('Education added')
+                        console.log('Education added')
                         this.v_id = doc.id
                         this.$emit(this.reason, this.v_id)
                      })

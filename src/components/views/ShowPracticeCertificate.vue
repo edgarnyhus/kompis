@@ -48,9 +48,9 @@
 
             <b-card class="shadow-none text-muted" title="Nøkkelkompetanse">
                 <!-- present a card for each job experiences/experience -->
-                <div v-for="elem in key_values"  :key="elem.id">
+                <div v-for="elem in keyvalues"  :key="elem.id">
                     <div class="card-body">
-                        <h5 class="card-subtitle text-muted">{{ elem.key_value }}
+                        <h5 class="card-subtitle text-muted">{{ elem.keyvalue }}
                             <b-link class="btn-floating float-right btn-sm info-color" @click="updateKeyValue(elem)">Endre</b-link>
                             <!-- <b-link class="btn-floating float-right btn-sm" @click="id = elem.id; selectedComponent = 'KeyValue'">Endre</b-link> -->
                             <b-link class="button-span btn-floating float-right btn-sm info-color" @click="removeKeyValue(elem)">Slett</b-link>
@@ -129,7 +129,7 @@ export default {
             user: null,
             profile: null,
             experience: [],
-            key_values: [],
+            keyvalues: [],
             skills: [],
             references: [],
             selectedComponent: null,
@@ -180,13 +180,13 @@ export default {
             }
         },
         removeKeyValue(elem) {
-            db.collection('key_values').doc(elem.id).delete()
+            db.collection('keyvalues').doc(elem.id).delete()
             .then(() => {
                 console.log("PC Document successfully deleted!");
                 if (elem) {
-                    let ix = this.key_values.findIndex(e => e.id === elem.id)
+                    let ix = this.keyvalues.findIndex(e => e.id === elem.id)
                     if (~ix) {
-                        this.key_values.splice(ix, 1)
+                        this.keyvalues.splice(ix, 1)
                     }
                 }
             }).catch(error => {
@@ -357,14 +357,14 @@ export default {
         },
         fetchKeyValues() {
             if (this.user && this.cert_id) {
-                db.collection('key_values').where('cert_id', '==',this.cert_id)
+                db.collection('keyvalues').where('cert_id', '==',this.cert_id)
                 .where('user_id', '==',firebase.auth().currentUser.uid)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        this.key_values.push(elem)
+                        this.keyvalues.push(elem)
                     })
                 })
                 .catch(err => {
