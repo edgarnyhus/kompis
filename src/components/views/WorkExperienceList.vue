@@ -44,7 +44,7 @@ export default {
             })
         },
         edit: function(elem) {
-            console.log('language edit:', elem.id)
+            console.log('experience edit:', elem.id)
             this.$emit(this.reason, elem.id)
         }
     }

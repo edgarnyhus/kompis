@@ -54,7 +54,8 @@ export default {
             this.$router.push({ name: 'PracticeCertificateView' })
         },
         isMobile() {
-            if( screen.width <= 480 ) {
+            // an assumption
+            if ( screen.width <= 480 ) {
                 return true
             }
             return false

@@ -140,7 +140,7 @@ export default {
             }
         }            
     },
-    created() {
+    mounted() {
         this.reset()
         this.user = firebase.auth().currentUser
         this.cert_id  = this.cid

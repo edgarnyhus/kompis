@@ -52,7 +52,7 @@ export default {
     },
     methods: {
         editExperience(id) {
-            console.log('experience edit',)
+            console.log('experience edit', id)
             if (id) {
                 this.id = id
                 this.showList = false

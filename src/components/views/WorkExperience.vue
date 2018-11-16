@@ -172,7 +172,9 @@ export default {
                     element.user_id = this.user_id
                     element.cert_id = this.cert_id
                     element.timestamp = Date.now()
-                    db.collection("media").doc(element.id).set(element, {merge: true})
+                    db.collection("media").doc(element.id).set({
+                        filename: element.filename, url: element.url, type: element.type, description: element.description,
+                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}, {merge: true})
                     .then((docRef) => {
                         console.log("media updated with ID: ", docRef.id);
                     })
@@ -237,6 +239,7 @@ export default {
         }
     },
     mounted() {
+        console.log('experience created:', this.id)
         this.reset()
         this.user = firebase.auth().currentUser
         this.cert_id  = this.cid
@@ -246,9 +249,9 @@ export default {
         } else {
             this.user_id = this.user.uid
         }
-
+        this.fetchData()
+        console.log('experience created:', this.we_id)
         this.fetchData(this.we_id)
-        console.log('we created:', this.we_id)
     }
 }
 </script>
