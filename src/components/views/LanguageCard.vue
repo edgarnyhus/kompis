@@ -19,7 +19,7 @@
             </div>
 
             <b-collapse class="mt-2"  id="editExp" :visible="!showList">
-                <language v-on:onUpdatedLanguge="onUpdatedLanguage" :uid="user_id" :cid="cert_id" :id="id"></language>
+                <language v-on:onUpdatedLanguage="onUpdatedLanguage" :uid="user_id" :cid="cert_id" :id="id"></language>
             </b-collapse>
         </b-card>
     </div>
