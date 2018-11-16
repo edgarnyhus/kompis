@@ -87,6 +87,7 @@ export default {
             })
             .catch(error => {
                 console.error('Firebase error: ', error)
+                alert(error)
             })
         }
     }

@@ -2,6 +2,7 @@
     <div class="component">
         <div v-for="elem in experience" :key="elem.id">
                 <!-- <div class="card-body"> -->
+                <div class="g-group">
                     <h6 class="card-title">{{ elem.employer }}
                         <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
                         <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
@@ -12,7 +13,7 @@
                     <p v-else class="card-text text-muted" style="margin-bottom: 0.5em">{{ elem.from | formatDate }} - {{ elem.to | formatDate }}<br>
                         {{elem.location}}</P>
                     <p class="card-text">{{elem.description}}</p>
-                <!-- </div> -->
+                </div>
         </div>
     </div>
 </template>
@@ -41,6 +42,7 @@ export default {
                 }
             }).catch(error => {
                 console.error("pc error removing praksissted: ", error);
+                alert(error)
             })
         },
         edit: function(elem) {
@@ -52,6 +54,8 @@ export default {
 </script>
 
 <style>
-
+.g-group {
+    margin-top: 1em
+}
 </style>
 

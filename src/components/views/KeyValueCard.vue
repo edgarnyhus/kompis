@@ -1,24 +1,24 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!keyvalues[0] && showList" >
-                <h5 class="text-muted">UNøkkelkompetanse
-                    <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
+            <div v-if="!keyvalues[0] && mode!=='edit'" >
+                <h5 class="text-muted">Nøkkelkompetanse
+                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
                 </h5>
+                <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listKey    " :visible="showList">
+                <b-collapse class="mt-2" id="listKey" :visible="mode==='list'">
                     <h5 class="text-muted">Nøkkelkompetanse
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til skole/kurs</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <key-value-list v-on:editKeyValue="editKeyValue" :keyvalues="keyvalues" :uid="user_id" :cid="cert_id" :id="kv_id"></key-value-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editKey" :visible="!showList">
+            <b-collapse class="mt-2"  id="editKey" :visible="mode==='edit'">
                 <key-value v-on:onUpdatedKeyValue="onUpdatedKeyValue" :uid="user_id" :cid="cert_id" :id="kv_id"></key-value>
             </b-collapse>
         </b-card>
@@ -45,14 +45,14 @@ export default {
             user_id: null,
             cert_id: null,
             kv_id: null,
-            showList: true
+            mode: 'list'
         }
     },
     methods: {
         editKeyValue(id) {
             if (id) {
                 this.kv_id = id
-                this.showList = false
+                this.mode = 'edit'
             }
         },
         onUpdatedKeyValue(id) {
@@ -61,7 +61,7 @@ export default {
             if (id) {
                 this.fetchKeyValues()
             }
-            this.showList = true
+            this.mode = 'list'
         },
         fetchKeyValues() {
             if (this.user) {

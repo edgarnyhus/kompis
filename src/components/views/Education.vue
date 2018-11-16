@@ -27,9 +27,9 @@
 
             <from-to :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg går her nå'"></from-to>
             
-            <upload-media :uid="user_id" :cid="form.cert_id"> </upload-media>
+            <upload-media :uid="user_id" :cid="cert_id"> </upload-media>
  
-            <media-list :media="media" :links="links"></media-list>
+            <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -108,6 +108,7 @@ export default {
                     }
                 } catch (error) {
                     console.log('update excception: ', error)
+                    alert(error)
                 }
                 if (this.edu_id) {
                     db.collection("education").doc(this.edu_id).set(this.form, {merge: true})
@@ -117,6 +118,7 @@ export default {
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
+                        alert(error)
                     });
                 } else {
                     db.collection("education").add(this.form)
@@ -127,11 +129,13 @@ export default {
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
+                        alert(error)
                     });
                 }
             }
             else {
                 console.log('User not logged in???')
+                alert(error)
             }
         },
         fetchData(id) {
@@ -147,28 +151,32 @@ export default {
                         this.from.year = getYear(this.form.from)
                         this.to.month = getMonth(this.form.to)
                         this.to.year = getYear(this.form.to)
-                        // this.media = this.form.media
-                        // this.links = this.form.links
+                        this.user_id = this.form.user_id
+                        this.cert_id = this.form.cert_id
+                        console.log('education fetched ok')
                     }
                 })
                 .catch((error) => {
                     console.error("edu error fetching document: ", error);
+                    alert(error)
                 });
             }
         }
     },
-    mounted() {
+    created() {
         this.reset()
         this.user = firebase.auth().currentUser
-        this.form.cert_id  = this.cid
-        this.edu_id = this.id
+        if (this.cid)
+            this.form.cert_id  = this.cid
+        if (this.id)
+            this.edu_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
         this.fetchData(this.edu_id)
-        console.log('edu mounted:', this.we_id)
+        console.log('education created ok')
     }
 }
 </script>

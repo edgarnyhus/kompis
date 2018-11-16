@@ -1,5 +1,5 @@
 <template>
-    <div class="component" style="margin: 1em">
+    <div class="component">
         <div>
             <h4 class="g-title">Frivillig arbeid</h4>
             <p style="font-style: italic">Hvilke frivillig verv har du tatt på deg?</p>
@@ -34,9 +34,9 @@
             
             <from-to :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg har det vervet nå'"></from-to>
 
-            <upload-media :parent="'vol'" :uid="user_id" :cid="form.cert_id"> </upload-media>
+            <upload-media :parent="'vol'" :uid="user_id" :cid="cert_id"> </upload-media>
  
-            <media-list :media="media" :links="links"></media-list>
+            <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -114,6 +114,7 @@ export default {
                     }
                 } catch (error) {
                     console.log('update excception: ' + error)
+                    alert(error)
                 }
                 if (this.v_id) {
                     db.collection('volunteering').doc(this.v_id).set(
@@ -124,6 +125,7 @@ export default {
                     })
                     .catch(err => {
                         console.log('Firestore error: ' + err)
+                        alert(error)
                     })
                 } else {
                     db.collection('volunteering').add(this.form)
@@ -134,6 +136,7 @@ export default {
                      })
                     .catch(err => {
                         console.log('Firestore error: ' + err)
+                        alert(error)
                     })
                 }
             }
@@ -153,26 +156,32 @@ export default {
                         this.from.year = getYear(this.form.from)
                         this.to.month = getMonth(this.form.to)
                         this.to.year = getYear(this.form.to)
+                        this.user_id = this.form.user_id
+                        this.cert_id = this.form.cert_id
+                        console.log('volunteering fetched ok')
                     }
                 })
                 .catch((error) => {
-                    console.error("WE Error fetching document: ", error);
+                    console.error("error fetching document: ", error);
+                    alert(error)
                 });
             }
         }
     },
-    mounted() {
+    created() {
         this.reset()
         this.user = firebase.auth().currentUser
-        this.cert_id  = this.cid
-        this.v_id = this.id
+        if (this.cid)
+            this.cert_id  = this.cid
+        if (this.id)
+            this.v_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
         this.fetchData(this.v_id)
-        console.log('vol mounted:', this.v_id)
+        console.log('volunteering created ok')
     }
 }
 </script>

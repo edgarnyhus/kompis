@@ -1,18 +1,16 @@
 <template>
     <div class="component">
         <div v-for="elem in education" :key="elem.id">
-            <!-- <div class="card"> -->
-                <!-- <div class="card-body"> -->
-                    <h6 class="card-title">{{ elem.school }}
-                        <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
-                        <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
-                    </h6>
-                    <h5 class="card-subtitle">{{elem.study}}</h5>
-                    <p  v-if="elem.ongoing" class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - (Studerer her forsatt)</p>
-                    <p v-else class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}</p>
-                    <p class="card-text">{{elem.description}}</p>
-                <!-- </div> -->
-            <!-- </div> -->
+            <div class="g-group">
+                <h6 class="card-title">{{ elem.school }}
+                    <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
+                    <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                </h6>
+                <h5 class="card-subtitle">{{elem.study}}</h5>
+                <p  v-if="elem.ongoing" class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - (Studerer her forsatt)</p>
+                <p v-else class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}</p>
+                <p class="card-text">{{elem.description}}</p>
+            </div>
         </div>
     </div>
 </template>
@@ -41,6 +39,7 @@ export default {
                 }
             }).catch(error => {
                 console.error("error removing praksissted: ", error);
+                alert(error)
             })
         },
         edit: function(elem) {
@@ -52,6 +51,8 @@ export default {
 </script>
 
 <style>
-
+.g-group {
+    margin-top: 1em
+}
 </style>
 

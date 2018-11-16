@@ -1,24 +1,24 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!references[0] && showList" >
+            <div v-if="!references[0] && mode!=='edit'" >
                 <h5 class="text-muted">Referanser
-                    <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Hvilke personer kan potensielle arbeidsgivere kontakte for å bli kjent med deg? Husk å be om tillatelse!</p>
+                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
                 </h5>
+                <p class="b-card-text" style="font-style: italic">Hvilke personer kan potensielle arbeidsgivere kontakte for å bli kjent med deg? Husk å be om tillatelse!</p>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listExp" :visible="showList">
+                <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Referanser
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til referanse</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til referanse</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <reference-list v-on:editReference="editReference" :references="references" :uid="user_id" :cid="cert_id" :id="ref_id"></reference-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editExp" :visible="!showList">
+            <b-collapse class="mt-2"  id="editExp" :visible="mode==='edit'">
                 <reference v-on:onUpdatedReference="onUpdatedReference" :uid="user_id" :cid="cert_id" :id="id"></reference>
             </b-collapse>
         </b-card>
@@ -45,14 +45,14 @@ export default {
             user_id: null,
             cert_id: null,
             id: null,
-            showList: true
+            mode: 'list'
         }
     },
     methods: {
         editReference(id) {
             if (id) {
                 this.id = id
-                this.showList = false
+                this.mode = 'edit'
             }
         },
         onUpdatedReference(id) {
@@ -61,7 +61,7 @@ export default {
             if (id) {
                 this.fetchReference()
             }
-            this.showList = true
+            this.mode = 'list'
         },
         fetchReference() {
             if (this.user) {

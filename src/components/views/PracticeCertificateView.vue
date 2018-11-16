@@ -54,6 +54,7 @@ export default {
                 // }
             }).catch(error => {
                 console.error("Error removing document: ", error);
+                alert(error)
             })
         },
         fetchCertificates() {

@@ -1,5 +1,5 @@
 <template>
-    <div class="component" style="margin: 1em">
+    <div class="component">
         <div v-if="this.show == 'training'">
             <h4  class="g-title">Praksissted</h4>
             <p style="font-style: italic">Hvor har du vært i praksis?</p>
@@ -42,7 +42,8 @@
             </b-form-group>
             
             <from-to :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg jobber her nå'"></from-to>
-            <upload-media :parent="'exp'" :uid="user_id" :cid="form.cert_id" :media="media" :links="links"> </upload-media>
+            
+            <upload-media :parent="'exp'" :uid="user_id" :cid="cert_id" :media="media" :links="links"> </upload-media>
  
             <media-list :media="media" :links="links"></media-list>
 
@@ -110,25 +111,37 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            we_id: null,
+            e_id: null,
             disableWrite: false,
             file: null,
             reason: 'onUpdatedExperience'
         }
 
     },
+    watch: {
+        // id: function(val, oldVal) {
+        //     console.log('experience wath', val,oldVal)
+        // }
+    },
+    computed: {
+        // id: function(val, oldVal) {
+        //     console.log('id changed', val, oldVal)
+        //     return this.id
+        // }
+    },
     methods: {
+        destroy() {
+          this.$destroy();
+        },    
         reset () {
             Object.assign(this.$data, this.$options.data.call(this));
         },
         cancel() {
             this.$emit(this.reason, null)
-            // this.$destroy()
+            this.destroy()
         },
         update() {
             if (this.user_id) {
-                this.form.user_id = this.user_id 
-                this.form.cert_id = this.cert_id 
                 this.form.timestamp = Date.now()
                 try {
                     this.form.from = toTimestamp(this.from.month, this.from.year)
@@ -139,22 +152,24 @@ export default {
                     console.error('update excception: ', error)
                 }
 
-                if (this.we_id) {
-                    db.collection("experience").doc(this.we_id).set(this.form, {merge: true})
+                if (this.e_id) {
+                    db.collection("experience").doc(this.e_id).set(this.form, {merge: true})
                     .then((docRef) => {
-                        updateMedia()
-                        console.log("Document updated with ID: ", this.we_id);
-                        this.$emit(this.reason, this.we_id)
+                        this.updateMedia()
+                        console.log("Document updated with ID: ", this.e_id);
+                        this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
                     });
                 } else {
+                    this.form.user_id = this.user_id 
+                    this.form.cert_id = this.cert_id 
                     db.collection("experience").add(this.form)
                     .then((docRef) => {
                         console.log("Document written with ID: ", docRef.id);
-                        this.we_id = docRef.id
-                        this.$emit(this.reason, this.we_id)
+                        this.e_id = docRef.id
+                        this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -164,17 +179,14 @@ export default {
             else {
                 console.info('User not logged in???')
             }
-            // this.$destroy()
+            this.destroy()
         },
         updateMedia() {
             this.media.forEach(element => {
+                let item = {filename: element.filename, url: element.url, type: element.type, description: element.description,
+                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
                 if (element.id) {
-                    element.user_id = this.user_id
-                    element.cert_id = this.cert_id
-                    element.timestamp = Date.now()
-                    db.collection("media").doc(element.id).set({
-                        filename: element.filename, url: element.url, type: element.type, description: element.description,
-                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}, {merge: true})
+                    db.collection("media").doc(element.id).set(item, {merge: true})
                     .then((docRef) => {
                         console.log("media updated with ID: ", docRef.id);
                     })
@@ -182,7 +194,7 @@ export default {
                         console.error("error adding media: ", error);
                     });
                 } else {
-                    db.collection("experience").add(element)
+                    db.collection("media").add(item)
                     .then((docRef) => {
                         console.log("media written with ID: ", docRef.id);
                     })
@@ -206,12 +218,14 @@ export default {
                         this.from.year = getYear(this.form.from)
                         this.to.month = getMonth(this.form.to)
                         this.to.year = getYear(this.form.to)
-                        this.media = this.form.media
-                        this.links = this.form.links
+                        this.user_id = this.form.user_id
+                        this.cert_id = this.form.cert_id
+                        console.log('experience fetched ok')
                     }
                 })
                 .catch((error) => {
-                    console.error("we error fetching document: ", error);
+                    console.error("error fetching document: ", error);
+                    alert('Henting av data feilet\n' + error.message)
                 });
             }
             this.fetchMedia()
@@ -233,25 +247,38 @@ export default {
                     })
                 })
                 .catch(err => {
-                    console.log('mc fetching experience failed', err)
+                    console.log('fetching media failed', err)
                 })
             }
+            console.log('experience created ok')
         }
     },
+    beforeDestroy() {
+        console.log('experience destroyed')
+    },
+    activated() {
+        console.log('experience activated', this.id)
+    },
+    updated() {
+        console.log('experience updated', this.id)
+    },
     mounted() {
-        console.log('experience created:', this.id)
+        console.log('experience mounted', this.id)
+    },
+    created() {
         this.reset()
         this.user = firebase.auth().currentUser
-        this.cert_id  = this.cid
-        this.we_id = this.id
+        if (this.cid)
+            this.cert_id  = this.cid
+        if (this.id !== undefined)
+            this.e_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
-        this.fetchData()
-        console.log('experience created:', this.we_id)
-        this.fetchData(this.we_id)
+        console.log('experience created:', this.cert_id, this.e_id)
+        this.fetchData(this.e_id)
     }
 }
 </script>

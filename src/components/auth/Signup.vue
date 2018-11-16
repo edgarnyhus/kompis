@@ -72,7 +72,7 @@ export default {
                     let user = null;
                     firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
                     .then(cred => {
-                        data = cred.user
+                        user = cred.user
                         return ref.set({
                             alias: this.alias,
                             user_id: user.uid

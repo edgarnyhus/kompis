@@ -1,24 +1,24 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!skills[0] && showList" >
+            <div v-if="!skills[0] && mode!=='edit'" >
                 <h5 class="text-muted">Praktiske ferdigheter
-                    <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
+                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
                 </h5>
+                <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listExp" :visible="showList">
+                <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Praktiske ferdigheter
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til arbeidserfaring</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til arbeidserfaring</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <practical-skill-list v-on:editSkill="editSkill" :skills="skills" :uid="user_id" :cid="cert_id" :id="w_id"></practical-skill-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editExp" :visible="!showList">
+            <b-collapse class="mt-2"  id="editExp" :visible="mode==='edit'">
                 <practical-skill v-on:onUpdatedSkill="onUpdatedSkill" :uid="user_id" :cid="cert_id" :id="id"></practical-skill>
             </b-collapse>
         </b-card>
@@ -45,14 +45,14 @@ export default {
             user_id: null,
             cert_id: null,
             id: null,
-            showList: true
+            mode: 'list'
         }
     },
     methods: {
         editSkill(id) {
             if (id) {
                 this.id = id
-                this.showList = false
+                this.mode = 'edit'
             }
         },
         onUpdatedSkill(id) {
@@ -61,7 +61,7 @@ export default {
             if (id) {
                 this.fetchSkill()
             }
-            this.showList = true
+            this.mode = 'list'
         },
         fetchSkill() {
             if (this.user) {

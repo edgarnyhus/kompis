@@ -1,24 +1,24 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!experience[0] && showList" >
+            <div v-if="!experience[0] && mode!=='edit'" >
                 <h5 class="text-muted">Arbeidserfaring
-                    <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
+                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
                 </h5>
+                <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listExp" :visible="showList">
+                <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Arbeidserfaring
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til arbeidserfaring</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='list'"><strong>Legg til arbeidserfaring</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editExp" :visible="!showList">
+            <b-collapse class="mt-2"  id="editExp" :visible="mode==='edit'">
                 <work-experience v-on:onUpdatedExperience="onUpdatedExperience" :uid="user_id" :cid="cert_id" :id="id"></work-experience>
             </b-collapse>
         </b-card>
@@ -47,15 +47,16 @@ export default {
             user_id: null,
             cert_id: null,
             id: null,
+            mode: 'list',
             showList: true
         }
     },
     methods: {
         editExperience(id) {
-            console.log('experience edit', id)
+            console.log('experienceCard edit', id, this.cert_id)
             if (id) {
                 this.id = id
-                this.showList = false
+                this.mode = 'edit'
             }
         },
         onUpdatedExperience(id) {
@@ -64,7 +65,7 @@ export default {
             if (id) {
                 this.fetchExperience()
             }
-            this.showList = true
+            this.mode = 'list'
         },
         fetchExperience() {
             if (this.user) {
@@ -109,7 +110,8 @@ export default {
     created() {
         // current user
         this.user = firebase.auth().currentUser
-        this.cert_id = this.cid
+        if (this.cid !== undefined)
+            this.cert_id = this.cid
         if (this.uid) {
             this.user_id = this.uid
         } else if (this.user) {

@@ -1,15 +1,13 @@
 <template>
     <div class="component">
         <ul class="list-unstyled" style="margin-top: 1em">
-            <p v-if="media.length > 0"><strong>Opplastet dokumentasjon</strong></p>
             <b-media tag="li" v-for="item in media" :key="item.url" style="margin-bottom: 0.5em">
+                <p><strong>{{ item.filename, 10 | textTruncate}}</strong></p>
                 <img :src="item.url" @click="show(item)" rounded slot="aside" class="mg-thumbnail" width="92" height="92" :alt="item.filename" style="padding-top: 0">
-                <p>{{ item.filename }}</p>
                 <p>{{ item.description }}</p>
             </b-media>
             <show-media v-if="showFile" v-on:onFileClose="onFileClose" :file="file"></show-media>
 
-            <p v-if="links.length > 0"><strong>Linker</strong></p>
             <b-media tag="li" v-for="item in links" :key="item.url" style="margin-bottom: 0.5em">
                 <b-link href="item.url">Link</b-link>
                 <p style="margin-bottom: 5px">{{ item.description }}</p>

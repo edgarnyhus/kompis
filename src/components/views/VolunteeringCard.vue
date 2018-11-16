@@ -1,24 +1,24 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!volunteering[0] && showList" >
+            <div v-if="!volunteering[0] && mode!=='edit'" >
                 <h5 class="text-muted">Frivillig arbeid og verv
-                    <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Har du tatt på deg frivillig arbeid eller verv? Hva?</p>
+                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
                 </h5>
+                <p class="b-card-text" style="font-style: italic">Har du tatt på deg frivillig arbeid eller verv? Hva?</p>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listEdu" :visible="showList">
+                <b-collapse class="mt-2" id="listEdu" :visible="moed==='list'">
                     <h5 class="text-muted">Frivillig arbeid og verv
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til skole/kurs</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <volunteering-list v-on:editVolunteering="editVolunteering" :volunteering="volunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editEdu" :visible="!showList">
+            <b-collapse class="mt-2"  id="editEdu" :visible="mode==='edit'">
                 <volunteering v-on:onUpdatedVolunteering="onUpdatedVolunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering>
             </b-collapse>
         </b-card>
@@ -45,14 +45,14 @@ export default {
             user_id: null,
             cert_id: null,
             id: null,
-            showList: true
+            mode: 'list'
         }
     },
     methods: {
         editVolunteering(id) {
             if (id) {
                 this.id = id
-                this.showList = false
+                this.mode = 'edit'
             }
         },
         onUpdatedVolunteering(id) {
@@ -61,7 +61,7 @@ export default {
             if (id) {
                 this.fetchiVolunteering()
             }
-            this.showList = true
+            this.mode = 'list'
         },
         fetchVolunteering() {
             if (this.user) {

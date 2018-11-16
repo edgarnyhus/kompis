@@ -59,6 +59,7 @@ export default {
                 }
             }).catch(error => {
                 console.error("pc error removing praksissted: ", error);
+                alert(error)
             })
         },
         updateTraining(elem) {
@@ -88,6 +89,7 @@ export default {
                 })
                 .catch((error) => {
                     console.error("WE Error fetching document: ", error);
+                    alert(error)
                 });
             }            
         }

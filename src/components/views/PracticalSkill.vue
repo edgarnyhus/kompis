@@ -1,5 +1,5 @@
 <template>
-    <div class="component" style="margin: 1em">
+    <div class="component">
         <div>
             <h4 class="g-title">Praktisk ferdighet</h4>
             <p style="font-style: italic">Hva er dine praktiske evner? Noe du har lært på skole eller i jobb?</p>
@@ -20,9 +20,9 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <upload-media :parent="'skill'" :uid="user_id" :cid="form.cert_id"> </upload-media>
+            <upload-media :parent="'skill'" :uid="user_id" :cid="cert_id"> </upload-media>
  
-            <media-list :media="media" :links="links"></media-list>
+            <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
             <b-form-group>
                 <p class="g-header"><strong>Bekreftelse</strong></p>
@@ -106,6 +106,7 @@ export default {
                     })
                     .catch(err => {
                         console.log('Firestore error: ', err)
+                        alert(error)
                     })
                 } else {
                     db.collection('skills').add(
@@ -117,6 +118,7 @@ export default {
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
+                        alert(error)
                     })
                 }
             }
@@ -132,19 +134,25 @@ export default {
                 .then (doc => {
                     if(doc.exists) {
                         this.form = doc.data()
+                        this.user_id = this.form.user_id
+                        this.cert_id = this.form.cert_id
+                        console.log('skill fetched ok')
                     }
                 })
                 .catch(err => {
                     console.log('Firestore error: ', err)
+                    alert(error)
                 })
             }
         }            
     },
-    mounted() {
+    created() {
         this.reset()
         this.user = firebase.auth().currentUser
-        this.cert_id  = this.cid
-        this.ps_id = this.id
+        if (this.cid)
+            this.cert_id  = this.cid
+        if (this.id)
+            this.ps_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
@@ -152,7 +160,7 @@ export default {
         }
 
         this.fetchData(this.ps_id)
-        console.log('created:', this.ps_id)
+        console.log('skill created ok')
     }
 }
 </script>

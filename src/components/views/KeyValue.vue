@@ -20,9 +20,9 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <upload-media :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </upload-media>
+            <upload-media :parent="'edu'" :uid="user_id" :cid="cert_id"> </upload-media>
  
-            <media-list :media="media" :links="links"></media-list>
+            <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
             <b-form-group>
                 <p class="g-header"><strong>Bekreftelse</strong></p>
@@ -101,8 +101,9 @@ export default {
                             console.log('Key value updated')
                             this.$emit(this.reason, this.kv_id)
                         })
-                    .catch(err => {
-                        console.log('Firestore error: ', err)
+                    .catch(error => {
+                        console.log('Firestore error: ', error)
+                        alert(error)
                     })
                 } else {
                     console.log('db.add', this.form)
@@ -113,8 +114,9 @@ export default {
                         this.kv_id = doc.id
                         this.$emit(this.reason, this.kv_id)
                      })
-                    .catch(err => {
-                        console.log('Firestore error: ', err)
+                    .catch(error => {
+                        console.log('Firestore error: ', error)
+                        alert(error)
                     })
                 }
             }
@@ -130,20 +132,26 @@ export default {
                 .then ((docRef) => {
                     if(docRef.exists) {
                         this.form = docRef.data()
+                        this.user_id = this.form.user_id
+                        this.cert_id = this.form.cert_id
+                        console.log('keyvalue fetched ok')
                     }
                 })
                 .catch((error) => {
                     console.error("WE Error fetching document: ", error);
+                    alert(error)
                 });
             }            
         }
 
     },
-    mounted() {
+    created() {
         this.reset()
         this.user = firebase.auth().currentUser
-        this.cert_id  = this.cid
-        this.kv_id = this.id
+        if (this.cid)
+            this.cert_id  = this.cid
+        if (this.id)
+            this.kv_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
@@ -151,6 +159,7 @@ export default {
         }
 
         this.fetchData(this.kv_id)
+        console.log('keyvalue created ok')
     }
 }
 </script>

@@ -37,11 +37,11 @@
 
             <!--FAILED-->
             <div v-if="isFailed">
-                <p style="color: red">Opplastingen feilet.</p>
-                <p>
+                <p style="color: red; margin-top: 0.6em; margin-bottom: 0">Opplastingen feilet.</p>
+                <!-- <p>
                 <a href="javascript:void(0)" @click="reset()">Prøv igjen</a>
-                </p>
-                <pre>{{ uploadError }}</pre>
+                </p> -->
+                <!-- <pre>{{ uploadError }}</pre> -->
             </div>
             </div>
         </div>

@@ -1,5 +1,5 @@
 <template>
-    <div class="component" style="margin: 1em">
+    <div class="component">
         <div>
             <h4 class="g-title">Språk</h4>
             <p style="font-style: italic">Hvilke språk kan du snakke?</p>
@@ -23,9 +23,9 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <upload-media :parent="'edu'" :uid="user_id" :cid="form.cert_id"> </upload-media>
+            <upload-media :parent="'edu'" :uid="user_id" :cid="cert_id"> </upload-media>
  
-            <media-list :media="media" :links="links"></media-list>
+            <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -97,6 +97,7 @@ export default {
                     })
                     .catch(err => {
                         console.log('Firestore error: ', err)
+                        alert(error)
                     })
                 } else {
                     db.collection('languages').add(this.form)
@@ -107,6 +108,7 @@ export default {
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
+                        alert(error)
                     })
                 }
             }
@@ -115,11 +117,13 @@ export default {
             }
         }
     },
-    mounted() {
+    created() {
         this.reset()
         this.user = firebase.auth().currentUser
-        this.cert_id  = this.cid
-        this.l_id = this.id
+        if (this.cid)
+            this.cert_id  = this.cid
+        if (this.id)
+            this.l_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
@@ -133,9 +137,13 @@ export default {
             .then (doc => {
                 if(doc.exists) {
                     this.form = doc.data()
+                    this.user_id = this.form.user_id
+                    this.cert_id = this.form.cert_id
+                    console.log('language fetched ok')
                 }
             })
         }            
+        console.log('language created ok')
     }
 }
 </script>

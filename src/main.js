@@ -58,6 +58,20 @@ global.toTimestamp = (month, year) => {
   return new Date(date)
 }
 
+global.textTruncate = (str, length, ending) => {
+    if (length == null) {
+      length = 100;
+    }
+    if (ending == null) {
+      ending = '...';
+    }
+    if (str.length > length) {
+      return str.substring(0, length - ending.length) + ending;
+    } else {
+      return str;
+    }
+}
+
 // // Register a global custom directive called `v-focus`
 // Vue.directive('focus', {
 //   // When the bound element is inserted into the DOM...

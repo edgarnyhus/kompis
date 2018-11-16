@@ -1,24 +1,24 @@
 <template>
     <div class="component">
         <b-card> 
-            <div v-if="!education[0] && showList" >
+            <div v-if="!education[0] && mode!=='edit'" >
                 <h5 class="text-muted">Utdanning og kurs
-                    <b-button class="btn-floating btn-secondary float-right" @click="showList=false">Legg til emne</b-button>
-                    <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
+                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
                 </h5>
+                <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listEdu" :visible="showList">
+                <b-collapse class="mt-2" id="listEdu" :visible="mode==='list'">
                     <h5 class="text-muted">Utdanning og kurs
-                        <b-link class="g-link float-right" @click="showList=false"><strong>Legg til skole/kurs</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='list'"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="id"></education-list>
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editEdu" :visible="!showList">
+            <b-collapse class="mt-2"  id="editEdu" :visible="mode==='edit'">
                 <education v-on:onUpdatedEducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="id"></education>
             </b-collapse>
         </b-card>
@@ -45,23 +45,23 @@ export default {
             user_id: null,
             cert_id: null,
             id: null,
-            showList: true
+            mode: 'list'
         }
     },
     methods: {
         editEducation(id) {
             if (id) {
                 this.id = id
-                this.showList = false
+                this.mode = 'edit'
             }
         },
         onUpdatedEducation(id) {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchiEducation()
+                this.fetchEducation()
             }
-            this.showList = true
+            this.mode = 'list'
         },
         fetchEducation() {
             if (this.user) {
