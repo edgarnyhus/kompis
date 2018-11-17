@@ -150,29 +150,34 @@ export default {
                     }
                 } catch (error) {
                     console.error('update excception: ', error)
+                    alert(error)
                 }
 
                 if (this.e_id) {
                     db.collection("experience").doc(this.e_id).set(this.form, {merge: true})
                     .then((docRef) => {
                         this.updateMedia()
-                        console.log("Document updated with ID: ", this.e_id);
+                        this.updateLinks()
+                        console.log("experience updated", this.e_id);
                         this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
-                        console.error("Error adding document: ", error);
+                        console.error("Error adding experience", error);
                     });
                 } else {
                     this.form.user_id = this.user_id 
                     this.form.cert_id = this.cert_id 
                     db.collection("experience").add(this.form)
                     .then((docRef) => {
-                        console.log("Document written with ID: ", docRef.id);
+                        this.updateMedia()
+                        this.updateLinks()
+                        console.log("experience added ", docRef.id);
                         this.e_id = docRef.id
                         this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
-                        console.error("Error adding document: ", error);
+                        console.error("Error adding experience", error);
+                        alert(error)
                     });
                 }
             }
@@ -192,6 +197,7 @@ export default {
                     })
                     .catch((error) => {
                         console.error("error adding media: ", error);
+                        alert(error)
                     });
                 } else {
                     db.collection("media").add(item)
@@ -200,35 +206,35 @@ export default {
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
+                        alert(error)
                     });
                 }
             });
-
         },
-        fetchData(id) {
-            if (id) {
-                console.log('we get object', id)
-                // get object
-                db.collection('experience').doc(id)
-                .get()
-                .then ((docRef) => {
-                    if(docRef.exists) {
-                        this.form = docRef.data()
-                        this.from.month = getMonth(this.form.from)
-                        this.from.year = getYear(this.form.from)
-                        this.to.month = getMonth(this.form.to)
-                        this.to.year = getYear(this.form.to)
-                        this.user_id = this.form.user_id
-                        this.cert_id = this.form.cert_id
-                        console.log('experience fetched ok')
-                    }
-                })
-                .catch((error) => {
-                    console.error("error fetching document: ", error);
-                    alert('Henting av data feilet\n' + error.message)
-                });
-            }
-            this.fetchMedia()
+        updateLiinks() {
+            this.media.forEach(element => {
+                let item = {name: element.name, url: element.url, description: element.description,
+                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                if (element.id) {
+                    db.collection("links").doc(element.id).set(item, {merge: true})
+                    .then((docRef) => {
+                        console.log("links updated", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("error adding link", error);
+                        alert(error)
+                    });
+                } else {
+                    db.collection("links").add(item)
+                    .then((docRef) => {
+                        console.log("links added", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("Error adding links", error);
+                        alert(error)
+                    })
+                }
+            });
         },
         fetchMedia() {
             if (this.user_id) {
@@ -248,9 +254,57 @@ export default {
                 })
                 .catch(err => {
                     console.log('fetching media failed', err)
+                    alert(error)
                 })
             }
-            console.log('experience created ok')
+        },
+        fetchLinks() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('links').where('cert_id', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('links').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.links.push(elem)
+                    })
+                })
+                .catch(err => {
+                    console.log('fetching links failed', err)
+                    alert(error)
+                })
+            }
+        },
+        fetchData(id) {
+            if (id) {
+                console.log('we get object', id)
+                // get object
+                db.collection('experience').doc(id)
+                .get()
+                .then ((docRef) => {
+                    if(docRef.exists) {
+                        this.form = docRef.data()
+                        this.from.month = getMonth(this.form.from)
+                        this.from.year = getYear(this.form.from)
+                        this.to.month = getMonth(this.form.to)
+                        this.to.year = getYear(this.form.to)
+                        this.user_id = this.form.user_id
+                        this.cert_id = this.form.cert_id
+                        this.fetchMedia()
+                        this.fetchLinks()
+                        console.log('experience fetched ok')
+                    }
+                })
+                .catch((error) => {
+                    console.error("error fetching document: ", error);
+                    alert('Henting av data feilet\n' + error.message)
+                })
+            }
         }
     },
     beforeDestroy() {

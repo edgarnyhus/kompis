@@ -1,5 +1,6 @@
 <template>
     <div class="component">
+        <slot>
         <div>
             <h4 class="g-title">Utdanning og kurs</h4>
             <p style="font-style: italic">Hvilke skole har du gått på? Har du tatt noe kurs på jobb, skole eller fritid?</p>
@@ -27,7 +28,7 @@
 
             <from-to :from="from" :to="to" :ongoing="form.ongoing" :ongoingText="'Jeg går her nå'"></from-to>
             
-            <upload-media :uid="user_id" :cid="cert_id"> </upload-media>
+            <upload-media :media="media" :uid="user_id" :cid="cert_id"> </upload-media>
  
             <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
@@ -37,6 +38,8 @@
             </div>
 
         </b-form>
+            
+        </slot>
     </div>
 </template>
 
@@ -83,9 +86,15 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            edu_id: null,
+            // edu_id: null,
             disableWrite: false,
             reason: 'onUpdatedEducation'
+        }
+    },
+    watch: {
+        id() {
+            console.log('education watch', this.id)
+            this.fetchData()
         }
     },
     methods: {
@@ -110,11 +119,13 @@ export default {
                     console.log('update excception: ', error)
                     alert(error)
                 }
-                if (this.edu_id) {
-                    db.collection("education").doc(this.edu_id).set(this.form, {merge: true})
+                if (this.id) {
+                    db.collection("education").doc(this.id).set(this.form, {merge: true})
                     .then((docRef) => {
-                        console.log("Document updated with ID: ", this.edu_id);
-                        this.$emit(this.reason, this.edu_id)
+                        this.updateMedia()
+                        this.updateLiinks()
+                        console.log("Document updated with ID: ", this.id);
+                        this.$emit(this.reason, this.id)
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -123,10 +134,12 @@ export default {
                 } else {
                     db.collection("education").add(this.form)
                     .then((docRef) => {
+                        this.updateMedia()
+                        this.updateLiinks()
                         console.log("Document written with ID: ", docRef.id);
-                        this.edu_id = docRef.id
-                        this.$emit(this.reason, this.edu_id)
-                    })
+                        this.id = docRef.id
+                        this.$emit(this.reason, this.id)
+ˍ                    })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
                         alert(error)
@@ -138,11 +151,107 @@ export default {
                 alert(error)
             }
         },
-        fetchData(id) {
-            if (id) {
-                console.log('edu get object', id)
+        updateMedia() {
+            this.media.forEach(element => {
+                let item = {filename: element.filename, url: element.url, type: element.type, description: element.description,
+                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                if (element.id) {
+                    db.collection("media").doc(element.id).set(item, {merge: true})
+                    .then((docRef) => {
+                        console.log("media updated with ID: ", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("error updating media: ", error);
+                        alert(error)
+                    });
+                } else {
+                    db.collection("media").add(item)
+                    .then((docRef) => {
+                        console.log("media added", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("Error adding media", error);
+                        alert(error)
+                    });
+                }
+            });
+        },
+        updateLiinks() {
+            this.media.forEach(element => {
+                let item = {name: element.name, url: element.url, description: element.description,
+                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                if (element.id) {
+                    db.collection("links").doc(element.id).set(item, {merge: true})
+                    .then((docRef) => {
+                        console.log("links updated", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("error updating link", error);
+                        alert(error)
+                    });
+                } else {
+                    db.collection("links").add(item)
+                    .then((docRef) => {
+                        console.log("links added", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("error adding links", error);
+                        alert(error)
+                    })
+                }
+            });
+        },
+        fetchMedia() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('media').where('cert_i', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('media').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.media.push(elem)
+                    })
+                })
+                .catch(err => {
+                    console.log('fetching media failed', err)
+                    alert(error)
+                })
+            }
+        },
+        fetchLinks() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('links').where('cert_i', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('links').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.links.push(elem)
+                    })
+                    this.fetchMedia()
+                    this.fetchLinks()
+                })
+                .catch(err => {
+                    console.log('fetching links failed', err)
+                    alert(error)
+                })
+            }
+        },
+        fetchData() {
+            if (this.id) {
+                console.log('we get object', this.id)
                 // get object
-                db.collection('education').doc(id)
+                db.collection('education').doc(this.id)
                 .get()
                 .then ((docRef) => {
                     if(docRef.exists) {
@@ -153,13 +262,38 @@ export default {
                         this.to.year = getYear(this.form.to)
                         this.user_id = this.form.user_id
                         this.cert_id = this.form.cert_id
+                        this.id = docRef.id
+                        this.fetchMedia()
+                        this.fetchLinks()
                         console.log('education fetched ok')
                     }
                 })
                 .catch((error) => {
-                    console.error("edu error fetching document: ", error);
+                    console.error("error fetching document: ", error);
+                    alert('Henting av data feilet\n' + error.message)
+                })
+            }
+        },
+        fetchLinks() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('links').where('cert_i', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('links').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.links.push(elem)
+                    })
+                })
+                .catch(err => {
+                    console.log('fetching media failed', err)
                     alert(error)
-                });
+                })
             }
         }
     },
@@ -168,14 +302,14 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.cid)
             this.form.cert_id  = this.cid
-        if (this.id)
-            this.edu_id = this.id
+        // if (this.id)
+        //     this.edu_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
-        this.fetchData(this.edu_id)
+        this.fetchData()
         console.log('education created ok')
     }
 }

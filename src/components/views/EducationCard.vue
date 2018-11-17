@@ -14,12 +14,12 @@
                         <b-link class="g-link float-right" @click="mode='list'"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="id"></education-list>
+                    <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="edu_id"></education-list>
                 </b-collapse>
             </div>
 
             <b-collapse class="mt-2"  id="editEdu" :visible="mode==='edit'">
-                <education v-on:onUpdatedEducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="id"></education>
+                <education v-on:onUpdatedEducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="edu_id"></education>
             </b-collapse>
         </b-card>
     </div>
@@ -44,14 +44,15 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            id: null,
+            edu_id: null,
             mode: 'list'
         }
     },
     methods: {
         editEducation(id) {
+            console.log('educationCard edit', id)
             if (id) {
-                this.id = id
+                this.edu_id = id
                 this.mode = 'edit'
             }
         },
@@ -64,7 +65,7 @@ export default {
             this.mode = 'list'
         },
         fetchEducation() {
-            if (this.user) {
+            if (this.user_id) {
                 db.collection('education').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {
@@ -84,8 +85,9 @@ export default {
     created() {
         // current user
         this.user = firebase.auth().currentUser
-        this.cert_id = this.cid
-        if (this.uid) {
+        if (this.cert_id !== undefined)
+            this.cert_id = this.cid
+        if (this.uid !== undefined) {
             this.user_id = this.uid
         } else if (this.user) {
             this.user_id = this.user.uid

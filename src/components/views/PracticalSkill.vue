@@ -101,6 +101,8 @@ export default {
                     db.collection('skills').doc(this.ps_id).set(
                         this.form, { merge: true })
                     .then (doc => {
+                        this.updateMedia()
+                        this.updateLiinks()
                         console.log('Work experience updated')
                         this.$emit(this.reason, this.ps_id)
                     })
@@ -112,6 +114,8 @@ export default {
                     db.collection('skills').add(
                         this.form)
                     .then (doc => {
+                        this.updateMedia()
+                        this.updateLiinks()
                         console.log('Work experience added')
                         this.ps_id = doc.id
                         this.$emit(this.reason, this.ps_id)
@@ -125,6 +129,102 @@ export default {
             else {
                 console.log('User not logged in???')
             }
+        },
+        updateMedia() {
+            this.media.forEach(element => {
+                let item = {filename: element.filename, url: element.url, type: element.type, description: element.description,
+                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                if (element.id) {
+                    db.collection("media").doc(element.id).set(item, {merge: true})
+                    .then((docRef) => {
+                        console.log("media updated with ID: ", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("error adding media: ", error);
+                        alert(error)
+                    });
+                } else {
+                    db.collection("media").add(item)
+                    .then((docRef) => {
+                        console.log("media written with ID: ", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("Error adding document: ", error);
+                        alert(error)
+                    });
+                }
+            });
+        },
+        updateLiinks() {
+            this.media.forEach(element => {
+                let item = {name: element.name, url: element.url, description: element.description,
+                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                if (element.id) {
+                    db.collection("links").doc(element.id).set(item, {merge: true})
+                    .then((docRef) => {
+                        console.log("links updated", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("error adding link", error);
+                        alert(error)
+                    });
+                } else {
+                    db.collection("links").add(item)
+                    .then((docRef) => {
+                        console.log("links added", docRef.id);
+                    })
+                    .catch((error) => {
+                        console.error("Error adding links", error);
+                        alert(error)
+                    })
+                }
+            });
+        },
+        fetchMedia() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('media').where('cert_i', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('media').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.media.push(elem)
+                    })
+                })
+                .catch(err => {
+                    console.log('fetching media failed', err)
+                    alert(error)
+                })
+            }
+            console.log('experience created ok')
+        },
+        fetchLinks() {
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('links').where('cert_i', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('links').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
+                .then(snapshot => {
+                    snapshot.forEach(doc => {
+                        let elem = doc.data()
+                        elem.id = doc.id
+                        this.links.push(elem)
+                    })
+                })
+                .catch(err => {
+                    console.log('fetching links failed', err)
+                    alert(error)
+                })
+            }
+            console.log('experience created ok')
         },
         fetchData(id) {
             if (id) {

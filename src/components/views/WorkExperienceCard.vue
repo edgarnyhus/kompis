@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Arbeidserfaring
-                        <b-link class="g-link float-right" @click="mode='list'"><strong>Legg til arbeidserfaring</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til arbeidserfaring</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>
@@ -41,8 +41,8 @@ export default {
     data() {
         return {
             experience: [],
-            media: [],
-            links: [],
+            // media: [],
+            // links: [],
             user: null,
             user_id: null,
             cert_id: null,
@@ -68,9 +68,14 @@ export default {
             this.mode = 'list'
         },
         fetchExperience() {
-            if (this.user) {
-                db.collection('experience').where('user_id', '==',this.user_id)
-                .get()
+            if (this.user_id) {
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('wxperience').where('cert_id', '==',this.cert_id)
+                 } else {
+                    ref = db.collection('wxperience').where('user_id', '==',this.user_id)
+                 }   
+                ref.get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -82,29 +87,29 @@ export default {
                     console.log('mc fetching experience failed', err)
                 })
             }
-            this.fetchMedia()
+            // this.fetchMedia()
         },
-        fetchMedia() {
-            if (this.user_id) {
-                let ref = null
-                if (this.cert_id) {
-                    ref = db.collection('media').where('cert_i', '==',this.cert_id)
-                 } else {
-                    ref = db.collection('media').where('user_id', '==',this.user_id)
-                 }   
-                ref.get()
-                .then(snapshot => {
-                    snapshot.forEach(doc => {
-                        let elem = doc.data()
-                        elem.id = doc.id
-                        this.media.push(elem)
-                    })
-                })
-                .catch(err => {
-                    console.log('mc fetching experience failed', err)
-                })
-            }
-        }
+        // fetchMedia() {
+        //     if (this.user_id) {
+        //         let ref = null
+        //         if (this.cert_id) {
+        //             ref = db.collection('media').where('cert_i', '==',this.cert_id)
+        //          } else {
+        //             ref = db.collection('media').where('user_id', '==',this.user_id)
+        //          }   
+        //         ref.get()
+        //         .then(snapshot => {
+        //             snapshot.forEach(doc => {
+        //                 let elem = doc.data()
+        //                 elem.id = doc.id
+        //                 this.media.push(elem)
+        //             })
+        //         })
+        //         .catch(err => {
+        //             console.log('mc fetching experience failed', err)
+        //         })
+        //     }
+        // }
 
     },
     created() {
