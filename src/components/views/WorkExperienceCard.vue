@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!experience[0] && mode!=='edit'" >
                 <h5 class="text-muted">Arbeidserfaring
-                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="ie=null; mode='edit'">Legg til emne</b-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
             </div>
@@ -41,8 +41,6 @@ export default {
     data() {
         return {
             experience: [],
-            // media: [],
-            // links: [],
             user: null,
             user_id: null,
             cert_id: null,
@@ -69,17 +67,20 @@ export default {
         },
         fetchExperience() {
             if (this.user_id) {
+                this.experience.length = 0
                 let ref = null
                 if (this.cert_id) {
-                    ref = db.collection('wxperience').where('cert_id', '==',this.cert_id)
+                    ref = db.collection('experience').where('cert_id', '==',this.cert_id)
                  } else {
-                    ref = db.collection('wxperience').where('user_id', '==',this.user_id)
+                    ref = db.collection('experience').where('user_id', '==',this.user_id)
                  }   
                 ref.get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
+                        elem.media = []
+                        elem.links = [] 
                         this.experience.push(elem)
                     })
                 })

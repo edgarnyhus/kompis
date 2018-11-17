@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!volunteering[0] && mode!=='edit'" >
                 <h5 class="text-muted">Frivillig arbeid og verv
-                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Har du tatt på deg frivillig arbeid eller verv? Hva?</p>
             </div>
@@ -64,6 +64,7 @@ export default {
             this.mode = 'list'
         },
         fetchVolunteering() {
+            this.volunteering.length = 0
             if (this.user) {
                 db.collection('volunteering').where('user_id', '==',this.user_id)
                 .get()

@@ -70,10 +70,15 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            l_id: null,
             reason: 'onUpdatedLanguage'
         }
 
+    },
+    watch: {
+        id() {
+            console.log('lamgiage watch', this.id)
+            this.fetchData()
+        }
     },
     methods: {
         reset () {
@@ -88,14 +93,13 @@ export default {
                 this.form.user_id = this.user_id 
                 this.form.cert_id = this.cert_id 
                 this.form.timestamp = Date.now()
-                if (this.l_id) {
-                    db.collection('languages').doc(this.l_id).set(
+                if (this.id) {
+                    db.collection('languages').doc(this.id).set(
                         this.form, { merge: true })
                     .then (doc => {
                         this.updateMedia()
                         this.updateLiinks()
                         console.log('Language updated')
-                        this.$emit(this.reason, this.l_id)
                     })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -107,8 +111,6 @@ export default {
                         this.updateMedia()
                         this.updateLiinks()
                         console.log('Language added')
-                        this.l_id = doc.id
-                        this.$emit(this.reason, this.l_id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -191,7 +193,6 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
         fetchLinks() {
             if (this.user_id) {
@@ -214,13 +215,11 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
-        fetchData(id) {
-            if (id) {
-                console.log('we get object', id)
+        fetchData() {
+            if (this.id) {
                 // get object
-                db.collection('language').doc(id)
+                db.collection('languages').doc(this.id)
                 .get()
                 .then ((docRef) => {
                     if (docRef.exists) {
@@ -229,11 +228,11 @@ export default {
                         this.cert_id = this.form.cert_id
                         this.fetchMedia()
                         this.fetchLinks()
-                        console.log('experience fetched ok')
+                        console.log('language fetched ok')
                     }
                 })
                 .catch((error) => {
-                    console.error("error fetching document: ", error);
+                    console.error("error fetching languages", error);
                     alert('Henting av data feilet\n' + error.message)
                 })
             }
@@ -244,14 +243,12 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.cid)
             this.cert_id  = this.cid
-        if (this.id)
-            this.l_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
-        this.fetchData(this.l_id)
+        this.fetchData()
 
         console.log('language created ok')
     }

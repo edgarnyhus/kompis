@@ -86,7 +86,6 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            // edu_id: null,
             disableWrite: false,
             reason: 'onUpdatedEducation'
         }

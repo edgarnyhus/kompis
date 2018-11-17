@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!skills[0] && mode!=='edit'" >
                 <h5 class="text-muted">Praktiske ferdigheter
-                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
             </div>
@@ -65,6 +65,7 @@ export default {
         },
         fetchSkill() {
             if (this.user) {
+                this.skills.length = 0
                 db.collection('skills').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {

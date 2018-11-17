@@ -76,9 +76,14 @@ export default {
             links: [],
             user_id: null,
             cert_id: null,
-            kv_id: null,
             reason: 'onUpdatedKeyValue',
             user: null
+        }
+    },
+    watch: {
+        id() {
+            console.log('education watch', this.id)
+            this.fetchData()
         }
     },
     methods: {
@@ -93,13 +98,12 @@ export default {
                 this.form.user_id = this.user.uid 
                 this.form.cert_id = this.cert_id
                 this.form.timestamp = Date.now()
-                if (this.kv_id) {
-                    console.log('db.set', this.form)
-                    db.collection('keyvalues').doc(this.kv_id).set(
+                if (this.id) {
+                    db.collection('keyvalues').doc(this.id).set(
                         this.form, { merge: true })
                         .then (doc => {
                             console.log('Key value updated')
-                            this.$emit(this.reason, this.kv_id)
+                            this.$emit(this.reason, this.id)
                         })
                     .catch(error => {
                         console.log('Firestore error: ', error)
@@ -111,8 +115,8 @@ export default {
                         this.form)
                     .then (doc => {
                         console.log('Key value added')
-                        this.kv_id = doc.id
-                        this.$emit(this.reason, this.kv_id)
+                        this.id = doc.id
+                        this.$emit(this.reason, this.id)
                      })
                     .catch(error => {
                         console.log('Firestore error: ', error)
@@ -145,7 +149,7 @@ export default {
                         this.updateMedia()
                         this.updateLiinks()
                         console.log("media added", docRef.id);
-                        this.kv_id = docRef.id
+                        this.id = docRef.id
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -200,7 +204,6 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
         fetchLinks() {
             if (this.user_id) {
@@ -223,13 +226,12 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
-        fetchData(id) {
-            if (id) {
-                console.log('we get object', id)
+        fetchData() {
+            if (this.id) {
+                console.log('we get object', this.id)
                 // get object
-                db.collection('keyvalues').doc(id)
+                db.collection('keyvalues').doc(this.id)
                 .get()
                 .then ((docRef) => {
                     if(docRef.exists) {
@@ -254,14 +256,14 @@ export default {
         if (this.cid)
             this.cert_id  = this.cid
         if (this.id)
-            this.kv_id = this.id
+            this.id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
 
-        this.fetchData(this.kv_id)
+        this.fetchData()
         console.log('keyvalue created ok')
     }
 }

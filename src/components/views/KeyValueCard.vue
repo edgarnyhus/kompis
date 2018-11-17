@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!keyvalues[0] && mode!=='edit'" >
                 <h5 class="text-muted">Nøkkelkompetanse
-                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hvilke nøkkelegenskaper kjennetegner deg? Hva er dine styrker?</p>
             </div>
@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listKey" :visible="mode==='list'">
                     <h5 class="text-muted">Nøkkelkompetanse
-                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til skole/kurs</strong></b-link>
+                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til nøkkelkompetanse</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <key-value-list v-on:editKeyValue="editKeyValue" :keyvalues="keyvalues" :uid="user_id" :cid="cert_id" :id="kv_id"></key-value-list>
@@ -65,6 +65,7 @@ export default {
         },
         fetchKeyValues() {
             if (this.user) {
+                this.keyvalues.length = 0
                 db.collection('keyvalues').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {

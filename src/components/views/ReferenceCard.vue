@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!references[0] && mode!=='edit'" >
                 <h5 class="text-muted">Referanser
-                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hvilke personer kan potensielle arbeidsgivere kontakte for å bli kjent med deg? Husk å be om tillatelse!</p>
             </div>
@@ -14,7 +14,7 @@
                         <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til referanse</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <reference-list v-on:editReference="editReference" :references="references" :uid="user_id" :cid="cert_id" :id="ref_id"></reference-list>
+                    <reference-list v-on:editReference="editReference" :references="references" :uid="user_id" :cid="cert_id" :id="id"></reference-list>
                 </b-collapse>
             </div>
 
@@ -32,7 +32,7 @@ import Reference from '@/components/views/Reference'
 import ReferenceList from './ReferenceList'
 
 export default {
-    name: 'WorkReferenceCard',
+    name: 'ReferenceCard',
     components: {
         Reference,
         ReferenceList
@@ -65,6 +65,7 @@ export default {
         },
         fetchReference() {
             if (this.user) {
+                this.references.length = 0
                 db.collection('references').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {

@@ -1,6 +1,6 @@
 <template>
     <div class="component">
-        <div v-if="this.$route.params.show == 'training'">
+        <div v-if="show == 'training'">
             <h4  class="g-title">Kontaktperson</h4>
             <p style="font-style: italic">Hvem var din kontaktperson på praksisstedet?</p>
         </div>
@@ -11,8 +11,22 @@
 
         <b-form @submit.prevent="update">
             <b-form-group>
-                <label for="person"><strong>Referanseperson</strong> </label>
+                <label v-if="show == 'training'" for="person"><strong>Kontaktperson</strong> </label>
+                <label v-else for="person"><strong>Referanseperson</strong> </label>
                 <b-form-input id="person" v-model="form.person" />
+            </b-form-group>
+
+            <b-form-group>
+                <div class="form-row">
+                    <div class="col">
+                        <label for="email"><strong>Email</strong></label>
+                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="email" type="email" v-model="form.email" required />
+                    </div>
+                    <div class="col">
+                        <label for="phonw"><strong>Telefon</strong></label>
+                        <b-input class="mb-2 mr-sm-2 mb-sm-0" id="phone" type="tel" placeholder="" v-model="form.phone" />
+                    </div>
+                </div>
             </b-form-group>
 
             <b-form-group>
@@ -26,13 +40,21 @@
  
             <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
-            <b-form-group>
+            <!-- <b-form-group>
                 <p class="g-header"><strong >Bekreftelse</strong></p>
                 <p >Spør veileder eller kontaktperson ved bedrift om bekreftelse for å styrke din CV</p>
                 <div class="button-group">
                     <b-button variant="light">Spør</b-button>
                 </div>
-            </b-form-group>
+            </b-form-group> -->
+
+            <div class="my-3">
+                <p class="g-header"><strong >Bekreftelse</strong></p>
+                <p >Spør veileder eller kontaktperson ved bedrift om bekreftelse for å styrke din CV</p>
+                <b-btn variant="light" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">
+                    Spør
+                </b-btn>
+            </div>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -57,18 +79,13 @@ export default {
         UploadMedia,
         MediaList
     },
-    props: ['uid', 'cid', 'id'],
+    props: ['show', 'uid', 'cid', 'id'],
     data() {
         return {
-            competences: [
-                { value: null, text: 'Velg en nøkkelkompetanse' },
-                { value: 'Punktlig', text: 'Punktlig' },
-                { value: 'Tar initiativ', text: 'Tar initiativ' },
-                { value: 'Loyal', text: 'Loyal' },
-                { value: 'Ansvarlig', text: 'Ansvarlig' }
-            ],
             form: {
                 person: null,
+                email: null,
+                phone: null,
                 description: null,
                 confirmation: null,
                 user_id: null,
@@ -80,10 +97,15 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            ref_id: null,
             reason: 'onUpdatedReference'
         }
 
+    },
+    watch: {
+        id() {
+            console.log('lamgiage watch', this.id)
+            this.fetchData()
+        }
     },
     methods: {
         reset () {
@@ -97,12 +119,14 @@ export default {
                 this.form.user_id = this.user_id 
                 this.form.cert_id = this.cert_id 
                 this.form.timestamp = Date.now()
-                if (this.$route.params.id) {
-                    db.collection('references').doc(this.$route.params.id).set(
+                if (this.id) {
+                    db.collection('references').doc(this.id).set(
                         this.form, { merge: true })
                     .then (doc => {
+                        this.updateMedia()
+                        this.updateLiinks()
                         console.log('Work experience updated')
-                        this.$emit(this.reason, this.ref_id)
+                        this.$emit(this.reason, this.id)
                     })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -111,9 +135,10 @@ export default {
                     db.collection('references').add(
                         this.form)
                     .then (doc => {
+                        this.updateMedia()
+                        this.updateLiinks()
                         console.log('Work experience added')
-                        this.ref_id = doc.id
-                        this.$emit(this.reason, this.ref_id)
+                        this.$emit(this.reason, doc.id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -156,8 +181,6 @@ export default {
                 if (element.id) {
                     db.collection("links").doc(element.id).set(item, {merge: true})
                     .then((docRef) => {
-                        this.updateMedia()
-                        this.updateLiinks()
                         console.log("links updated", docRef.id);
                     })
                     .catch((error) => {
@@ -167,10 +190,7 @@ export default {
                 } else {
                     db.collection("links").add(item)
                     .then((docRef) => {
-                        this.updateMedia()
-                        this.updateLiinks()
                         console.log("links added", docRef.id);
-                        this.ref_id = docRef.id
                     })
                     .catch((error) => {
                         console.error("Error adding links", error);
@@ -200,7 +220,6 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
         fetchLinks() {
             if (this.user_id) {
@@ -223,21 +242,20 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
-        fetchData(id) {
-        if (this.ref_id) {
-            db.collection('references').doc(this.ref_id)
-            .get()
-            .then (doc => {
-                if(doc.exists) {
-                    this.form = doc.data()
-                    this.user_id = this.form.user_id
-                    this.cert_id = this.form.cert_id
-                    console.log('refernce fetched ok')
-                }
-            })
-        }            
+        fetchData() {
+            if (this.id) {
+                db.collection('references').doc(this.id)
+                .get()
+                .then (doc => {
+                    if(doc.exists) {
+                        this.form = doc.data()
+                        this.user_id = this.form.user_id
+                        this.cert_id = this.form.cert_id
+                        console.log('refernce fetched ok')
+                    }
+                })
+            }            
         },
     },
     created() {
@@ -245,8 +263,6 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.cid)
             this.cert_id  = this.cid
-        if (this.id)
-            this.ref_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {

@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!education[0] && mode!=='edit'" >
                 <h5 class="text-muted">Utdanning og kurs
-                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
             </div>
@@ -66,6 +66,7 @@ export default {
         },
         fetchEducation() {
             if (this.user_id) {
+                this.education.length = 0
                 db.collection('education').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {

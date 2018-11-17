@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!languages[0] && mode!=='edit'">
                 <h5 class="text-muted">Språk
-                    <b-button class="btn-floating btn-secondary float-right" @click="mode='edit'">Legg til emne</b-button>
+                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hvilke språk kan du snakke?</p>
             </div>
@@ -65,6 +65,7 @@ export default {
         },
         fetchLanguage() {
             if (this.user) {
+                this.languages.length = 0
                 db.collection('languages').where('user_id', '==',this.user_id)
                 .get()
                 .then(snapshot => {

@@ -76,11 +76,16 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            ps_id: null,
             reason: 'onUpdatedSkill',
             user: null
         }
 
+    },
+    watch: {
+        id() {
+            console.log('lamgiage watch', this.id)
+            this.fetchData()
+        }
     },
     methods: {
         reset () {
@@ -97,14 +102,14 @@ export default {
                 this.form.user_id = this.user_id 
                 this.form.cert_id = this.cert_ud 
                 this.form.timestamp = Date.now()
-                if (this.ps_id) {
-                    db.collection('skills').doc(this.ps_id).set(
+                if (this.id) {
+                    db.collection('skills').doc(this.id).set(
                         this.form, { merge: true })
                     .then (doc => {
                         this.updateMedia()
                         this.updateLiinks()
                         console.log('Work experience updated')
-                        this.$emit(this.reason, this.ps_id)
+                        this.$emit(this.reason, this.id)
                     })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -117,8 +122,8 @@ export default {
                         this.updateMedia()
                         this.updateLiinks()
                         console.log('Work experience added')
-                        this.ps_id = doc.id
-                        this.$emit(this.reason, this.ps_id)
+                        this.id = doc.id
+                        this.$emit(this.reason, this.id)
                      })
                     .catch(err => {
                         console.log('Firestore error: ', err)
@@ -226,10 +231,10 @@ export default {
             }
             console.log('experience created ok')
         },
-        fetchData(id) {
-            if (id) {
+        fetchData() {
+            if (this.id) {
                 // get object
-                db.collection('skills').doc(id)
+                db.collection('skills').doc(this.id)
                 .get()
                 .then (doc => {
                     if(doc.exists) {
@@ -251,15 +256,13 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.cid)
             this.cert_id  = this.cid
-        if (this.id)
-            this.ps_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
 
-        this.fetchData(this.ps_id)
+        this.fetchData()
         console.log('skill created ok')
     }
 }

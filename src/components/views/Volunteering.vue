@@ -89,10 +89,15 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
-            v_id: null,
             reason: 'onUpdatedVolunteering'
         }
 
+    },
+    watch: {
+        id() {
+            console.log('lamgiage watch', this.id)
+            this.fetchData()
+        }
     },
     methods: {
         reset () {
@@ -116,14 +121,13 @@ export default {
                     console.log('vollunteering update excception', error)
                     alert(error)
                 }
-                if (this.v_id) {
-                    db.collection('volunteering').doc(this.v_id).set(
+                if (this.id) {
+                    db.collection('volunteering').doc(this.id).set(
                         this.form, { merge: true })
                     .then (doc => {
                         this.updateMedia()
                         this.updateLiinks()
                         console.log('volunteering updated')
-                        this.$emit(this.reason, this.v_id)
                     })
                     .catch(error => {
                         console.log('Firestore error: ' + error)
@@ -135,8 +139,6 @@ export default {
                         this.updateMedia()
                         this.updateLiinks()
                         console.log('volunteering added')
-                        this.v_id = doc.id
-                        this.$emit(this.reason, this.v_id)
                      })
                     .catch(error => {
                         console.log('Firestore error: ' + error)
@@ -219,7 +221,6 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
         fetchLinks() {
             if (this.user_id) {
@@ -242,12 +243,11 @@ export default {
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
-        fetchData(id) {
-            if (id) {
+        fetchData() {
+            if (this.id) {
                 // get object
-                db.collection('volunteering').doc(id)
+                db.collection('volunteering').doc(this.id)
                 .get()
                 .then ((docRef) => {
                     if(docRef.exists) {
@@ -275,14 +275,12 @@ export default {
         this.user = firebase.auth().currentUser
         if (this.cid)
             this.cert_id  = this.cid
-        if (this.id)
-            this.v_id = this.id
         if (this.uid) {
             this.user_id = this.uid
         } else {
             this.user_id = this.user.uid
         }
-        this.fetchData(this.v_id)
+        this.fetchData()
         console.log('volunteering created ok')
     }
 }

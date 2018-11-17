@@ -61,7 +61,6 @@ export default {
     },
     created() {
         console.log('showmedia created',this.file)
-        // this.this.file = this.$route.params.this.file
     }
 }
 </script>
