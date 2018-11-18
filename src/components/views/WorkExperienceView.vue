@@ -78,9 +78,9 @@ export default {
                 // get object
                 db.collection('experience').doc(this.wid)
                 .get()
-                .then ((docRef) => {
-                    if(docRef.exists) {
-                        this.form = docRef.data()
+                .then ((doc) => {
+                    if(doc.exists) {
+                        this.form = doc.data()
                         this.from.month = getMonth(this.form.from)
                         this.from.year = getYear(this.form.from)
                         this.to.month = getMonth(this.form.to)

@@ -6,7 +6,7 @@
                     <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
                     <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
                 </h5>
-                <p class="card-text">{{elem.description}}</p>
+                <p class="card-text" style="margin-top: 0.5em">{{elem.description}}</p>
             </div>
         </div> 
    </div>

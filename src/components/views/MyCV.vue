@@ -6,25 +6,25 @@
             <h1 style="margin-top: 0.7em; margin-bottom: 0.7em">Min CV</h1>
             
             <!-- ARBEIDSERFARING -->
-            <work-experience-card :uid="user_id" :cis="cert_id"></work-experience-card>
+            <work-experience-card :show="show" :uid="user_id" :cid="cert_id"></work-experience-card>
 
             <!-- UTDANNING OG KURS -->
-            <education-card :uid="user_id" :cis="cert_id">></education-card>
+            <education-card :show="show" :uid="user_id" :cid="cert_id">></education-card>
 
             <!-- NØKKELKOMPETANSE -->
-            <key-value-card :uid="user_id" :cis="cert_id">></key-value-card>
+            <key-value-card :show="show" :uid="user_id" :cid="cert_id">></key-value-card>
 
             <!-- PRAKTISKE FERDIGHETER -->
-            <practical-skill-card :uid="user_id" :cis="cert_id">></practical-skill-card>
+            <practical-skill-card :show="show" :uid="user_id" :cid="cert_id">></practical-skill-card>
 
             <!-- FRIVILLIG ARBEID OG VERV -->
-            <volunteering-card :uid="user_id" :cis="cert_id">></volunteering-card>
+            <volunteering-card :show="show" :uid="user_id" :cid="cert_id">></volunteering-card>
 
             <!-- SPRÅK -->
-            <language-card :uid="user_id" :cis="cert_id">></language-card>
+            <language-card :show="show" :uid="user_id" :cid="cert_id">></language-card>
 
             <!-- REFERANSER -->
-            <reference-card> :uid="user_id" :cis="cert_id"></reference-card>
+            <reference-card :show="show" :uid="user_id" :cid="cert_id"></reference-card>
 
             <div style="margin-bottom: 2em"></div>
         </div>

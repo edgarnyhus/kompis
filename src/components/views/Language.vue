@@ -23,7 +23,7 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <upload-media :parent="'edu'" :uid="user_id" :cid="cert_id"> </upload-media>
+            <upload-media :parent="'lang'" :uid="user_id" :cid="cert_id" :media="media" :links="links"> </upload-media>
  
             <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
@@ -70,66 +70,79 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
+            e_id: null,
             reason: 'onUpdatedLanguage'
         }
-
     },
     watch: {
-        id() {
-            console.log('lamgiage watch', this.id)
-            this.fetchData()
+        id(newId, oldId) {
+            console.log('languages watch', this.id, newId, oldId)
+            this.e_id = this.id
+            this.init()
         }
+    },
+    computed: {
+
     },
     methods: {
         reset () {
             Object.assign(this.$data, this.$options.data.call(this));
+            this.media = []
+            this.links = []
         },
+        destroy() {
+        //   this.$destroy();
+        },    
         cancel() {
-            console.log("cancel")
             this.$emit(this.reason, null)
+            this.destroy()
         },
         update() {
-            if (this.user) {
-                this.form.user_id = this.user_id 
-                this.form.cert_id = this.cert_id 
+            if (this.user_id) {
                 this.form.timestamp = Date.now()
-                if (this.id) {
-                    db.collection('languages').doc(this.id).set(
-                        this.form, { merge: true })
-                    .then (doc => {
+                if (this.e_id) {
+                    db.collection("languages").doc(this.e_id).set(this.form, {merge: true})
+                    .then(() => {
                         this.updateMedia()
-                        this.updateLiinks()
-                        console.log('Language updated')
+                        this.updateLinks()
+                        console.log("languages updated", this.e_id);
+                        this.$emit(this.reason, this.e_id)
                     })
-                    .catch(err => {
-                        console.log('Firestore error: ', err)
+                    .catch((error) => {
+                        console.error("Error adding languages", error);
                         alert(error)
-                    })
+                        this.cancel()
+                    });
                 } else {
-                    db.collection('languages').add(this.form)
-                    .then (doc => {
+                    this.form.user_id = this.user_id 
+                    this.form.cert_id = this.cert_id 
+                    db.collection("languages").add(this.form)
+                    .then((doc) => {
                         this.updateMedia()
-                        this.updateLiinks()
-                        console.log('Language added')
-                     })
-                    .catch(err => {
-                        console.log('Firestore error: ', err)
-                        alert(error)
+                        this.updateLinks()
+                        console.log("education added ", this.e_id);
+                        this.$emit(this.reason, this.e_id)
                     })
+                    .catch((error) => {
+                        console.error("Error adding languages", error);
+                        alert(error)
+                        this.cancel()
+                    });
                 }
             }
             else {
-                console.log('User not logged in???')
+                console.info('User not logged in???')
             }
+            this.destroy()
         },
         updateMedia() {
             this.media.forEach(element => {
                 let item = {filename: element.filename, url: element.url, type: element.type, description: element.description,
-                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                        user_id: this.user_id, cert_id: this.cert_id, parent_id: this.e_id, timestamp: Date.now()}
                 if (element.id) {
                     db.collection("media").doc(element.id).set(item, {merge: true})
-                    .then((docRef) => {
-                        console.log("media updated with ID: ", docRef.id);
+                    .then(() => {
+                        console.log("media updated with ID: ", element.id);
                     })
                     .catch((error) => {
                         console.error("error adding media: ", error);
@@ -137,8 +150,8 @@ export default {
                     });
                 } else {
                     db.collection("media").add(item)
-                    .then((docRef) => {
-                        console.log("media written with ID: ", docRef.id);
+                    .then((doc) => {
+                        console.log("media written with ID: ", doc.id);
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -147,14 +160,14 @@ export default {
                 }
             });
         },
-        updateLiinks() {
-            this.media.forEach(element => {
+        updateLinks() {
+            this.links.forEach(element => {
                 let item = {name: element.name, url: element.url, description: element.description,
-                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                        user_id: this.user_id, cert_id: this.cert_id, parent_id: this.e_id, timestamp: Date.now()}
                 if (element.id) {
                     db.collection("links").doc(element.id).set(item, {merge: true})
-                    .then((docRef) => {
-                        console.log("links updated", docRef.id);
+                    .then(() => {
+                        console.log("links updated", element.id);
                     })
                     .catch((error) => {
                         console.error("error adding link", error);
@@ -162,8 +175,8 @@ export default {
                     });
                 } else {
                     db.collection("links").add(item)
-                    .then((docRef) => {
-                        console.log("links added", docRef.id);
+                    .then((doc) => {
+                        console.log("links added", doc.id);
                     })
                     .catch((error) => {
                         console.error("Error adding links", error);
@@ -174,35 +187,26 @@ export default {
         },
         fetchMedia() {
             if (this.user_id) {
-                let ref = null
-                if (this.cert_id) {
-                    ref = db.collection('media').where('cert_i', '==',this.cert_id)
-                 } else {
-                    ref = db.collection('media').where('user_id', '==',this.user_id)
-                 }   
-                ref.get()
+                db.collection('media').where('parent_id', '==', this.e_id)
+                .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
                         this.media.push(elem)
+                        console.log('maedia fetched', doc.id)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('fetching media failed', err)
                     alert(error)
                 })
             }
         },
         fetchLinks() {
-            if (this.user_id) {
-                let ref = null
-                if (this.cert_id) {
-                    ref = db.collection('links').where('cert_i', '==',this.cert_id)
-                 } else {
-                    ref = db.collection('links').where('user_id', '==',this.user_id)
-                 }   
-                ref.get()
+            if (this.e_id) {
+                db.collection('links').where('parent_id', '==', this.e_id)
+                .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -210,47 +214,49 @@ export default {
                         this.links.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('fetching links failed', err)
                     alert(error)
                 })
             }
         },
         fetchData() {
-            if (this.id) {
-                // get object
-                db.collection('languages').doc(this.id)
+            if (this.e_id) {
+                console.log('we get object', this.e_id)
+                db.collection('languages').doc(this.e_id)
                 .get()
-                .then ((docRef) => {
-                    if (docRef.exists) {
-                        this.form = docRef.data()
-                        this.user_id = this.form.user_id
-                        this.cert_id = this.form.cert_id
+                .then ((doc) => {
+                    if(doc.exists) {
+                        this.form = doc.data()
                         this.fetchMedia()
                         this.fetchLinks()
-                        console.log('language fetched ok')
+                        console.log('languages fetched ok')
                     }
                 })
                 .catch((error) => {
-                    console.error("error fetching languages", error);
-                    alert('Henting av data feilet\n' + error.message)
+                    console.error("error fetching document: ", error);
+                    alert('Henting av data feiletń' + error)
                 })
             }
+        },
+        init() {
+            this.reset()
+            this.user = firebase.auth().currentUser
+            if (this.cid != undefined)
+                this.cert_id  = this.cid
+            if (this.id != undefined)
+                this.e_id  = this.id
+            if (this.uid != undefined) {
+                this.user_id = this.uid
+            } else {
+                this.user_id = this.user.uid
+            }
+            console.log('languages created:', this.cert_id, this.e_id)
+            this.fetchData()
         }
     },
     created() {
-        this.reset()
-        this.user = firebase.auth().currentUser
-        if (this.cid)
-            this.cert_id  = this.cid
-        if (this.uid) {
-            this.user_id = this.uid
-        } else {
-            this.user_id = this.user.uid
-        }
-        this.fetchData()
-
-        console.log('language created ok')
+        this.init()
     }
 }
 </script>

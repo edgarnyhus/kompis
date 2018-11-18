@@ -66,9 +66,14 @@ export default {
         },
         fetchEducation() {
             if (this.user_id) {
-                this.education.length = 0
-                db.collection('education').where('user_id', '==',this.user_id)
-                .get()
+                this.education = []
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('education').where('user_id', '==', this.cert_id)
+                } else {
+                    ref = db.collection('education').where('user_id', '==', this.user_id)
+                }
+                ref.get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -76,7 +81,7 @@ export default {
                         this.education.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('ec fetching educaion failed', err)
                 })
             }

@@ -2,7 +2,7 @@
     <div class="container">
         <div>
             <h1 class="page-title">Praksisattester
-                <b-button class="btn-floating btn-info float-right" router-link :to="{ name: 'PracticeCertificate' }">Lag ny praksisattest</b-button>
+                <b-button class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
             </h1>
         </div>
 
@@ -41,12 +41,15 @@ export default {
         }
     },
     methods: {
+        add() {
+            this.$router.push({ name: 'PracticeCertificate', params: { cid: null }})
+        },
         remove(cert) {
             console.log("onRemove", cert.id);
             db.collection('certs').doc(cert.id).delete()
             .then(() => {
                 console.log("Document successfully deleted!");
-                this.certificates.length = 0
+                this.certificates = []
                 this.fetchCertificates()
                 // let idx = this.certificates.findIndex(cert)
                 // if (idx >= 0) {

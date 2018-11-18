@@ -65,9 +65,14 @@ export default {
         },
         fetchLanguage() {
             if (this.user) {
-                this.languages.length = 0
-                db.collection('languages').where('user_id', '==',this.user_id)
-                .get()
+                this.languages = []
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('languages').where('user_id', '==', this.cert_id)
+                } else {
+                    ref = db.collection('languages').where('user_id', '==', this.user_id)
+                }
+                ref.get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -75,7 +80,7 @@ export default {
                         this.languages.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('mc fetching Language failed', err)
                 })
             }

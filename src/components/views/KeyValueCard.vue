@@ -65,9 +65,14 @@ export default {
         },
         fetchKeyValues() {
             if (this.user) {
-                this.keyvalues.length = 0
-                db.collection('keyvalues').where('user_id', '==',this.user_id)
-                .get()
+                this.keyvalues = []
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('keyvalues').where('user_id', '==',this.cert_id)
+                } else {
+                    ref = db.collection('keyvalues').where('user_id', '==',this.user_id)
+                }
+                ref.get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -75,7 +80,7 @@ export default {
                         this.keyvalues.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('fetching key values failed', err)
                 })
             }

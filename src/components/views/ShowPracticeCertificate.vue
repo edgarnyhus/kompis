@@ -302,7 +302,7 @@ export default {
                 this.form.timestamp = Date.now()
                 if (this.cert_id) {
                     db.collection("certs").doc(this.cert_id).set(this.form, {merge: true})
-                    .then((docRef) => {
+                    .then((doc) => {
                         console.log("Document written/updated with ID: ", this.cert_id);
                     })
                     .catch((error) => {
@@ -310,9 +310,9 @@ export default {
                     });
                 } else {
                     db.collection("certs").add(this.form)
-                    .then((docRef) => {
-                        console.log("Document written with ID: ", docRef.id);
-                        this.cert_id = docRef.id
+                    .then((doc) => {
+                        console.log("Document written with ID: ", doc.id);
+                        this.cert_id = doc.id
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -332,14 +332,14 @@ export default {
                     this.form = doc.data()
                     this.employer = this.form.employer
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('Fetching certificate failed', err)
                 })
             }
         },
         fetchTraining() {
             if (this.user && this.cert_id) {
-                this.experience.length = 0
+                this.experience = []
                 db.collection('experience').where('cert_id', '==',this.cert_id)
                 .where('user_id', '==',firebase.auth().currentUser.uid)
                 .get()
@@ -350,7 +350,7 @@ export default {
                         this.experience.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('Fetching certificate failed', err)
                 })
             }
@@ -367,7 +367,7 @@ export default {
                         this.keyvalues.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('Fetching certificate failed', err)
                 })
             }
@@ -384,7 +384,7 @@ export default {
                         this.skills.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('Fetching certificate failed', err)
                 })
             }
@@ -401,7 +401,7 @@ export default {
                         this.references.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('Fetching certificate failed', err)
                 })
             }
@@ -427,7 +427,7 @@ export default {
             .then(doc => {
                 this.profile = doc.data()
             })
-            .catch(err => {
+            .catch(error=> {
                 console.log('Fetching user failed', err)
             })
         }

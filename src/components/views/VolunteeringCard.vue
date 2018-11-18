@@ -9,7 +9,7 @@
             </div>
 
             <div v-else>
-                <b-collapse class="mt-2" id="listEdu" :visible="moed==='list'">
+                <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Frivillig arbeid og verv
                         <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
@@ -18,7 +18,7 @@
                 </b-collapse>
             </div>
 
-            <b-collapse class="mt-2"  id="editEdu" :visible="mode==='edit'">
+            <b-collapse class="mt-2"  id="editExp" :visible="mode==='edit'">
                 <volunteering v-on:onUpdatedVolunteering="onUpdatedVolunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering>
             </b-collapse>
         </b-card>
@@ -59,26 +59,29 @@ export default {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchiVolunteering()
+                this.fetchVolunteering()
             }
             this.mode = 'list'
         },
         fetchVolunteering() {
-            this.volunteering.length = 0
-            if (this.user) {
-                db.collection('volunteering').where('user_id', '==',this.user_id)
-                .get()
-                .then(snapshot => {
-                    snapshot.forEach(doc => {
-                        let elem = doc.data()
-                        elem.id = doc.id
-                        this.volunteering.push(elem)
-                    })
-                })
-                .catch(err => {
-                    console.log('ec fetching educaion failed', err)
-                })
+            this.volunteering = []
+            let ref = null
+            if (this.cert_id) {
+                ref = db.collection('volunteering').where('user_id', '==', this.cert_id)
+            } else {
+                ref = db.collection('volunteering').where('user_id', '==', this.user_id)
             }
+            ref.get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    let elem = doc.data()
+                    elem.id = doc.id
+                    this.volunteering.push(elem)
+                })
+            })
+            .catch(error=> {
+                console.log('ec fetching educaion failed', err)
+            })
         }
 
     },

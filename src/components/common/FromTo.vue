@@ -19,7 +19,7 @@
                 <b-form-select id="toYear" class="mb-3" @change="changed" :options="years" v-model="to.year" required />
             </b-form-group>
             <b-form-group v-if="show != 'training'" class="g-m-0">
-                <b-form-checkbox @change="changed" v-model="ongoing">{{ ongoingText }}</b-form-checkbox>
+                <b-form-checkbox @change="changed" v-model="to.ongoing">{{ ongoingText }}</b-form-checkbox>
             </b-form-group>
         </div>
     </b-form-group>
@@ -30,7 +30,7 @@
 <script>
 export default {
     name: 'FromTo',
-    props: ['from', 'to', 'ongoing', 'ongoingText'],
+    props: ['from', 'to', 'ongoingText'],
     data() {
         return {
             months: [

@@ -49,7 +49,7 @@ export default {
                 .then(user => {
                     //console.log(user)
                     this.$router.push({ name: 'MyCV' })
-                }).catch(err => {
+                }).catch(error=> {
                     this.feedback = err.message
                 })
             } else {

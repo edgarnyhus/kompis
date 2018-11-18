@@ -14,7 +14,7 @@
                         <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til arbeidserfaring</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <practical-skill-list v-on:editSkill="editSkill" :skills="skills" :uid="user_id" :cid="cert_id" :id="w_id"></practical-skill-list>
+                    <practical-skill-list v-on:editSkill="editSkill" :skills="skills" :uid="user_id" :cid="cert_id" :id="id"></practical-skill-list>
                 </b-collapse>
             </div>
 
@@ -59,15 +59,20 @@ export default {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchSkill()
+                this.fetchSkills()
             }
             this.mode = 'list'
         },
-        fetchSkill() {
+        fetchSkills() {
             if (this.user) {
-                this.skills.length = 0
-                db.collection('skills').where('user_id', '==',this.user_id)
-                .get()
+                this.skills = []
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('skills').where('user_id', '==', this.cert_id)
+                } else {
+                    ref = db.collection('skills').where('user_id', '==', this.user_id)
+                }
+                ref.get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -75,7 +80,7 @@ export default {
                         this.skills.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('mc fetching skills failed', err)
                 })
             }
@@ -85,7 +90,9 @@ export default {
     created() {
         // current user
         this.user = firebase.auth().currentUser
-        this.cert_id = this.cid
+        if (this.cid !== undefined) {
+            this.cert_id = this.cid
+        }
         if (this.uid) {
             this.user_id = this.uid
         } else if (this.user) {
@@ -93,8 +100,9 @@ export default {
         }
         if (this.user) {
             // fetch work skills/training
-            this.fetchSkill()
+            this.fetchSkills()
         }
+        console.log('skill card crearewd', this.user_id, this.cert_id)
     }
     
 }

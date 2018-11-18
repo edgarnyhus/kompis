@@ -65,9 +65,14 @@ export default {
         },
         fetchReference() {
             if (this.user) {
-                this.references.length = 0
-                db.collection('references').where('user_id', '==',this.user_id)
-                .get()
+                this.references = []
+                let ref = null
+                if (this.cert_id) {
+                    ref = db.collection('references').where('user_id', '==', this.cert_id)
+                } else {
+                    ref = db.collection('references').where('user_id', '==', this.user_id)
+                }
+                ref.get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -75,7 +80,7 @@ export default {
                         this.references.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('fetching references failed', err)
                 })
             }

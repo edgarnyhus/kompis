@@ -7,8 +7,12 @@
                     <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
                 </h6>
                 <h5 class="card-subtitle ">{{elem.role}}</h5>
-                <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}<br>
-                    {{elem.location}}</P>
+                    <p v-if="elem.ongoing" class="card-text text-muted" style="margin-bottom: 0.5em">{{ elem.from | formatDate }} - (Har fortsatt dette vervet)<br>
+                        {{elem.location}}
+                    </P>
+                    <p v-else class="card-text text-muted" style="margin-bottom: 0.5em">{{ elem.from | formatDate }} - {{ elem.to | formatDate }}<br>
+                        {{elem.location}}
+                    </P>
                 <p class="card-text">{{elem.description}}</p>
             </div>
         </div>

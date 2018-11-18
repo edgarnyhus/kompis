@@ -1,14 +1,21 @@
 <template>
     <div>
-        <b-navbar toggleable="md" type="light" variant="light" 
+        <b-navbar class="navbar-collapse" toggleable="md" type="light" variant="light" 
             style="height: 70px; border-bottom: 1px solid rgb(232,233,232); padding-left: 3.5%; padding-right: 3.5%;">
         <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
         <b-navbar-brand href="#"><strong>KOMPIS</strong></b-navbar-brand>
         <b-collapse is-nav id="nav_collapse">
             <b-navbar-nav>
-            <b-nav-item v-if="user" router-link :to="{ name: 'MyCV' }">Min CV</b-nav-item>
-            <b-nav-item v-if="user" router-link :to="{ name: 'PracticeCertificateView' }">Praksisattester</b-nav-item>
-            <b-nav-item v-if="user" href="#">Utviklingsplan</b-nav-item>
+                <b-nav-item v-if="user" router-link :to="{ name: 'MyCV' }">Min CV</b-nav-item>
+                <b-nav-item v-if="user" router-link :to="{ name: 'PracticeCertificateView' }">Praksisattester</b-nav-item>
+                <b-nav-item v-if="user" href="#">Utviklingsplan</b-nav-item>
+
+                <div v-if="false">
+                    <div class="dropdown-divider"></div>
+                    <b-nav-item v-if="user" href="#" disabled >Del</b-nav-item>
+                    <b-nav-item v-if="user" href="#" disabled>PDF</b-nav-item>
+                    <b-nav-item v-if="user" href="#" disabled>Generer CV</b-nav-item>
+                </div>
             </b-navbar-nav>
 
             <!-- Right aligned nav items -->
@@ -21,9 +28,12 @@
                     <b-dropdown-item type="link" v-on:click="showProfile()" href="#">Profil</b-dropdown-item>
                     <b-dropdown-item type="link" v-on:click="logout()" href="#">Logg ut</b-dropdown-item>
                 </b-nav-item-dropdown>
+
             </b-navbar-nav>
         </b-collapse>
         </b-navbar>
+
+
     </div>
 </template>
 
@@ -35,6 +45,7 @@ export default {
     data() {
         return {
             user: null,
+            windowWidth: 0,
             logout: function () {
                 console.log('logging out...')
                 firebase.auth().signOut().then(() => {
@@ -46,8 +57,10 @@ export default {
             }
         }
     },
-    events: {
-
+    computed: {
+        smallScreen() {
+            return this.windowWidth <= 480
+        }
     },
     methods: {
         showPracticeCertificateView() {
@@ -64,7 +77,12 @@ export default {
     mounted() {
         // get current user
         let user = firebase.auth().currentUser
-    },
+        // this.$nextTick(() => {
+        //     window.addEventListener('resize', () => {
+        //         this.windowWidth = window.innerWidth
+        //     })
+        // })
+   },
     created() {      
         firebase.auth().onAuthStateChanged((user) => {
             this.user = user;
@@ -72,13 +90,13 @@ export default {
                 this.$router.push({ name: 'Login' })
             }
         })
-    },
-    methods: {
-
     }
 }
 </script>
 
 <style>
+.navbar-collapse{ 
+    background-color: rgb(248,249,250);
+}
 
 </style>

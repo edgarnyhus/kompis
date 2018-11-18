@@ -86,12 +86,12 @@ export default {
                         console.log('signup ok')
                         this.$router.push({ name: 'MyCV' })
                     })
-                    .catch(err => {
+                    .catch(error=> {
                         this.feedback = err.message
                     })
                 }
             })
-            .catch(err => {
+            .catch(error=> {
                 this.feedback = err.message
             })
         }

@@ -2,7 +2,8 @@
     <div class="component">
         <div>
             <h4 class="g-title">Praktisk ferdighet</h4>
-            <p style="font-style: italic">Hva er dine praktiske evner? Noe du har lært på skole eller i jobb?</p>
+            <p v-if="show == 'training'" style="font-style: italic">Hvilke praktiske feredigheter er lært eller bekreftet gjennom arbeid  ved dette parksisstedet?</p>
+            <p v-else style="font-style: italic">Hva er dine praktiske evner? Noe du har lært på skole eller i jobb?</p>
         </div>
 
         <b-form @submit.prevent="update">
@@ -20,7 +21,7 @@
                 </b-form-textarea>
             </b-form-group>
             
-            <upload-media :parent="'skill'" :uid="user_id" :cid="cert_id"> </upload-media>
+            <upload-media :parent="'skill'" :uid="user_id" :cid="cert_id" :media="media" :links="links"> </upload-media>
  
             <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
@@ -55,7 +56,7 @@ export default {
         UploadMedia,
         MediaList
     },
-    props: ['uid', 'cid', 'id'],
+    props: ['show','uid', 'cid', 'id'],
     data() {
         return {
             skills: [
@@ -76,73 +77,81 @@ export default {
             user: null,
             user_id: null,
             cert_id: null,
+            e_id: null,
             reason: 'onUpdatedSkill',
             user: null
         }
 
     },
     watch: {
-        id() {
-            console.log('lamgiage watch', this.id)
-            this.fetchData()
+        id(newId, oldId) {
+            console.log('skills watch', this.id, newId, oldId)
+            this.e_id = this.id
+            this.init()
         }
+    },
+    computed: {
+
     },
     methods: {
         reset () {
             Object.assign(this.$data, this.$options.data.call(this));
+            this.media = []
+            this.links = []
         },
-        setSkill(value) {
-            this.form.skill = value
-        },
+        destroy() {
+        //   this.$destroy();
+        },    
         cancel() {
             this.$emit(this.reason, null)
+            this.destroy()
         },
         update() {
-            if (this.user) {
-                this.form.user_id = this.user_id 
-                this.form.cert_id = this.cert_ud 
+            if (this.user_id) {
                 this.form.timestamp = Date.now()
-                if (this.id) {
-                    db.collection('skills').doc(this.id).set(
-                        this.form, { merge: true })
-                    .then (doc => {
+                if (this.e_id) {
+                    db.collection("skills").doc(this.e_id).set(this.form, {merge: true})
+                    .then(() => {
                         this.updateMedia()
-                        this.updateLiinks()
-                        console.log('Work experience updated')
-                        this.$emit(this.reason, this.id)
+                        this.updateLinks()
+                        console.log("skills updated", this.e_id);
+                        this.$emit(this.reason, this.e_id)
                     })
-                    .catch(err => {
-                        console.log('Firestore error: ', err)
+                    .catch((error) => {
+                        console.error("Error adding skills", error);
                         alert(error)
-                    })
+                        this.cancel()
+                    });
                 } else {
-                    db.collection('skills').add(
-                        this.form)
-                    .then (doc => {
+                    this.form.user_id = this.user_id 
+                    this.form.cert_id = this.cert_id 
+                    db.collection("skills").add(this.form)
+                    .then((doc) => {
                         this.updateMedia()
-                        this.updateLiinks()
-                        console.log('Work experience added')
-                        this.id = doc.id
-                        this.$emit(this.reason, this.id)
-                     })
-                    .catch(err => {
-                        console.log('Firestore error: ', err)
-                        alert(error)
+                        this.updateLinks()
+                        console.log("education added ", this.e_id);
+                        this.$emit(this.reason, this.e_id)
                     })
+                    .catch((error) => {
+                        console.error("Error adding skills", error);
+                        alert(error)
+                        this.cancel()
+                    });
                 }
             }
             else {
-                console.log('User not logged in???')
+                console.info('User not logged in???')
             }
+            this.destroy()
         },
         updateMedia() {
             this.media.forEach(element => {
                 let item = {filename: element.filename, url: element.url, type: element.type, description: element.description,
-                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                        user_id: this.user_id, cert_id: this.cert_id, parent_id: this.e_id, timestamp: Date.now()}
                 if (element.id) {
                     db.collection("media").doc(element.id).set(item, {merge: true})
-                    .then((docRef) => {
-                        console.log("media updated with ID: ", docRef.id);
+                    .then(() => {
+                        console.log("media updated with ID: ", element.id);
                     })
                     .catch((error) => {
                         console.error("error adding media: ", error);
@@ -150,8 +159,8 @@ export default {
                     });
                 } else {
                     db.collection("media").add(item)
-                    .then((docRef) => {
-                        console.log("media written with ID: ", docRef.id);
+                    .then((doc) => {
+                        console.log("media written with ID: ", doc.id);
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -160,14 +169,14 @@ export default {
                 }
             });
         },
-        updateLiinks() {
-            this.media.forEach(element => {
+        updateLinks() {
+            this.links.forEach(element => {
                 let item = {name: element.name, url: element.url, description: element.description,
-                        user_id: this.user_id, cert_id: this.cert_id, timestamp: Date.now()}
+                        user_id: this.user_id, cert_id: this.cert_id, parent_id: this.e_id, timestamp: Date.now()}
                 if (element.id) {
                     db.collection("links").doc(element.id).set(item, {merge: true})
-                    .then((docRef) => {
-                        console.log("links updated", docRef.id);
+                    .then(() => {
+                        console.log("links updated", element.id);
                     })
                     .catch((error) => {
                         console.error("error adding link", error);
@@ -175,8 +184,8 @@ export default {
                     });
                 } else {
                     db.collection("links").add(item)
-                    .then((docRef) => {
-                        console.log("links added", docRef.id);
+                    .then((doc) => {
+                        console.log("links added", doc.id);
                     })
                     .catch((error) => {
                         console.error("Error adding links", error);
@@ -187,36 +196,26 @@ export default {
         },
         fetchMedia() {
             if (this.user_id) {
-                let ref = null
-                if (this.cert_id) {
-                    ref = db.collection('media').where('cert_i', '==',this.cert_id)
-                 } else {
-                    ref = db.collection('media').where('user_id', '==',this.user_id)
-                 }   
-                ref.get()
+                db.collection('media').where('parent_id', '==', this.e_id)
+                .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
                         this.media.push(elem)
+                        console.log('maedia fetched', doc.id)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('fetching media failed', err)
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
         fetchLinks() {
-            if (this.user_id) {
-                let ref = null
-                if (this.cert_id) {
-                    ref = db.collection('links').where('cert_i', '==',this.cert_id)
-                 } else {
-                    ref = db.collection('links').where('user_id', '==',this.user_id)
-                 }   
-                ref.get()
+            if (this.e_id) {
+                db.collection('links').where('parent_id', '==', this.e_id)
+                .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
@@ -224,46 +223,49 @@ export default {
                         this.links.push(elem)
                     })
                 })
-                .catch(err => {
+                .catch(error=> {
                     console.log('fetching links failed', err)
                     alert(error)
                 })
             }
-            console.log('experience created ok')
         },
         fetchData() {
-            if (this.id) {
-                // get object
-                db.collection('skills').doc(this.id)
+            if (this.e_id) {
+                console.log('we get object', this.e_id)
+                db.collection('skills').doc(this.e_id)
                 .get()
-                .then (doc => {
+                .then ((doc) => {
                     if(doc.exists) {
                         this.form = doc.data()
-                        this.user_id = this.form.user_id
-                        this.cert_id = this.form.cert_id
-                        console.log('skill fetched ok')
+                        this.fetchMedia()
+                        this.fetchLinks()
+                        console.log('skills fetched ok')
                     }
                 })
-                .catch(err => {
-                    console.log('Firestore error: ', err)
-                    alert(error)
+                .catch((error) => {
+                    console.error("error fetching document: ", error);
+                    alert('Henting av data feiletń' + error)
                 })
             }
-        }            
+        },
+        init() {
+            this.reset()
+            this.user = firebase.auth().currentUser
+            if (this.cid != undefined)
+                this.cert_id  = this.cid
+            if (this.id != undefined)
+                this.e_id  = this.id
+            if (this.uid != undefined) {
+                this.user_id = this.uid
+            } else {
+                this.user_id = this.user.uid
+            }
+            console.log('skills created:', this.cert_id, this.e_id)
+            this.fetchData()
+        }
     },
     created() {
-        this.reset()
-        this.user = firebase.auth().currentUser
-        if (this.cid)
-            this.cert_id  = this.cid
-        if (this.uid) {
-            this.user_id = this.uid
-        } else {
-            this.user_id = this.user.uid
-        }
-
-        this.fetchData()
-        console.log('skill created ok')
+        this.init()
     }
 }
 </script>
