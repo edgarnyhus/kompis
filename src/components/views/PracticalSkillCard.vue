@@ -77,15 +77,31 @@ export default {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
+                        elem.media = this.fetchMedia(doc.id)
                         this.skills.push(elem)
                     })
                 })
                 .catch(error=> {
-                    console.log('mc fetching skills failed', err)
+                    console.log('mc fetching skills failed', error)
                 })
             }
+        },
+        fetchMedia(id) {
+            let media = []
+            db.collection('media').where('parent_id', '==', id)
+            .get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    let elem = doc.data()
+                    elem.id = doc.id
+                    media.push(elem)
+                })
+            })
+            .catch(error=> {
+                console.log('ec fetching media failed', error)
+            })
+            return media
         }
-
     },
     created() {
         // current user

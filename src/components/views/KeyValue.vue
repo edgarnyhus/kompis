@@ -205,7 +205,7 @@ export default {
                     })
                 })
                 .catch(error=> {
-                    console.log('fetching media failed', err)
+                    console.log('fetching media failed', error)
                     alert(error)
                 })
             }
@@ -222,7 +222,7 @@ export default {
                     })
                 })
                 .catch(error=> {
-                    console.log('fetching links failed', err)
+                    console.log('fetching links failed', error)
                     alert(error)
                 })
             }

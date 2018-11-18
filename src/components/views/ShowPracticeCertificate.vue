@@ -333,7 +333,7 @@ export default {
                     this.employer = this.form.employer
                 })
                 .catch(error=> {
-                    console.log('Fetching certificate failed', err)
+                    console.log('Fetching certificate failed', error)
                 })
             }
         },
@@ -351,7 +351,7 @@ export default {
                     })
                 })
                 .catch(error=> {
-                    console.log('Fetching certificate failed', err)
+                    console.log('Fetching certificate failed', error)
                 })
             }
         },
@@ -368,7 +368,7 @@ export default {
                     })
                 })
                 .catch(error=> {
-                    console.log('Fetching certificate failed', err)
+                    console.log('Fetching certificate failed', error)
                 })
             }
         },
@@ -385,7 +385,7 @@ export default {
                     })
                 })
                 .catch(error=> {
-                    console.log('Fetching certificate failed', err)
+                    console.log('Fetching certificate failed', error)
                 })
             }
         },
@@ -402,7 +402,7 @@ export default {
                     })
                 })
                 .catch(error=> {
-                    console.log('Fetching certificate failed', err)
+                    console.log('Fetching certificate failed', error)
                 })
             }
         }
@@ -428,7 +428,7 @@ export default {
                 this.profile = doc.data()
             })
             .catch(error=> {
-                console.log('Fetching user failed', err)
+                console.log('Fetching user failed', error)
             })
         }
 

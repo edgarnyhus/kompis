@@ -77,13 +77,31 @@ export default {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
+                        elem.media = this.fetchMedia(doc.id)
+                        elem.links = []
                         this.languages.push(elem)
                     })
                 })
                 .catch(error=> {
-                    console.log('mc fetching Language failed', err)
+                    console.log('mc fetching Language failed', error)
                 })
             }
+        },
+        fetchMedia(id) {
+            let media = []
+            db.collection('media').where('parent_id', '==', id)
+            .get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    let elem = doc.data()
+                    elem.id = doc.id
+                    media.push(elem)
+                })
+            })
+            .catch(error=> {
+                console.log('ec fetching media failed', error)
+            })
+            return media
         }
 
     },

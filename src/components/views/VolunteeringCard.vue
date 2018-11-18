@@ -76,14 +76,33 @@ export default {
                 snapshot.forEach(doc => {
                     let elem = doc.data()
                     elem.id = doc.id
+                    elem.media = this.fetchMedia(doc.id)
+                    elem.links = []
                     this.volunteering.push(elem)
                 })
             })
             .catch(error=> {
-                console.log('ec fetching educaion failed', err)
+                console.log('ec fetching educaion failed', error)
             })
+        },
+        fetchMedia(id) {
+            console.log('card fetching media', id)
+            let media = []
+            db.collection('media').where('parent_id', '==', id)
+            .get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    let elem = doc.data()
+                    elem.id = doc.id
+                    media.push(elem)
+                    console.log('fetched media', elem)
+                })
+            })
+            .catch(error=> {
+                console.log('ec fetching media failed', error)
+            })
+            return media
         }
-
     },
     created() {
         // current user

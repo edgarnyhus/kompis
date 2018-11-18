@@ -15,7 +15,9 @@
                     </P>
                     <p class="card-text">{{elem.description}}</p>
 
-                    <media-list v-if="more" @click="showMore()" :media="elem.media" :links="elem.links">more...</media-list>
+                    <!-- <b-link @click="more=true">se mer...</b-link> -->
+                    
+                    <media-list v-if="more" @click="showMore()" :media="elem.media" :links="elem.links"></media-list>
                 </div>
         </div>
     </div>
@@ -33,7 +35,7 @@ export default {
     props: ['experience'],
     data: function() {
         return {
-            more: false,
+            more: true,
             reason: 'editExperience'
         }
     },

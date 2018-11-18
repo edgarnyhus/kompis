@@ -10,6 +10,9 @@
                 <p  v-if="elem.ongoing" class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - (Studerer her forsatt)</p>
                 <p v-else class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from | formatDate}} - {{elem.to | formatDate}}</p>
                 <p class="card-text">{{elem.description}}</p>
+
+                <!-- <b-link @click="more=true">se mer...</b-link> -->
+                <media-list v-if="more" @click="showMore()" :media="elem.media" :links="elem.links"></media-list>
             </div>
         </div>
     </div>
@@ -18,11 +21,16 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
+import MediaList from '@/components/common/MediaList'
 
 export default {
+    components: {
+        MediaList
+    },
     props: ['education'],
     data: function() {
         return {
+            more: true,
             reason: 'editEducation'
         }
     },

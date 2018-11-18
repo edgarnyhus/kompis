@@ -148,7 +148,7 @@ export default {
                     this.employer = this.form.employer
                 })
                 .catch(err => {
-                    console.log('Fetching certificate failed', err)
+                    console.log('Fetching certificate failed', error)
                 })
             }
         },

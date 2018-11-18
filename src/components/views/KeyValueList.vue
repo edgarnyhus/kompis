@@ -7,6 +7,9 @@
                     <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
                 </h5>
                 <p class="card-text" style="margin-top: 0.5em">{{elem.description}}</p>
+
+                <!-- <b-link @click="more=true">se mer...</b-link> -->
+                <media-list v-if="more" @click="showMore()" :media="elem.media" :links="elem.links"></media-list>
             </div>
         </div>
     </div>
@@ -15,11 +18,16 @@
 <script>
 import firebase from 'firebase'
 import db from '@/firebase/init'
+import MediaList from '@/components/common/MediaList'
 
 export default {
+    components: {
+        MediaList
+    },
     props: ['keyvalues'],
     data: function() {
         return {
+            more: true,
             reason: 'editKeyValue'
         }
     },

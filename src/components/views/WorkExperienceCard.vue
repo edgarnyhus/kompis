@@ -79,42 +79,36 @@ export default {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        elem.media = []
+                        elem.media = this.fetchMedia(doc.id)
                         elem.links = [] 
                         this.experience.push(elem)
                     })
                 })
                 .catch(error=> {
-                    console.log('mc fetching experience failed', err)
+                    console.log('mc fetching experience failed', error)
                 })
             }
             // this.fetchMedia()
         },
-        // fetchMedia() {
-        //     if (this.user_id) {
-        //         let ref = null
-        //         if (this.cert_id) {
-        //             ref = db.collection('media').where('cert_i', '==',this.cert_id)
-        //          } else {
-        //             ref = db.collection('media').where('user_id', '==',this.user_id)
-        //          }   
-        //         ref.get()
-        //         .then(snapshot => {
-        //             snapshot.forEach(doc => {
-        //                 let elem = doc.data()
-        //                 elem.id = doc.id
-        //                 this.media.push(elem)
-        //             })
-        //         })
-        //         .catch(error=> {
-        //             console.log('mc fetching experience failed', err)
-        //         })
-        //     }
-        // }
-
+        fetchMedia(id) {
+            let media = []
+            db.collection('media').where('parent_id', '==', id)
+            .get()
+            .then(snapshot => {
+                snapshot.forEach(doc => {
+                    let elem = doc.data()
+                    elem.id = doc.id
+                    media.push(elem)
+                })
+            })
+            .catch(error=> {
+                console.log('ec fetching media failed', error)
+            })
+            return media
+        }
     },
     created() {
-        // current user
+        // current user 
         this.user = firebase.auth().currentUser
         if (this.cid !== undefined)
             this.cert_id = this.cid
