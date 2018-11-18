@@ -16,7 +16,6 @@
                     <p class="card-text">{{elem.description}}</p>
 
                     <!-- <b-link @click="more=true">se mer...</b-link> -->
-                    
                     <media-list v-if="more" @click="showMore()" :media="elem.media" :links="elem.links"></media-list>
                 </div>
         </div>

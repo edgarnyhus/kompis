@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import firebase from 'firebase'
+import db from '@/firebase/init'
 import ShowMedia from '@/components/common/ShowMedia'
 
 export default {
@@ -37,7 +39,19 @@ export default {
         }
     },
     methods: {
-        remove(item) {
+        remove: function(item) {
+            db.collection('media').doc(item.id).delete()
+            .then(() => {
+                console.log("media successfully deleted!");
+                let ix = this.media.findIndex(e => e.id === item.id)
+                if (~ix) {
+                    this.media.splice(ix, 1)
+                }
+                // TODO: Bildet må også slettes i storage
+            }).catch(error => {
+                console.error("error removing media", error);
+                alert(error)
+            })
         },
         show(item) {
             console.log('show', item.url)
