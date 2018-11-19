@@ -5,7 +5,7 @@
                 <div class="col-md-2" v-for="(item, index) in media" :key="index" style="margin-top: 0.5em; margin.-bottom: 1em">
                     <div class="card h-100" >
                         <h5 class="card-subtitle" style="font-size: 12px; margin: 10px"><strong>{{ item.filename.substring(0,11) }}...</strong></h5>
-                        <img class="card-img-top" :src="item.url" @click="show(item)" alt="item.type">
+                        <img class="card-img-top" style="font-size: 12px" :src="item.url" @click="show(item)" :alt="item.type">
                         <b-link class="btn-floating float-right btn-sm" @click="remove(item)">Slett</b-link>
                     </div>
                 </div>

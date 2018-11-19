@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listKey" :visible="mode==='list'">
                     <h5 class="text-muted">Nøkkelkompetanse
-                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til nøkkelkompetanse</strong></b-link>
+                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til nøkkelkompetanse</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <key-value-list v-on:editKeyValue="editKeyValue" :keyvalues="keyvalues" :uid="user_id" :cid="cert_id" :id="kv_id"></key-value-list>
@@ -59,11 +59,11 @@ export default {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchKeyValues()
+                this.fetchData()
             }
             this.mode = 'list'
         },
-        fetchKeyValues() {
+        fetchData() {
             if (this.user) {
                 this.keyvalues = []
                 let ref = null
@@ -78,7 +78,7 @@ export default {
                         let elem = doc.data()
                         elem.id = doc.id
                         elem.id = doc.id
-                        elem.media = this.fetchMedia(doc.id)
+                        elem.media = this.fetchMedia('media', doc.id)
                         this.keyvalues.push(elem)
                     })
                 })
@@ -87,9 +87,9 @@ export default {
                 })
             }
         },
-        fetchMedia(id) {
+        fetchMedia(coll, id) {
             let media = []
-            db.collection('media').where('parent_id', '==', id)
+            db.collection(coll).where('parent_id', '==', id)
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
@@ -99,7 +99,7 @@ export default {
                 })
             })
             .catch(error=> {
-                console.log('ec fetching media failed', error)
+                console.log('fetching media failed', error)
             })
             return media
         }
@@ -115,7 +115,7 @@ export default {
         }
         if (this.user) {
             // fetch work keyvalues
-            this.fetchKeyValues()
+            this.fetchData()
         }
     }
     

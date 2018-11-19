@@ -151,6 +151,7 @@ export default {
                     .then((doc) => {
                         this.updateMedia()
                         this.updateLinks()
+                        this.e_id = doc.id
                         console.log("education added ", this.e_id);
                         this.$emit(this.reason, this.e_id)
                     })

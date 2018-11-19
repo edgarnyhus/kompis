@@ -24,13 +24,13 @@
  
             <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
 
-            <b-form-group>
-                <p class="g-header"><strong>Bekreftelse</strong></p>
-                <p>Spør veileder eller kontaktperson ved bedrift om bekreftelse for å styrke din CV</p>
-                <div class="">
-                    <b-button variant="light">Spør</b-button>
-                </div>
-            </b-form-group>
+            <div class="my-3">
+                <p class="g-header"><strong >Bekreftelse</strong></p>
+                <p >Spør veileder eller kontaktperson ved bedrift om bekreftelse for å styrke din CV</p>
+                <b-btn variant="light" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">
+                    Spør
+                </b-btn>
+            </div>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -127,6 +127,7 @@ export default {
                     .then((doc) => {
                         this.updateMedia()
                         this.updateLinks()
+                        this.e_id = doc.id
                         console.log("education added ", this.e_id);
                         this.$emit(this.reason, this.e_id)
                     })

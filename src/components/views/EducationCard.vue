@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listEdu" :visible="mode==='list'">
                     <h5 class="text-muted">Utdanning og kurs
-                        <b-link class="g-link float-right" @click="mode='list'"><strong>Legg til skole/kurs</strong></b-link>
+                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="edu_id"></education-list>
@@ -60,11 +60,11 @@ export default {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchEducation()
+                this.fetchData()
             }
             this.mode = 'list'
         },
-        fetchEducation() {
+        fetchData() {
             if (this.user_id) {
                 this.education = []
                 let ref = null
@@ -78,7 +78,7 @@ export default {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        elem.media = this.fetchMedia(doc.id)
+                        elem.media = this.fetchMedia('media', doc.id)
                         elem.links = []
                         this.education.push(elem)
                     })
@@ -88,9 +88,9 @@ export default {
                 })
             }
         },
-        fetchMedia(id) {
+        fetchMedia(coll, id) {
             let media = []
-            db.collection('media').where('parent_id', '==', id)
+            db.collection(coll).where('parent_id', '==', id)
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
@@ -100,12 +100,10 @@ export default {
                 })
             })
             .catch(error=> {
-                console.log('ec fetching media failed', error)
+                console.log('fetching media failed', error)
             })
             return media
         }
-
-
     },
     created() {
         // current user
@@ -118,8 +116,8 @@ export default {
             this.user_id = this.user.uid
         }
         if (this.user) {
-            // fetch work education
-            this.fetchEducation()
+            // fetch education
+            this.fetchData()
         }
     }
     

@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Frivillig arbeid og verv
-                        <b-link class="g-link float-right" @click="mode='edit'"><strong>Legg til skole/kurs</strong></b-link>
+                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til frivillig arbeid/verv</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <volunteering-list v-on:editVolunteering="editVolunteering" :volunteering="volunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering-list>
@@ -59,11 +59,11 @@ export default {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchVolunteering()
+                this.fetchData()
             }
             this.mode = 'list'
         },
-        fetchVolunteering() {
+        fetchData() {
             this.volunteering = []
             let ref = null
             if (this.cert_id) {
@@ -76,7 +76,7 @@ export default {
                 snapshot.forEach(doc => {
                     let elem = doc.data()
                     elem.id = doc.id
-                    elem.media = this.fetchMedia(doc.id)
+                    elem.media = this.fetchMedia('media', doc.id)
                     elem.links = []
                     this.volunteering.push(elem)
                 })
@@ -85,21 +85,19 @@ export default {
                 console.log('ec fetching educaion failed', error)
             })
         },
-        fetchMedia(id) {
-            console.log('card fetching media', id)
+        fetchMedia(coll, id) {
             let media = []
-            db.collection('media').where('parent_id', '==', id)
+            db.collection(coll).where('parent_id', '==', id)
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
                     let elem = doc.data()
                     elem.id = doc.id
                     media.push(elem)
-                    console.log('fetched media', elem)
                 })
             })
             .catch(error=> {
-                console.log('ec fetching media failed', error)
+                console.log('fetching media failed', error)
             })
             return media
         }
@@ -115,7 +113,7 @@ export default {
         }
         if (this.user) {
             // fetch work volunteering
-            this.fetchVolunteering()
+            this.fetchData()
         }
     }
     

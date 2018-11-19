@@ -45,8 +45,7 @@ export default {
             user_id: null,
             cert_id: null,
             id: null,
-            mode: 'list',
-            showList: true
+            mode: 'list'
         }
     },
     methods: {
@@ -61,11 +60,11 @@ export default {
             // child component (slot) signaled finished
             console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchExperience()
+                this.fetchData()
             }
             this.mode = 'list'
         },
-        fetchExperience() {
+        fetchData() {
             if (this.user_id) {
                 this.experience = []
                 let ref = null
@@ -79,8 +78,9 @@ export default {
                     snapshot.forEach(doc => {
                         let elem = doc.data()
                         elem.id = doc.id
-                        elem.media = this.fetchMedia(doc.id)
-                        elem.links = [] 
+                        elem.media = this.fetchMedia('media', doc.id)
+                        elem.links = this.fetchMedia('links', doc.id)
+                        // elem.links = [] 
                         this.experience.push(elem)
                     })
                 })
@@ -90,9 +90,9 @@ export default {
             }
             // this.fetchMedia()
         },
-        fetchMedia(id) {
+        fetchMedia(coll, id) {
             let media = []
-            db.collection('media').where('parent_id', '==', id)
+            db.collection(coll).where('parent_id', '==', id)
             .get()
             .then(snapshot => {
                 snapshot.forEach(doc => {
@@ -102,7 +102,7 @@ export default {
                 })
             })
             .catch(error=> {
-                console.log('ec fetching media failed', error)
+                console.log('fetching media failed', error)
             })
             return media
         }
@@ -119,7 +119,7 @@ export default {
         }
         if (this.user) {
             // fetch work experience/training
-            this.fetchExperience()
+            this.fetchData()
         }
     }
     

@@ -64,7 +64,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 b-card {
     border-color: rgb(0,160,161);
 }
