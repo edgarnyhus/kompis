@@ -7,9 +7,9 @@
             <b-collapse is-nav id="nav_collapse">
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
-                    <button type="button" class="nav-button btn btn-outline-secondary">Del</button>
-                    <button type="button" class="nav-button btn btn-outline-secondary">PDF</button>
-                    <button type="button" class="nav-button btn btn-outline-secondary">Generer CV</button>
+                    <button type="button" class="nav-button btn btn-outline-secondary" @click="share()" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Del</button>
+                    <button type="button" class="nav-button btn btn-outline-secondary" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">PDF</button>
+                    <button type="button" class="nav-button btn btn-outline-secondary" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Generer CV</button>
                 </b-navbar-nav>
             </b-collapse>
         </b-navbar>
@@ -18,6 +18,8 @@
 
 <script>
 import firebase from 'firebase'
+import apiKey from '@/firebase/init'
+import axios from 'axios'
 
 export default {
     name: 'SubNavbar',
@@ -28,12 +30,28 @@ export default {
             show: false
         }
     },
-    cpmputed: {
-
-    },
     computed: {
         normalScreen() {
             return (this.user && window.innerWidth > 480)
+        }
+    },
+    methods: {
+        share() {
+            console.log('apiKey', apiKey)
+
+            axios.post({
+                method: 'post',
+                url: 'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=' + apiKey,
+                dynamicLinkInfo: {
+                    "domainUriPrefix": "https://kompetanse.page.link",
+                    "link": "https://www.example.com/",
+                }
+            })
+            .then(result => {
+                console.log('result', result)
+            }, error => {
+                console.log('error', error)
+            })
         }
     },
     mounted() {

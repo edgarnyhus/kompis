@@ -12,8 +12,8 @@
                         <md-button class="md-fab md-mini md-primary float-right" >
                             <menu-icon>delete</menu-icon>
                         </md-button> -->
-                        <b-link class="btn-floating float-right btn-sm" @click="updateTraining(elem)">Endre</b-link>
-                        <b-link class="button-span btn-floating float-right btn-sm" @click="removeTraining(elem)">Slett</b-link>
+                        <b-link class="info-color btn-floating float-right btn-sm" @click="updateTraining(elem)">Endre</b-link>
+                        <b-link class="info-color button-span btn-floating float-right btn-sm" @click="removeTraining(elem)">Slett</b-link>
                     </h6>
                     <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
                     <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->

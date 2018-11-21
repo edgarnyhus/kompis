@@ -1,0 +1,70 @@
+[debug] [2018-11-21T21:38:45.758Z] ----------------------------------------------------------------------
+[debug] [2018-11-21T21:38:45.760Z] Command:       /usr/local/bin/node /usr/local/bin/firebase deploy
+[debug] [2018-11-21T21:38:45.760Z] CLI Version:   6.0.1
+[debug] [2018-11-21T21:38:45.760Z] Platform:      darwin
+[debug] [2018-11-21T21:38:45.760Z] Node Version:  v10.13.0
+[debug] [2018-11-21T21:38:45.761Z] Time:          Wed Nov 21 2018 22:38:45 GMT+0100 (Central European Standard Time)
+[debug] [2018-11-21T21:38:45.761Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2018-11-21T21:38:45.774Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2018-11-21T21:38:45.774Z] > authorizing via signed-in user
+[debug] [2018-11-21T21:38:45.775Z] [iam] checking project cvue-bf9ec for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","datastore.indexes.create","datastore.indexes.delete","datastore.indexes.list","datastore.indexes.update","firebase.projects.get","firebasehosting.sites.update","firebaserules.releases.create","firebaserules.releases.update","firebaserules.rulesets.create"]
+[debug] [2018-11-21T21:38:45.776Z] >>> HTTP REQUEST POST https://cloudresourcemanager.googleapis.com/v1/projects/cvue-bf9ec:testIamPermissions  
+
+[debug] [2018-11-21T21:38:47.347Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-21T21:38:47.348Z] >>> HTTP REQUEST GET https://firebase.googleapis.com/v1beta1/projects/cvue-bf9ec  
+ 
+[debug] [2018-11-21T21:38:47.630Z] <<< HTTP RESPONSE 200
+[info] 
+[info] === Deploying to 'cvue-bf9ec'...
+[info] 
+[info] i  deploying storage, firestore, functions, hosting
+[debug] [2018-11-21T21:38:49.340Z] >>> HTTP REQUEST GET https://appengine.googleapis.com/v1/apps/cvue-bf9ec  
+ 
+[debug] [2018-11-21T21:38:50.683Z] <<< HTTP RESPONSE 200
+[info] i  storage: checking storage.rules for compilation errors...
+[debug] [2018-11-21T21:38:50.685Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/cvue-bf9ec:test  
+
+[debug] [2018-11-21T21:38:51.821Z] <<< HTTP RESPONSE 200
+[info] ✔  storage: rules file storage.rules compiled successfully
+[info] i  firestore: checking firestore.rules for compilation errors...
+[debug] [2018-11-21T21:38:51.823Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/cvue-bf9ec:test  
+
+[debug] [2018-11-21T21:38:52.788Z] <<< HTTP RESPONSE 200
+[info] ✔  firestore: rules file firestore.rules compiled successfully
+[debug] [2018-11-21T21:38:52.790Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase serve --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "dependencies": {
+    "firebase-admin": "~6.0.0",
+    "firebase-functions": "^2.1.0"
+  },
+  "private": true
+}
+[info] i  functions: ensuring necessary APIs are enabled...
+[debug] [2018-11-21T21:38:52.790Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/cloudfunctions.googleapis.com/projectSettings/cvue-bf9ec?view=CONSUMER_VIEW  
+ 
+[debug] [2018-11-21T21:38:52.791Z] >>> HTTP REQUEST GET https://servicemanagement.googleapis.com/v1/services/runtimeconfig.googleapis.com/projectSettings/cvue-bf9ec?view=CONSUMER_VIEW  
+ 
+[debug] [2018-11-21T21:38:54.565Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-21T21:38:54.595Z] <<< HTTP RESPONSE 200
+[info] ✔  functions: all necessary APIs are enabled
+[debug] [2018-11-21T21:38:54.596Z] >>> HTTP REQUEST GET https://cloudresourcemanager.googleapis.com/v1/projects/cvue-bf9ec  
+ 
+[debug] [2018-11-21T21:38:55.801Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-21T21:38:55.801Z] >>> HTTP REQUEST GET https://mobilesdk-pa.googleapis.com/v1/projects/851848949486:getServerAppConfig  
+ 
+[debug] [2018-11-21T21:38:56.801Z] <<< HTTP RESPONSE 200
+[debug] [2018-11-21T21:38:56.802Z] >>> HTTP REQUEST POST https://firebasehosting.googleapis.com/v1beta1/sites/cvue-bf9ec/versions  
+
+[debug] [2018-11-21T21:38:58.801Z] <<< HTTP RESPONSE 200
+[info] i  storage: uploading rules storage.rules...
+[debug] [2018-11-21T21:38:58.802Z] >>> HTTP REQUEST POST https://firebaserules.googleapis.com/v1/projects/cvue-bf9ec/rulesets  
+

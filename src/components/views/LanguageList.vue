@@ -3,8 +3,8 @@
         <div v-for="elem in languages" :key="elem.id">
             <div class="g-groupy">
                 <h5 class="card-title">{{ elem.language }}
-                    <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
-                    <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                    <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
+                    <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
                 </h5>
                 <h6 class="card-subtitle text-muted">{{ elem.proficiency }}</h6>
                 <p class="card-text" style="margin-top: 0.5em">{{elem.description}}</p>
@@ -57,8 +57,6 @@ export default {
 </script>
 
 <style>
-.g-group {
-    margin-top: 1em
-}
+
 </style>
 

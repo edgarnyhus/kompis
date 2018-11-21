@@ -19,7 +19,7 @@
                 <b-link v-b-modal.modalPrevent  variant="info" class="info-color btn-mr"><strong>Endre</strong></b-link>
             </b-form>
 
-            <div v-if="cert_id"> 
+            <div v-if="cert_id" class="g-group"> 
                 <!-- PRAKSISSTED -->
                 <work-experience-card :show="show" :uid="user_id" :cid="cert_id"></work-experience-card>
 
@@ -147,7 +147,7 @@ export default {
                     this.form = doc.data()
                     this.employer = this.form.employer
                 })
-                .catch(err => {
+                .catch(error => {
                     console.log('Fetching certificate failed', error)
                 })
             }
@@ -159,13 +159,6 @@ export default {
         this.user_id = this.user.uid
         this.cert_id = this.$route.params.cid
         this.show = this.$route.params.show
-        // if (this.cid != undefined) {
-        //     this.cert_id = this.cid
-        // if (this.uid != undefined) {
-        //     this.user_id = this.uid
-        // } else if (this.user) {
-        //     this.user_id = this.user.uid
-        // }
         console.log('created cert', this.user_id, this.cert_id)
         if (this.user_id) {
             db.collection('users').doc(this.user_id)
@@ -187,14 +180,38 @@ export default {
 }
 </script>
 
-<style scoped>
- .g-group {
+<style>
+.g-title {
+    margin-top: 0;
     margin-bottom: 1em;
 }
-.g-bottom {
-    margin-bottom: em;
+.g-link {
+    color: rgb(62,65,67);
+    font-size: 16px;
 }
-.btn-outline-secondary {
-    border-color: grey;
+.g-link:hover {
+    color: rgb(70,72,74);
+    font-size: 16px;
+}
+a {
+    color: rgb(0,161,181);
+}
+a:hover {
+    color: rgb(0,161,181);
+}
+.gb-link {
+    color: rgb(0,161,181);
+}
+.gb-link:hover {
+    color: rgb(0,161,181);
+}
+.g-header {
+    margin-bottom: 0;
+}
+.g-group {
+    margin-top: 1em;
+}
+.g-span {
+    margin-right: 1em;
 }
 </style>

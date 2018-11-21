@@ -77,15 +77,5 @@ export default {
 </script>
 
 <style>
-.g-title {
-    margin-top: 2em;
-    margin-bottom: 0;
-}
-.g-group {
-    margin-top: 2em;
-    margin-bottom: 1.5em;
-}
-.g-span {
-    margin-right: 1em;
-}
+
 </style>

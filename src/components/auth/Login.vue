@@ -50,7 +50,7 @@ export default {
                     //console.log(user)
                     this.$router.push({ name: 'MyCV' })
                 }).catch(error=> {
-                    this.feedback = err.message
+                    this.feedback = error.message
                 })
             } else {
                 this.feedback = 'Vær vennlig og fyll ut begge feltene'

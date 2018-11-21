@@ -6,7 +6,7 @@
                     <div class="card h-100" >
                         <h5 class="card-subtitle" style="font-size: 12px; margin: 10px"><strong>{{ item.filename.substring(0,11) }}...</strong></h5>
                         <img class="card-img-top" style="font-size: 12px" :src="item.url" @click="show(item)" :alt="item.type">
-                        <b-link class="btn-floating float-right btn-sm" @click="remove(item)">Slett</b-link>
+                        <b-link class="gb-link btn-floating float-right btn-sm" @click="remove(item)">Slett</b-link>
                     </div>
                 </div>
             </div>
@@ -54,25 +54,11 @@ export default {
             })
         },
         show(item) {
-            console.log('show', item.url)
+            console.log('show', item)
             this.file = item
             window.open(item.url)
-            // const ref = this.$refs.showmodal
-            // if(ref)
-            //     ref.show()
-            // this.$router.push({name: 'ShowMedia', params: { file: file }})
-
-            // const ref = this.$refs.ShowFile
-            // this.$set(ref, 'file', file)
-            // this.$router.push({name: 'ShowMedia'})
         },
-        // show(item) {
-        //     this.file = item
-        //     console.log('show', this.file)
-        //     this.showFile = true
-        // },
         onFileClose() {
-            this.showFile = false
         }
     },
     mounted() {

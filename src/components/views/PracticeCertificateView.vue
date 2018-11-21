@@ -85,7 +85,7 @@ export default {
 <style>
 .page-title {
     margin-top: 1.5em;
-    margin-bottom: 2em;
+    margin-bottom: 1em;
 }
 b-card {
     margin-bottom: 2em;

@@ -25,7 +25,7 @@
                     <template slot="button-content">
                         <em>{{ this.user.email }}</em>
                     </template>
-                    <b-dropdown-item type="link" v-on:click="showProfile()" href="#">Profil</b-dropdown-item>
+                    <b-dropdown-item type="link" v-on:click="showProfile()" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Profil</b-dropdown-item>
                     <b-dropdown-item type="link" v-on:click="logout()" href="#">Logg ut</b-dropdown-item>
                 </b-nav-item-dropdown>
 

@@ -121,34 +121,5 @@ export default {
 </script>
 
 <style>
-small {
-    display: block;
-}
-a {
-    color: rgb(0,161,181);
-}
-a:hover {
-    color: rgb(0,161,181);
-}
-.g-title {
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-.g-header {
-    margin-bottom: 0;
-}
-.g-group {
-    margin-top: 1em;
-}
-.g-span {
-    margin-right: 1em;
-}
-.g-link {
-    color: rgb(62,65,67);
-    font-size: 16px;
-}
-.g-link:hover {
-    color: rgb(70,72,74);
-    font-size: 16px;
-}
+
 </style>

@@ -96,7 +96,7 @@ export default {
 
 <style>
 .g-title {
-    margin-top: 2em;
+    margin-top: 0;
     margin-bottom: 1em;
 }
 .g-link {
@@ -107,4 +107,26 @@ export default {
     color: rgb(70,72,74);
     font-size: 16px;
 }
+a {
+    color: rgb(0,161,181);
+}
+a:hover {
+    color: rgb(0,161,181);
+}
+.gb-link {
+    color: rgb(0,161,181);
+}
+.gb-link:hover {
+    color: rgb(0,161,181);
+}
+.g-header {
+    margin-bottom: 0;
+}
+.g-group {
+    margin-top: 1em;
+}
+.g-span {
+    margin-right: 1em;
+}
+
 </style>

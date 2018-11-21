@@ -32,5 +32,6 @@ const firebaseApp = firebase.initializeApp(config);
 
 firebaseApp.firestore().settings({ timestampsInSnapshots: true })
 const db = firebaseApp.firestore()
+const apiKey = config.apiKey
 
-export default  db
+export { db as default, apiKey }

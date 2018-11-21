@@ -3,8 +3,8 @@
         <div v-for="elem in references" :key="elem.id">
             <div class="g-group">
                 <h5 class="card-title">{{ elem.person }}
-                    <b-link class="btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
-                    <b-link class="button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                    <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
+                    <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
                 </h5>
                 <p class="card-subtitle text-muted" style="margin-bottom: 0.5em">Email: {{elem.email}}<br>
                     Telefon: {{elem.phone}}
@@ -59,8 +59,6 @@ export default {
 </script>
 
 <style>
-.g-group {
-    margin-top: 1em
-}
+
 </style>
 

@@ -50,7 +50,7 @@
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
-                <b-link @click="cancel()" href="#" variant="foreground-color: rgb(0,161,181)"><strong>Avbyt</strong></b-link>
+                <b-link @click="cancel()" href="#" class="gb-link"><strong>Avbyt</strong></b-link>
             </div>
 
         </b-form>
@@ -283,20 +283,5 @@ export default {
 </script>
 
 <style>
-a {
-    color: rgb(0,161,181);
-}
-.g-title {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-.g-header {
-    margin-bottom: 0;
-}
-.g-group {
-    margin-top: 2em;
-}
-.g-span {
-    margin-right: 1em;
-}
+
 </style>

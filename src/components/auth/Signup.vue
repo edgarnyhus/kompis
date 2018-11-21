@@ -33,6 +33,7 @@
 <script>
 import db from '@/firebase/init'
 import firebase from 'firebase'
+import functions from 'firebase/functions'
 import slugify from 'slugify'
 
 export default {
@@ -63,6 +64,7 @@ export default {
             } 
             this.feedback = null
             let slug = slugify(this.alias, { replacement: '-', remove: /[$*_+~.()'"!\-:@]/g, lower: true })
+
             let ref = db.collection('users').doc(slug)
             ref.get()
             .then(doc => {
@@ -78,11 +80,6 @@ export default {
                             user_id: user.uid
                         })
                     }).then(() => {
-                        // db.collection("slugs").doc(user.uid).set({slug: slug})
-                        // .then(() => {
-                        //     console.log('signup ok')
-                        //     this.$router.push({ name: 'MyCV' })
-                        // })
                         console.log('signup ok')
                         this.$router.push({ name: 'MyCV' })
                     })
@@ -94,6 +91,31 @@ export default {
             .catch(error=> {
                 this.feedback = err.message
             })
+
+            // checkAlias(slug)
+            // .then(result =>{
+            //     if (!result.unique) {
+            //         this.feedback = "Brukernavnet er opptatt! Velg et annet."
+            //     } else {
+            //         let user = null;
+            //         firebase.auth().createUserWithEmailAndPassword(this.email, this.password)
+            //         .then(cred => {
+            //             user = cred.user
+            //             db.collection('users').doc(slug).set({
+            //                 alias: this.alias,
+            //                 user_id: user.uid
+            //             })
+            //             }).then(() => {
+            //                 console.log('signup ok')
+            //                 this.$router.push({ name: 'MyCV' })
+            //             })
+            //         .catch(error=> {
+            //             this.feedback = error.message
+            //         })
+            //     }
+            // }, error => {
+            //     this.feedback = error
+            // })
         }
     }
 }
