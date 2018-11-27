@@ -8,7 +8,10 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import moment from 'moment'
 import firebase from 'firebase'
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.css'
 
+Vue.use(VueMaterial);
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false
 
@@ -26,6 +29,12 @@ Vue.filter('formatDateAndTime', function(value) {
         // return moment(String(value)).format('MM/DD/YYYY hh:mm')
         let date = moment(value).format('lll')
         return date
+    }
+})
+
+Vue.filter('truncateFilename', function(value) {
+    if (value) {
+        return (filename.length > 11 ? filename.substring(0, 11) + '...' : filename);
     }
 })
 

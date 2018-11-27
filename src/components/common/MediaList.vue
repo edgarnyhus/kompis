@@ -6,7 +6,8 @@
                     <div class="card h-100" >
                         <h5 class="card-subtitle" style="font-size: 12px; margin: 10px"><strong>{{ item.filename.substring(0,11) }}...</strong></h5>
                         <img class="card-img-top" style="font-size: 12px" :src="item.url" @click="show(item)" :alt="item.type">
-                        <b-link class="gb-link btn-floating float-right btn-sm" @click="remove(item)">Slett</b-link>
+                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                        <!-- <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete_outline</i></span> -->
                     </div>
                 </div>
             </div>
@@ -42,12 +43,21 @@ export default {
         remove: function(item) {
             db.collection('media').doc(item.id).delete()
             .then(() => {
-                console.log("media successfully deleted!");
+                // Delete from Storage
+                firebase.storage().ref('media').child(file.name).delete()
+                .then(() => {
+                    // File deleted successfully
+                    console.log("media successfully deleted!");
+                }).catch((error) => {
+                    // Uh-oh, an error occurred!
+                    console.error("error removing media from storage", error);
+                });
+
+                // Remove from array
                 let ix = this.media.findIndex(e => e.id === item.id)
                 if (~ix) {
                     this.media.splice(ix, 1)
                 }
-                // TODO: Bildet må også slettes i storage
             }).catch(error => {
                 console.error("error removing media", error);
                 alert(error)
@@ -102,6 +112,10 @@ img {
     font-size: 1.2em;
     text-align: center;
     padding: 50px 0;
+}
+.g-icon { 
+    color: rgb(80,80,80);
+    cursor: pointer;
 }
 </style>
 

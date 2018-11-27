@@ -3,8 +3,15 @@
         <div v-for="elem in experience" :key="elem.id">
                 <div class="g-group">
                     <h6 class="card-title">{{ elem.employer }}
+                        <!-- links -->
                         <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
                         <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+
+                        <!-- or icons -->
+                        <!-- <md-icon class="g-icon float-right" @click="edit(elem)">edit</md-icon> -->
+                        <!-- <md-icon class="g-icon float-right" style="margin-right: 10px" @click="remove(elem)">delete</md-icon> -->
+                        <!-- <md-button class="g-icon md-fab md-mini float-right" @click="edit(elem) "><md-icon>edit</md-icon></md-button> -->
+                        <!-- <md-button class="g-icon md-fab md-mini md-plain float-right" @click="remove(elem)"><md-icon>delete</md-icon></md-button> -->
                     </h6>
                     <h5 class="card-subtitle">{{ elem.role }}</h5>
                     <p v-if="elem.ongoing" class="card-text text-muted" style="margin-bottom: 0.5em">{{ elem.from | formatDate }} - (Jobber her nå)<br>
@@ -66,6 +73,9 @@ export default {
 </script>
 
 <style>
-
+.g-icon {
+    cursor: pointer;
+    color: #767676;
+}
 </style>
 

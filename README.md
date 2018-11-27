@@ -11,6 +11,7 @@ npm install slugify --save
 npm install moment --save
 npm install firebase --save
 npm install bootstrp-vue --save
+npm install vue-material --save
 
 # initialize firebasse
 firebase login
