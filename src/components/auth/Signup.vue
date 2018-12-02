@@ -19,12 +19,17 @@
                     <label for="confirmPassword">Bekreft ditt passord</label>
                     <b-form-input id="confirmPassword" type="password" @change="feedback = null" v-model="confirmPassword" required></b-form-input>
                 </b-form-group>
-                <b-form-group class="g-m2">
-                    <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
-                    <!-- <b-form-checkbox button-variant id="accept" v-model="accepted" value="accepted" unchecked-value="not_accepted" variant="info">
+                <b-form-group>
+                    <!-- <b-form-checkbox id="accept" v-model="accepted" value="accepted" unchecked-value="not_accepted" variant="info">
                     Jeg godtar betingelsene
                     </b-form-checkbox> -->
-                    <p-check name="accept" color="info" v-model="accepted">Jeg godtar betingelsene</p-check>
+                    <div class="pretty">
+                        <input type="checkbox" id="accept" name="accept">
+                        <div class="pretty-inner"><label for="accept">Jeg godtar betingelsene</label></div>
+                    </div>
+                </b-form-group>
+                <b-form-group class="g-m2">
+                    <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
                 </b-form-group>
                 <p style="margin-top: 1.5em">
                     Hvis du allerede har en konto, kan du 
@@ -43,7 +48,6 @@ import db from '@/firebase/init'
 import firebase from 'firebase'
 import functions from 'firebase/functions'
 import slugify from 'slugify'
-import Prettycheckbox from 'pretty-chackbox.vue'
 
 export default {
     name: 'Signup',
@@ -151,14 +155,76 @@ export default {
 .g-check {
     color: rgb(0,160,161);
 }
-input[type="checkbox"]:after {
-    background-color: rgb(0,160,161);
+
+
+.pretty {
+  position: relative;
+  /* margin: 1em; */
+  margin-top: 1em;
 }
-b-form-input[type=checkbox]:checked {
-    background-color: rgb(0,160,161);
+.pretty input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-width: 1em;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  opacity: 0;
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
 }
-b-form-checkbox:checked {
-  background: rgb(0,160,161);
+.pretty-inner {
+  box-sizing: border-box;
+  position: relative;
+}
+.pretty-inner label {
+  position: initial;
+  display: inline-block;
+  font-weight: 400;
+  margin: 0;
+  text-indent: 1.5em;
+  min-width: calc(1em + 2px);
+}
+.pretty-inner label:after,
+.pretty-inner label:before {
+  content: '';
+  width: calc(1em + 2px);
+  height: calc(1em + 2px);
+  display: block;
+  box-sizing: border-box;
+  border-radius: 0;
+  border: 1px solid transparent;
+  z-index: 0;
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: transparent;
+}
+.pretty-inner label:before {
+  border-color: #bdc3c7;
+}
+.pretty input:checked~.pretty-inner label:after {
+  background-color: rgb(0,160,161);
+  width: calc(1em - 6px);
+  height: calc(1em - 6px);
+  top: 4px;
+  left: 4px;
 }
 
+/* Add checkmark character style */
+.pretty input:checked~.pretty-inner.checkmark:after {
+  content: '\2713';
+  color: #fff;
+  position: absolute;
+  font-size: 0.65em;
+  left: 6px;
+  top: 3px;
+}
+
+/* body {
+  font-size: 20px;
+  font-family: sans-serif;
+} */
 </style>

@@ -9,7 +9,7 @@
             <p v-if="uploadError" style="color: red; margin-top: 0.4em"> {{ errorMessage }}</p>
  
             <!--UPLOAD-->
-            <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
+            <form enctype="multipart/form-data" novalidate v-if="isInitial">
                 <div class="dropbox">
                     <input type="file" multiple :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files); fileCount = $event.target.files.length"
                         accept="*/*" class="input-file">
@@ -19,11 +19,16 @@
 '                    <p v-if="isSaving">
                         Laster opp {{ fileCount }} filer...
                     </p>
-                    <!-- <div v-if="isSaving">
-                        <b-progress style="width: 200px; height: 10px" :value="progress" :max="max" variant="secondary" class="mb-2"></b-progress>
-                    </div> -->
                 </div>
             </form>
+
+            <!--SAVING-->
+            <div v-if="isSaving">
+              <div style="margin-top: 1em">
+                  <b-progress :value="100" variant="info" striped :animated="animated" class="mb-2"></b-progress>
+                  <!-- <md-progress-spinner :md-diameter="30" :md-stroke="5" md-mode="indeterminate" style="top-margin: 1em"></md-progress-spinner> -->
+              </div>
+            </div>
 
             <!--SUCCESS-->
             <div v-if="isSuccess">
@@ -67,6 +72,7 @@ import 'firebase/storage';
         uploadFieldName: 'media',
         progress: 20,
         max: 100,
+        animated: true,
         reason: 'input'
       }
     },

@@ -41,27 +41,32 @@ export default {
     },
     methods: {
         remove: function(item) {
-            db.collection('media').doc(item.id).delete()
-            .then(() => {
-                // Delete from Storage
-                firebase.storage().ref('media').child(file.name).delete()
+            console.log('remove', item.filename, item.id)
+            if (item.id) {
+                db.collection('media').doc(item.id).delete()
                 .then(() => {
-                    // File deleted successfully
-                    console.log("media successfully deleted!");
-                }).catch((error) => {
-                    // Uh-oh, an error occurred!
-                    console.error("error removing media from storage", error);
-                });
+                    console.log('media deleted in database/media')
+                }).catch(error => {
+                    console.info("error removing media; not saved yet?...", error);
+                    // alert(error)
+                })
+            }
 
-                // Remove from array
-                let ix = this.media.findIndex(e => e.id === item.id)
-                if (~ix) {
-                    this.media.splice(ix, 1)
-                }
-            }).catch(error => {
-                console.error("error removing media", error);
-                alert(error)
-            })
+            // Delete from Storage
+            firebase.storage().ref('media').child(item.filename).delete()
+            .then(() => {
+                // File deleted successfully
+                console.log("media successfully deleted from storage!");
+            }).catch((error) => {
+                // Uh-oh, an error occurred!
+                console.error("error removing media from storage", error);
+            });
+
+            // Remove from array
+            let ix = this.media.findIndex(e => e.id === item.id)
+            if (~ix) {
+                this.media.splice(ix, 1)
+            }
         },
         show(item) {
             console.log('show', item)
