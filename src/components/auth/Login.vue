@@ -13,7 +13,11 @@
                 </b-form-group>
                 <div class="g-m2">
                     <b-button class="g-span" type="submit" variant="info">Logg inn</b-button>
-                    <b-link @click="signup()" style="color: rgb(0,161,181)"><strong>Registrer deg</strong></b-link>
+                    <p style="margin-top: 1.5em">
+                        Hvis du ikke har en konto, kan du 
+                        <router-link :to="{ name: 'Signup' }" style="font-size: 14px; color: rgb(0,161,181)"><strong>registrere deg</strong></router-link>
+                        med brukernavn, email adresse og passord.
+                    </p>
                 </div>
             </b-form>
 

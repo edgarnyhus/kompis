@@ -19,10 +19,18 @@
                     <label for="confirmPassword">Bekreft ditt passord</label>
                     <b-form-input id="confirmPassword" type="password" @change="feedback = null" v-model="confirmPassword" required></b-form-input>
                 </b-form-group>
-                <div class="g-m2">
+                <b-form-group class="g-m2">
                     <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
-                    <router-link :to="{ name: 'Login' }" style="color: rgb(0,161,181)"><strong>Logg inn</strong></router-link>
-                </div>
+                    <!-- <b-form-checkbox button-variant id="accept" v-model="accepted" value="accepted" unchecked-value="not_accepted" variant="info">
+                    Jeg godtar betingelsene
+                    </b-form-checkbox> -->
+                    <p-check name="accept" color="info" v-model="accepted">Jeg godtar betingelsene</p-check>
+                </b-form-group>
+                <p style="margin-top: 1.5em">
+                    Hvis du allerede har en konto, kan du 
+                    <router-link :to="{ name: 'Login' }" style="font-size: 14px; color: rgb(0,161,181)"><strong>logge inn</strong></router-link>
+                    ved å bruke din email adresse og passord.
+                </p>
 
                 <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
             </b-form>
@@ -35,6 +43,7 @@ import db from '@/firebase/init'
 import firebase from 'firebase'
 import functions from 'firebase/functions'
 import slugify from 'slugify'
+import Prettycheckbox from 'pretty-chackbox.vue'
 
 export default {
     name: 'Signup',
@@ -44,6 +53,8 @@ export default {
             email: '',
             password: '',
             confirmPassword: '',
+            accepted: 'not_accepted',
+            options: ['Godtar'],
             feedback: ''
         }
     },
@@ -137,4 +148,17 @@ export default {
 .g-span {
     margin-right: 1em;
 }
+.g-check {
+    color: rgb(0,160,161);
+}
+input[type="checkbox"]:after {
+    background-color: rgb(0,160,161);
+}
+b-form-input[type=checkbox]:checked {
+    background-color: rgb(0,160,161);
+}
+b-form-checkbox:checked {
+  background: rgb(0,160,161);
+}
+
 </style>
