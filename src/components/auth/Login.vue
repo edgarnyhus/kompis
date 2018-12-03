@@ -74,11 +74,9 @@ b-card {
 }
 .g-frame {
     margin-top: 2em;
-    /* width: 20%; */
     min-width: 400px;
     max-width: 480px;
     height: 480px;
-    border-color: rgb(0,160,161);
     align-self: center; 
 }
 .g-m2 {

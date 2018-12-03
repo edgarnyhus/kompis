@@ -19,17 +19,9 @@
                     <label for="confirmPassword">Bekreft ditt passord</label>
                     <b-form-input id="confirmPassword" type="password" @change="feedback = null" v-model="confirmPassword" required></b-form-input>
                 </b-form-group>
-                <b-form-group>
-                    <!-- <b-form-checkbox id="accept" v-model="accepted" value="accepted" unchecked-value="not_accepted" variant="info">
-                    Jeg godtar betingelsene
-                    </b-form-checkbox> -->
-                    <div class="pretty">
-                        <input type="checkbox" id="accept" name="accept">
-                        <div class="pretty-inner"><label for="accept">Jeg godtar betingelsene</label></div>
-                    </div>
-                </b-form-group>
                 <b-form-group class="g-m2">
-                    <b-button class="g-span" type="submit" variant="info">Registrer</b-button>
+                    <b-btn class="g-span" variant="info" @click="agree()">Registrer</b-btn>
+                    <!-- <b-btn v-b-modal.consent class="g-span" variant="info">Registrer</b-btn> -->
                 </b-form-group>
                 <p style="margin-top: 1.5em">
                     Hvis du allerede har en konto, kan du 
@@ -40,6 +32,19 @@
                 <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
             </b-form>
         </b-card>
+
+        <keep-alive>
+            <b-modal id="consent" ref="agree" size="lg" hide-footer title="Personvernerklæring">
+                <div>
+                    <pdf v-for="i in numPages" :key="i" :src="src" :page="i" style="display: inline-block; width: 100%">
+                        <hr>
+                    </pdf>
+                </div>
+                <hr>
+                <b-btn class="mt-3 float-right" variant="secondary" @click="signup" style="margin-left: 1em">Jeg samtykker</b-btn>
+                <b-btn class="mt-3 float-right" variant="outline-secondary" @click="reject()">Jeg samtykker ikke</b-btn>
+            </b-modal>
+        </keep-alive>
     </div>
 </template>
 
@@ -48,8 +53,14 @@ import db from '@/firebase/init'
 import firebase from 'firebase'
 import functions from 'firebase/functions'
 import slugify from 'slugify'
+import pdf from 'vue-pdf'
+
+var loadingTask = null; //pdf.createLoadingTask('./static/Personvern_KOMPIS.pdf');
 
 export default {
+    components: {
+        pdf
+    },
     name: 'Signup',
     data() {
         return {
@@ -57,14 +68,22 @@ export default {
             email: '',
             password: '',
             confirmPassword: '',
-            accepted: 'not_accepted',
-            options: ['Godtar'],
+            src: loadingTask,
+            numPages: 0,
             feedback: ''
         }
     },
     methods: {
         reset() {
+            Object.assign(this.$data, this.$options.data.call(this));
             this.feedback = null
+        },
+        agree() {
+            this.$refs.agree.show()
+        },
+        reject() {
+            this.$refs.agree.hide()
+            this.numPages = 2;
         },
         signup() {
             console.log('signup...')
@@ -132,6 +151,13 @@ export default {
             //     this.feedback = error
             // })
         }
+    },
+    mounted() {
+        this.loadingTask = pdf.createLoadingTask('./static/Personvern_KOMPIS.pdf')
+        this.src = this.loadingTask
+        this.src.then(pdf => {
+            this.numPages = pdf.numPages
+        })
     }
 }
 </script>
@@ -139,12 +165,10 @@ export default {
 <style scoped>
 .g-frame {
     margin-top: 2em;
-    /* width: 20%; */
     min-width: 400px;
     max-width: 480px;
     height: 480px;
-    height: 480px;
-    border-color: rgb(0,160,161);
+    align-self: center; 
 }
 .g-m2 {
     margin-top: 1.5em;
@@ -155,76 +179,4 @@ export default {
 .g-check {
     color: rgb(0,160,161);
 }
-
-
-.pretty {
-  position: relative;
-  /* margin: 1em; */
-  margin-top: 1em;
-}
-.pretty input {
-  position: absolute;
-  left: 0;
-  top: 0;
-  min-width: 1em;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  opacity: 0;
-  margin: 0;
-  padding: 0;
-  cursor: pointer;
-}
-.pretty-inner {
-  box-sizing: border-box;
-  position: relative;
-}
-.pretty-inner label {
-  position: initial;
-  display: inline-block;
-  font-weight: 400;
-  margin: 0;
-  text-indent: 1.5em;
-  min-width: calc(1em + 2px);
-}
-.pretty-inner label:after,
-.pretty-inner label:before {
-  content: '';
-  width: calc(1em + 2px);
-  height: calc(1em + 2px);
-  display: block;
-  box-sizing: border-box;
-  border-radius: 0;
-  border: 1px solid transparent;
-  z-index: 0;
-  position: absolute;
-  left: 0;
-  top: 0;
-  background-color: transparent;
-}
-.pretty-inner label:before {
-  border-color: #bdc3c7;
-}
-.pretty input:checked~.pretty-inner label:after {
-  background-color: rgb(0,160,161);
-  width: calc(1em - 6px);
-  height: calc(1em - 6px);
-  top: 4px;
-  left: 4px;
-}
-
-/* Add checkmark character style */
-.pretty input:checked~.pretty-inner.checkmark:after {
-  content: '\2713';
-  color: #fff;
-  position: absolute;
-  font-size: 0.65em;
-  left: 6px;
-  top: 3px;
-}
-
-/* body {
-  font-size: 20px;
-  font-family: sans-serif;
-} */
 </style>
