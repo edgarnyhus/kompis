@@ -15,6 +15,8 @@ import PersonalGoal from '@/components/views/PersonalGoal'
 import Signup from '@/components/auth/Signup'
 import Login from '@/components/auth/Login'
 import ShowMedia from '@/components/common/ShowMedia'
+import Profile from '@/components/Profile/Profile'
+import ProfileView from '@/components/Profile/ProfileView'
 import firebase from 'firebase'
 
 Vue.use(Router)
@@ -34,6 +36,16 @@ const router = new Router({
       component: Signup
     },
     {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile
+    },
+    {
+        path: '/profileview',
+        name: 'ProfileView',
+        component: ProfileView
+      },
+      {
       path: '/',
       name: 'MyCV',
       component: MyCV,

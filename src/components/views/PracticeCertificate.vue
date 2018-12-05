@@ -58,7 +58,7 @@ export default {
         PracticalSkillCard,
         ReferenceCard
     },
-    props: ['name', 'cid'],
+    props: ['name', 'uid', 'cid'],
     data () {
         return {
             employer: "Navn på bedrift",
@@ -69,8 +69,6 @@ export default {
                 timestamp: null
             },
             oldName: null,
-            user: null,
-            profile: null,
             experience: [],
             keyvalues: [],
             skills: [],
@@ -154,64 +152,23 @@ export default {
         },
     },
     created() {
-        // current user
-        this.user = firebase.auth().currentUser
-        this.user_id = this.user.uid
-        this.cert_id = this.$route.params.cid
         this.show = this.$route.params.show
+        this.cert_id = this.$route.params.cid
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = firebase.auth().currentUser.uid
+        }
         console.log('created cert', this.user_id, this.cert_id)
-        if (this.user_id) {
-            db.collection('users').doc(this.user_id)
-            .get()
-            .then(doc => {
-                this.profile = doc.data()
-            })
-            .catch(error => {
-                console.error('Firebase error: ', error)
-                alert(error)
-            })
-            if (this.cert_id) {
-                this.fetchCertificate()
-            } else {
-                this.$refs.inputEmployer.show()
-            }
+        if (this.cert_id) {
+            this.fetchCertificate()
+        } else {
+            this.$refs.inputEmployer.show()
         }
     }
 }
 </script>
 
 <style>
-.g-title {
-    margin-top: 0;
-    margin-bottom: 1em;
-}
-.g-link {
-    color: rgb(62,65,67);
-    font-size: 16px;
-}
-.g-link:hover {
-    color: rgb(70,72,74);
-    font-size: 16px;
-}
-a {
-    color: rgb(0,161,181);
-}
-a:hover {
-    color: rgb(0,161,181);
-}
-.gb-link {
-    color: rgb(0,161,181);
-}
-.gb-link:hover {
-    color: rgb(0,161,181);
-}
-.g-header {
-    margin-bottom: 0;
-}
-.g-group {
-    margin-top: 1em;
-}
-.g-span {
-    margin-right: 1em;
-}
+
 </style>

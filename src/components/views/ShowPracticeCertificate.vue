@@ -110,7 +110,7 @@ export default {
         PracticalSkill,
         Reference
     },
-    props: ['name', 'cid'],
+    props: ['name', 'uid', 'cid'],
     data () {
         return {
             employer: "Navn på bedrift",
@@ -126,8 +126,6 @@ export default {
                 timestamp: null
             },
             oldName: null,
-            user: null,
-            profile: null,
             experience: [],
             keyvalues: [],
             skills: [],
@@ -407,29 +405,11 @@ export default {
             }
         }
     },
-    updated() {
-        console.log('PC updated event, ID=', this.cert_id)
-    },
-    activated() {
-        console.log('PC activated event, ID=', this.cert_id)
-    },
-    mounted() {
-        console.log('PC mounted event, ID=', this.cert_id)
-    },
     created() {
-        this.user = firebase.auth().currentUser.uid
-        this.cert_id = this.$route.params.cid
-        console.log('ShowPracticalCertificate created', this.cert_id)
-        // current user
-        if (this.user) {
-            db.collection('users').doc(firebase.auth().currentUser.uid)
-            .get()
-            .then(doc => {
-                this.profile = doc.data()
-            })
-            .catch(error=> {
-                console.log('Fetching user failed', error)
-            })
+        if (this.uid) {
+            this.user_id = this.uid
+        } else {
+            this.user_id = firebase.auth().currentUser.uid
         }
 
         // fetch this practice certificate
@@ -452,40 +432,5 @@ export default {
 </script>
 
 <style scoped>
-.info-color {
-    color: rgb(0,161,181);
-}
-  small {
-    display: block;
-  }
-  .g-title {
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-.g-practice {
-    margin-top: 3em;
-    margin-bottom: 1em;
-    background-color: rgb(242,242,242);
-}
-.accordion {
-    margin-top: 1em;
-    margin-bottom: 5em;
-}
-b-card-header {
-  cursor: wait;
-}
-.g-bottom {
-    margin-bottom: 2em;
-}
-.btn-outline-secondary {
-    border-color: grey;
-}
-b-link {
-    color: rgb(0,161,181);
 
-}
-b-card {
-    border-color: lightgrey;
-
-}
 </style>

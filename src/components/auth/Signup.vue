@@ -16,14 +16,14 @@
                     <b-form-input id="password"  type="password" @change="feedback = null" v-model="password" required></b-form-input>
                 </b-form-group>
                 <b-form-group>
-                    <label for="confirmPassword">Bekreft ditt passord</label>
+                    <label for="confirmPassword">Bekreft passordet</label>
                     <b-form-input id="confirmPassword" type="password" @change="feedback = null" v-model="confirmPassword" required></b-form-input>
                 </b-form-group>
                 <b-form-group class="g-m2">
-                    <b-btn class="g-span" variant="info" @click="agree()">Registrer</b-btn>
+                    <b-btn class="" variant="info" @click="agree()">Registrer</b-btn>
                     <!-- <b-btn v-b-modal.consent class="g-span" variant="info">Registrer</b-btn> -->
                 </b-form-group>
-                <p style="margin-top: 1.5em">
+                <p class="g-m2">
                     Hvis du allerede har en konto, kan du 
                     <router-link :to="{ name: 'Login' }" style="font-size: 14px; color: rgb(0,161,181)"><strong>logge inn</strong></router-link>
                     ved å bruke din email adresse og passord.
@@ -41,8 +41,8 @@
                     </pdf>
                 </div>
                 <hr>
-                <b-btn class="mt-3 float-right" variant="secondary" @click="signup" style="margin-left: 1em">Jeg samtykker</b-btn>
-                <b-btn class="mt-3 float-right" variant="outline-secondary" @click="reject()">Jeg samtykker ikke</b-btn>
+                <b-btn class="mt-3 float-right" variant="secondary" @click="signup()" style="margin-left: 1em">Jeg samtykker</b-btn>
+                <!-- <b-btn class="mt-3 float-right" variant="outline-secondary" @click="reject()">Jeg samtykker ikke</b-btn> -->
             </b-modal>
         </keep-alive>
     </div>
@@ -79,23 +79,30 @@ export default {
             this.feedback = null
         },
         agree() {
-            this.$refs.agree.show()
+            if (this.fieldsOk()) {
+                this.$refs.agree.show()
+            }
         },
         reject() {
+            console.log('reject')
             this.$refs.agree.hide()
             this.numPages = 2;
         },
-        signup() {
-            console.log('signup...')
-
+        fieldsOk() {
             if (!this.alias || !this.email || !this.password) {
                 this.feedback = 'Vær vennlig og fyll ut alle feltene'
-                return
+                return false
             }
             if (this.password !== this.confirmPassword) {
                 this.feedback = "Passordene er ikke like. Prøv igjen."
-                return
+                return false
             } 
+            return true
+        },
+        signup() {
+            console.log('signup...')
+            if (!this.fieldsOk)
+                return
             this.feedback = null
             let slug = slugify(this.alias, { replacement: '-', remove: /[$*_+~.()'"!\-:@]/g, lower: true })
 
@@ -174,7 +181,7 @@ export default {
     margin-top: 1.5em;
 }
 .g-span {
-    margin-right: 1em;
+    margin-left: 1em;
 }
 .g-check {
     color: rgb(0,160,161);

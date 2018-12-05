@@ -1,7 +1,7 @@
   <template>
     <div class="container">
         <div>
-            <h1 class="page-title">Praksisattester
+            <h1 h1 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
                 <b-button class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
             </h1>
         </div>
@@ -18,9 +18,7 @@
             </b-card>
         </b-card-group>
 
-        <div class="end-page">
-
-        </div>
+        <div class="g-bottom"></div>
     </div>
 </template>
 
@@ -83,21 +81,5 @@ export default {
 </script>
 
 <style>
-.page-title {
-    margin-top: 1.5em;
-    margin-bottom: 1em;
-}
-b-card {
-    margin-bottom: 2em;
-}
-.link-prop {
-    color: rgb(0,160,161);
-    font-size: 1.5rem;
-}
-.end-page {
-    margin-bottom: 3em;
-}
-.button-span {
-    margin-right: 1em;
-}
+
 </style>

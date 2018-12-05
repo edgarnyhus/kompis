@@ -36,16 +36,16 @@ export default {
     name: 'PeresonalGoal',
     computed: {
         state () {
-        return this.name.length >= 4 ? true : false
+          return this.name.length >= 4 ? true : false
         },
         invalidFeedback () {
-        if (this.form.goal.length > 4) {
-            return ''
-        } else if (this.form.goal.length > 0) {
-            return 'Enter at least 4 characters'
-        } else {
-            return 'Please enter something'
-        }
+            if (this.form.goal.length > 4) {
+                return ''
+            } else if (this.form.goal.length > 0) {
+                return 'Enter at least 4 characters'
+            } else {
+                return 'Please enter something'
+            }
         },
         validFeedback () {
             return this.state === true ? 'Thank you' : ''

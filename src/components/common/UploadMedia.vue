@@ -1,13 +1,22 @@
 <template>
     <div class="component">
-        <p class="g-header"><strong>Dokumentasjon</strong></p>
-        <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
+        <div v-if="!profile">
+            <p class="g-header"><strong>Dokumentasjon</strong></p>
+            <p>Legg til eller link til eksterne dokumenter. bilder, sider, videoer og presentasjoner</p>
+        </div>
         <div class="g-group">
-            <b-button class="g-span" @click="setInitial" variant="secondary">Last opp</b-button>
-            <!-- <input type="file" style="display: none" @change="onFilePicked($event)" ref="fileInput" accept="*"> -->
-            <b-button @click="addLink()" variant="secondary">Lenke</b-button>
-            <p v-if="uploadError" style="color: red; margin-top: 0.4em"> {{ uploadError }}</p>
- 
+            <div v-if="profile">
+                <h6 class="mt-0 mb-1">Last opp bilde av deg selv</h6>
+                <p style="margin-top: 0.5em">Bildet bør være minst 100 x 100 pixler</p>
+                <!-- <b-button class="g-btn"><strong>Last opp bilde</strong></b-button> -->
+                <b-button class="g-btn" @click="setInitial"><strong>Last opp bilde</strong></b-button>
+            </div>
+            <div v-else>
+                <b-button class="g-span" @click="setInitial" variant="secondary">Last opp</b-button>
+                <!-- <input type="file" style="display: none" @change="onFilePicked($event)" ref="fileInput" accept="*"> -->
+                <b-button @click="addLink()" variant="secondary">Lenke</b-button>
+                <p v-if="uploadError" style="color: red; margin-top: 0.4em"> {{ uploadError }}</p>
+            </div>
             <!--UPLOAD-->
             <form enctype="multipart/form-data" novalidate v-if="isInitial">
                 <div class="dropbox">
@@ -56,7 +65,7 @@ import 'firebase/storage';
 
   export default {
     name: 'app',
-    props: ['uid', 'cid', 'media', 'links'],
+    props: ['profile', 'uid', 'cid', 'media', 'links'],
     data() {
       return {
         fileCount: 0,
@@ -65,7 +74,7 @@ import 'firebase/storage';
         uploadFieldName: 'media',
         progress: 20,
         animated: true,
-        reason: 'input'
+        reason: 'addedPicture'
       }
     },
     computed: {
@@ -99,7 +108,12 @@ import 'firebase/storage';
             const file = formData.get('media')
             let elem = { filename: file.name, type: file.type, url: formData.get('url'), description: '' }
             console.log('add media', elem)
-            this.media.push(elem)
+            if (this.profile) {
+                // this.profile.picture = elem.url
+                this.$emit(this.reason, elem)
+            } else {
+                this.media.push(elem)
+            }
         }
       },
       upload(formData) {
@@ -191,5 +205,10 @@ b-progress {
 }
 .g-header {
     margin-bottom: 0;
+}
+.g-btn {
+    background: #eeeeea;
+    color: #515151;
+    border: none;
 }
 </style>

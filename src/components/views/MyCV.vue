@@ -61,72 +61,21 @@ export default {
     props: ['uid'],
     data () {
         return {
-            user: null,
-            profile: null,
             user_id: null,
             cert_id: null,
             show: ''
         }
     },
-    mounted() {
-
-    },
     created() {
-        // current user
-        this.user = firebase.auth().currentUser
         if (this.uid) {
             this.user_id = this.uid
-        } else if (this.user) {
-            this.user_id = this.user.uid
-        }
-        if (this.user_id) {
-            db.collection('users').doc(this.user_id)
-            .get()
-            .then(doc => {
-                this.profile = doc.data()
-            })
-            .catch(error => {
-                console.error('Firebase error: ', error)
-                alert(error)
-            })
+        } else {
+            this.user_id = firebase.auth().currentUser.uid
         }
     }
 }
 </script>
 
 <style>
-.g-title {
-    margin-top: 0;
-    margin-bottom: 1em;
-}
-.g-link {
-    color: rgb(62,65,67);
-    font-size: 16px;
-}
-.g-link:hover {
-    color: rgb(70,72,74);
-    font-size: 16px;
-}
-a {
-    color: rgb(0,161,181);
-}
-a:hover {
-    color: rgb(0,161,181);
-}
-.gb-link {
-    color: rgb(0,161,181);
-}
-.gb-link:hover {
-    color: rgb(0,161,181);
-}
-.g-header {
-    margin-bottom: 0;
-}
-.g-group {
-    margin-top: 1em;
-}
-.g-span {
-    margin-right: 1em;
-}
 
 </style>
