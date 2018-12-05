@@ -138,16 +138,6 @@ export default {
 </script>
 
 <style>
-.g-link {
-    color: rgb(62,65,67);
-    font-size: 16px;
-}
-.g-link:hover {
-    color: rgb(70,72,74);
-    font-size: 16px;
-}
-.g-span {
-    margin-right: 1em;
-}
+
 </style>
 

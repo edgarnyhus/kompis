@@ -5,7 +5,7 @@
         <div class="container">
             <b-form @submit.prevent="update">
                 <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ employer }}
-                    <b-button class="btn-floating btn-info float-right" router-link :to="{ name: 'PracticeCertificate', params: { cid: cert_id  } }">Tilbake</b-button>
+                    <b-button class="btn-floating btn-info float-right" router-link :to="{ name: 'PracticeCertificateView', params: { uid: user_id, cid: cert_id  } }">Tilbake</b-button>
                 </h1>
                 <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
                 <b-link v-b-modal.modalPrevent  variant="info" class="info-color"><strong>Endre</strong></b-link>
@@ -132,6 +132,7 @@ export default {
             references: [],
             selectedComponent: null,
             show: 'training',
+            user_id: null,
             cert_id: null,
             id: null
         }
@@ -149,7 +150,7 @@ export default {
     },
     methods: {
         back() {
-            this.$router.back()
+            this.$router.push({name: 'PracticeCertificateView'})
         },
         removeTraining(elem) {
             db.collection('experience').doc(elem.id).delete()
@@ -293,10 +294,10 @@ export default {
         handleSubmit () {
             console.log('PC handleSumit, cert_id=',  this.cert_id)
             this.$refs.modal.hide()
-            this.user = firebase.auth().currentUser
-            if (this.user) {
+            // this.user = firebase.auth().currentUser
+            if (this.cert_id) {
                 this.form.employer = this.employer
-                this.form.user_id = this.user.uid
+                this.form.user_id = this.user_id
                 this.form.timestamp = Date.now()
                 if (this.cert_id) {
                     db.collection("certs").doc(this.cert_id).set(this.form, {merge: true})
@@ -336,10 +337,10 @@ export default {
             }
         },
         fetchTraining() {
-            if (this.user && this.cert_id) {
+            if (this.user_id && this.cert_id) {
                 this.experience = []
-                db.collection('experience').where('cert_id', '==',this.cert_id)
-                .where('user_id', '==',firebase.auth().currentUser.uid)
+                db.collection('experience').where('cert_id', '==', this.cert_id)
+                .where('user_id', '==', this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -354,9 +355,9 @@ export default {
             }
         },
         fetchKeyValues() {
-            if (this.user && this.cert_id) {
-                db.collection('keyvalues').where('cert_id', '==',this.cert_id)
-                .where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id && this.cert_id) {
+                db.collection('keyvalues').where('cert_id', '==', this.cert_id)
+                .where('user_id', '==', this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -371,9 +372,9 @@ export default {
             }
         },
         fetchSkills() {
-            if (this.user && this.cert_id) {
-                db.collection('skills').where('cert_id', '==',this.cert_id)
-                .where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id && this.cert_id) {
+                db.collection('skills').where('cert_id', '==', this.cert_id)
+                .where('user_id', '==', this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -388,9 +389,9 @@ export default {
             }
         },
         fetchReferences() {
-            if (this.user && this.cert_id) {
-                db.collection('references').where('cert_id', '==',this.cert_id)
-                .where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id && this.cert_id) {
+                db.collection('references').where('cert_id', '==', this.cert_id)
+                .where('user_id', '==', this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -406,11 +407,12 @@ export default {
         }
     },
     created() {
-        if (this.uid) {
-            this.user_id = this.uid
-        } else {
+        this.cert_id = this.$route.params.cid
+        this.user_id = this.$route.params.uid
+        if (!this.user_id) {
             this.user_id = firebase.auth().currentUser.uid
         }
+        console.log('show certificate', this.user_id, this.cert_id)
 
         // fetch this practice certificate
         this.fetchCertificate()

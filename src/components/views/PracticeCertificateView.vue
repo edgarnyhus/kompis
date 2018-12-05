@@ -1,7 +1,7 @@
   <template>
     <div class="container">
         <div>
-            <h1 h1 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
+            <h1 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
                 <b-button class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
             </h1>
         </div>
@@ -9,10 +9,10 @@
         <b-card-group v-for="elem in certificates" :key="elem.id">
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
-                    <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { cid: elem.id  } }">{{ elem.employer }}
-                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { cid: elem.id } }">Endre</b-button>
-                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button>
+                    <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { uid: user_id, cid: elem.id  } }">{{ elem.employer }}
                     </b-link>
+                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">Endre</b-button>
+                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button>
                     <p class="b-card-text" style="font-style: normal"> Sist endret {{elem.timestamp | formatDateAndTime}}</p>
                 </b-card-header>
             </b-card>
@@ -35,12 +35,12 @@ export default {
         return {
             certificates: [],
             profile: null,
-            user: null            
+            user_id: null            
         }
     },
     methods: {
         add() {
-            this.$router.push({ name: 'PracticeCertificate', params: { cid: null }})
+            this.$router.push({ name: 'PracticeCertificate', params: { uid: this.user_id, cid: null }})
         },
         remove(cert) {
             console.log("onRemove", cert.id);
@@ -60,8 +60,8 @@ export default {
         },
         fetchCertificates() {
             // fetch this practice certificates
-            if (this.user) {
-                db.collection('certs').where('user_id', '==',firebase.auth().currentUser.uid)
+            if (this.user_id) {
+                db.collection('certs').where('user_id', '==', this.user_id)
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
@@ -74,7 +74,11 @@ export default {
         }
     },
     created() {
-        this.user = firebase.auth().currentUser.uid
+        this.user_id = this.$route.params.uid
+        if (!this.user_id) {
+            this.user_id = firebase.auth().currentUser.uid
+        }
+
         this.fetchCertificates()
     }
 }

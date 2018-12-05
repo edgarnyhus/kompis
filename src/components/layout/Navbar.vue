@@ -119,15 +119,19 @@ h1,h2,h3,h4,h5,h6,p {
 }
 a {
     color: rgb(0,161,181);
+    font-weight: bold;
 }
 a:hover {
     color: rgb(0,161,181);
+    font-weight: bold;
 }
 .gb-link {
     color: rgb(0,161,181);
+    font-weight: bold;
 }
 .gb-link:hover {
     color: rgb(0,161,181);
+    font-weight: bold;
 }
 .g-header {
     margin-bottom: 0;

@@ -109,9 +109,9 @@ export default {
             console.log('pc handleSumit, cert_id=',  this.cert_id)
             this.$refs.modal.hide()
             this.user = firebase.auth().currentUser
-            if (this.user) {
+            if (this.user_id) {
                 this.form.employer = this.employer
-                this.form.user_id = this.user.uid
+                this.form.user_id = this.user_id
                 this.form.timestamp = Date.now()
                 if (this.cert_id) {
                     db.collection("certs").doc(this.cert_id).set(this.form, {merge: true})
@@ -151,19 +151,21 @@ export default {
             }
         },
     },
+    mounted() {
+        if (!this.cert_id) {
+            this.$refs.inputEmployer.show()
+        }
+    },
     created() {
         this.show = this.$route.params.show
         this.cert_id = this.$route.params.cid
-        if (this.uid) {
-            this.user_id = this.uid
-        } else {
+        this.user_id = this.$route.params.uid
+        if (!this.user_id) {
             this.user_id = firebase.auth().currentUser.uid
         }
         console.log('created cert', this.user_id, this.cert_id)
         if (this.cert_id) {
             this.fetchCertificate()
-        } else {
-            this.$refs.inputEmployer.show()
         }
     }
 }
