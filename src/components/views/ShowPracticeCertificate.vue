@@ -5,7 +5,7 @@
         <div class="container">
             <b-form @submit.prevent="update">
                 <h1 style="margin-top: 2em; margin-bottom: 0.2em">{{ employer }}
-                    <b-button class="btn-floating btn-info float-right" router-link :to="{ name: 'PracticeCertificateView', params: { uid: user_id, cid: cert_id  } }">Tilbake</b-button>
+                    <b-button class="btn-floating btn-info float-right" router-link :to="{ name: 'PracticeCertificateView' }">Tilbake</b-button>
                 </h1>
                 <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
                 <b-link v-b-modal.modalPrevent  variant="info" class="info-color"><strong>Endre</strong></b-link>

@@ -5,7 +5,7 @@
         <div class="container">
             <b-form @submit.prevent="update">
                 <!-- Modal Component -->
-                <b-modal id="modalPrevent" ref="modal" title="Navn på bedrift" @cancel="handleCancel"
+                <b-modal id="setName" ref="inputEmployer" title="Navn på bedrift" @cancel="handleCancel"
                         @ok="handleOk" @shown="clearName">
                     <form @submit.stop.prevent="handleSubmit">
                         <b-form-input type="text"  placeholder="" v-model="employer"></b-form-input>
@@ -16,7 +16,7 @@
                     <b-button class="btn-floating btn-info float-right" @click="back">Tilbake</b-button>
                 </h1>
                 <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
-                <b-link v-b-modal.modalPrevent  variant="info" class="info-color btn-mr"><strong>Endre</strong></b-link>
+                <b-link v-b-modal.setName variant="info" class="info-color btn-mr"><strong>Endre</strong></b-link>
             </b-form>
 
             <div v-if="cert_id" class="g-group"> 
@@ -93,7 +93,7 @@ export default {
             // Prevent modal from closing
             evt.preventDefault()
             this.employer = this.oldName
-            this.handleSubmit()
+            this.$refs.inputEmployer.hide()
         },
         handleOk (evt) {
             // Prevent modal from closing
@@ -101,13 +101,14 @@ export default {
             if (!this.employer) {
                 this.employer = this.oldName
                 // alert('Vær vennlig å oppgi navnet på bedriften')
+                this.$refs.inputEmployer.hide()
             } else {
                 this.handleSubmit()
             }
         },
         handleSubmit () {
             console.log('pc handleSumit, cert_id=',  this.cert_id)
-            this.$refs.modal.hide()
+            this.$refs.inputEmployer.hide()
             this.user = firebase.auth().currentUser
             if (this.user_id) {
                 this.form.employer = this.employer
@@ -157,7 +158,7 @@ export default {
         }
     },
     created() {
-        this.show = this.$route.params.show
+        // this.show = this.$route.params.show
         this.cert_id = this.$route.params.cid
         this.user_id = this.$route.params.uid
         if (!this.user_id) {

@@ -9,7 +9,7 @@
         <b-card-group v-for="elem in certificates" :key="elem.id">
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
-                    <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { uid: user_id, cid: elem.id  } }">{{ elem.employer }}
+                    <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { show: false, uid: user_id, cid: elem.id  } }">{{ elem.employer }}
                     </b-link>
                         <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">Endre</b-button>
                         <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button>
@@ -40,7 +40,7 @@ export default {
     },
     methods: {
         add() {
-            this.$router.push({ name: 'PracticeCertificate', params: { uid: this.user_id, cid: null }})
+            this.$router.push({ name: 'PracticeCertificate', params: { show:'training', uid: this.user_id, cid: null }})
         },
         remove(cert) {
             console.log("onRemove", cert.id);

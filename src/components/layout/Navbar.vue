@@ -147,6 +147,12 @@ b-card {
 }
 .link-prop {
     color: rgb(0,160,161);
+    font-weight: 400;
+    font-size: 1.5rem;
+}
+.link-prop:hover {
+    color: rgb(0,160,161);
+    font-weight: 400;
     font-size: 1.5rem;
 }
 .end-page {
