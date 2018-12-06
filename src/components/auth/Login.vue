@@ -2,7 +2,7 @@
     <div class="login g-frame container">
         <b-card>
             <h3>Logg inn</h3>
-            <p  class="">
+            <p  class="g-group">
                 Har du ikke en konto? <router-link :to="{ name: 'Signup' }" style="font-size: 14px; color: rgb(0,161,181)">Registrer deg</router-link>
             </p>
             <b-form @submit.prevent="login">
