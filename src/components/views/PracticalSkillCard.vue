@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Praktiske ferdigheter
-                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til praktisk ferdighet</strong></b-link>
+                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til en praktisk ferdighet</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <practical-skill-list v-on:editSkill="editSkill" :skills="skills" :uid="user_id" :cid="cert_id" :id="id"></practical-skill-list>

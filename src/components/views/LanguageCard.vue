@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Språk
-                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til språk</strong></b-link>
+                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til et språk</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <language-list v-on:editLanguage="editLanguage" :languages="languages" :uid="user_id" :cid="cert_id" :id="id"></language-list>

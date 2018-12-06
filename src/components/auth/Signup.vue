@@ -2,6 +2,9 @@
     <div class="signup g-frame container">
         <b-card>
             <h3>Registrer deg</h3>
+            <p class="">
+                Har du allerede en konto? <router-link :to="{ name: 'Login' }" style="font-size: 14px; color: rgb(0,161,181)">Logg inn</router-link>
+            </p>
             <b-form  @submit.prevent="signup">
                 <b-form-group>
                     <label for="alias">Velg et brukernavn</label>
@@ -19,30 +22,29 @@
                     <label for="confirmPassword">Bekreft passordet</label>
                     <b-form-input id="confirmPassword" type="password" @change="feedback = null" v-model="confirmPassword" required></b-form-input>
                 </b-form-group>
-                <b-form-group class="g-m2">
-                    <b-btn class="" variant="info" @click="agree()">Registrer</b-btn>
+                <b-form-group class="g-sec">
+                    <b-btn class="" variant="info" block :disabled="agreed" @click="signup()">Kom i gang!</b-btn>
                     <!-- <b-btn v-b-modal.consent class="g-span" variant="info">Registrer</b-btn> -->
                 </b-form-group>
-                <p class="g-m2">
-                    Hvis du allerede har en konto, kan du 
-                    <router-link :to="{ name: 'Login' }" style="font-size: 14px; color: rgb(0,161,181)"><strong>logge inn</strong></router-link>
-                    ved å bruke din email adresse og passord.
-                </p>
-
-                <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
             </b-form>
+            <p class="g-center">Ved å klikke her godtar du KOMPIS sine<br>
+                <b-link v-b-modal.consent>Vilkår for Personvern</b-link>
+            </p>
+            <!-- <p-check color="info" v-model="accepted">Jeg godtar KOMPIS sine<b-link>Vilkår for Personvern</b-link></p-check> -->
+
+            <p v-if="feedback" class="g-center" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
         </b-card>
 
         <keep-alive>
-            <b-modal id="consent" ref="agree" size="lg" hide-footer title="Personvernerklæring">
+            <b-modal id="consent" ref="agree" size="lg" hide-footer title="Vilkår for Personvern">
                 <div>
                     <pdf v-for="i in numPages" :key="i" :src="src" :page="i" style="display: inline-block; width: 100%">
                         <hr>
                     </pdf>
                 </div>
                 <hr>
-                <b-btn class="mt-3 float-right" variant="secondary" @click="signup()" style="margin-left: 1em">Jeg samtykker</b-btn>
-                <!-- <b-btn class="mt-3 float-right" variant="outline-secondary" @click="reject()">Jeg samtykker ikke</b-btn> -->
+                <!-- <b-btn class="mt-3 float-right" variant="secondary" @click="agree()" style="margin-left: 1em">Jeg godtar</b-btn> -->
+                <!-- <b-btn class="mt-3 float-right" variant="outline-secondary" @click="reject()">Jeg godtar ikke</b-btn> -->
             </b-modal>
         </keep-alive>
     </div>
@@ -55,7 +57,7 @@ import functions from 'firebase/functions'
 import slugify from 'slugify'
 import pdf from 'vue-pdf'
 
-var loadingTask = null; //pdf.createLoadingTask('./static/Personvern_KOMPIS.pdf');
+var loadingTask = pdf.createLoadingTask('./static/Personvern_KOMPIS.pdf');
 
 export default {
     components: {
@@ -70,6 +72,7 @@ export default {
             confirmPassword: '',
             src: loadingTask,
             numPages: 0,
+            agreed: true,
             feedback: ''
         }
     },
@@ -79,9 +82,8 @@ export default {
             this.feedback = null
         },
         agree() {
-            if (this.fieldsOk()) {
-                this.$refs.agree.show()
-            }
+            this.$refs.agree.show()
+            this.agreed = false
         },
         reject() {
             console.log('reject')
@@ -101,7 +103,7 @@ export default {
         },
         signup() {
             console.log('signup...')
-            if (!this.fieldsOk)
+            if (!this.fieldsOk())
                 return
             this.feedback = null
             let slug = slugify(this.alias, { replacement: '-', remove: /[$*_+~.()'"!\-:@]/g, lower: true })
@@ -170,6 +172,9 @@ export default {
 </script>
 
 <style scoped>
+.g-center {
+    text-align: center;
+}
 .g-frame {
     margin-top: 2em;
     min-width: 400px;

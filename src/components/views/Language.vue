@@ -53,9 +53,12 @@ export default {
         return {
             proficiency: [
                 { value: null, text: 'Velg ferdighetsnivå' },
-                { value: 'Begrenset', text: 'Begrenset' },
-                { value: 'Profesjonelt', text: 'Profesjonelt' },
-                { value: 'Innfødt og tospråklig', text: 'Innfødt og tospråklig' }
+                { value: 'Nivå A1 - Nybegynner', text: 'Nivå A1 - Nybegynner' },
+                { value: 'Nivå A2 - Litt øvet ', text: 'Nivå A2 - Litt øvet ' },
+                { value: 'Nivå B1 -  Mellomnivå', text: 'Nivå B1 -  Mellomnivå' },
+                { value: 'Nivå B2 - Høyere mellomnivå', text: 'Nivå B2 - Høyere mellomnivå' },
+                { value: 'Nivå C1 - Høyere nivå', text: 'Nivå C1 - Høyere nivå' },
+                { value: 'Nivå C2 - Perfeksjonering', text: 'Nivå C2 - Perfeksjonering' }
             ],
             form: {
                 language: null,

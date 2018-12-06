@@ -2,6 +2,9 @@
     <div class="login g-frame container">
         <b-card>
             <h3>Logg inn</h3>
+            <p  class="">
+                Har du ikke en konto? <router-link :to="{ name: 'Signup' }" style="font-size: 14px; color: rgb(0,161,181)">Registrer deg</router-link>
+            </p>
             <b-form @submit.prevent="login">
                 <b-form-group>
                     <label for="email">Email</label>
@@ -11,14 +14,9 @@
                     <label for="password">Password</label>
                     <b-form-input id="password" type="password" @change="feedback = ''" v-model="password"></b-form-input>
                 </b-form-group>
-                <b-form-group class="g-m2">
-                    <b-btn class="" type="submit" align="center" variant="info">Logg inn</b-btn>
+                <b-form-group class="g-sec">
+                    <b-btn class="" type="submit" align="center" variant="info" block>Logg inn</b-btn>
                 </b-form-group>
-                <p  class="g-m2">
-                    Hvis du ikke har en konto, kan du 
-                    <router-link :to="{ name: 'Signup' }" style="font-size: 14px; color: rgb(0,161,181)"><strong>registrere deg</strong></router-link>
-                    med brukernavn, email adresse og passord.
-                </p>
             </b-form>
 
             <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>

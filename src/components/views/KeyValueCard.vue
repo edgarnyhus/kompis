@@ -11,7 +11,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listKey" :visible="mode==='list'">
                     <h5 class="text-muted">Nøkkelkompetanse
-                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til nøkkelkompetanse</strong></b-link>
+                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til en nøkkelkompetanse</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <key-value-list v-on:editKeyValue="editKeyValue" :keyvalues="keyvalues" :uid="user_id" :cid="cert_id" :id="kv_id"></key-value-list>
