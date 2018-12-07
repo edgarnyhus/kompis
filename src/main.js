@@ -10,9 +10,7 @@ import moment from 'moment'
 import firebase from 'firebase'
 import VueMaterial from 'vue-material'
 import 'vue-material/dist/vue-material.css'
-import PrettyCheckbox from 'pretty-checkbox-vue';
  
-Vue.use(PrettyCheckbox);
 Vue.use(VueMaterial);
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false

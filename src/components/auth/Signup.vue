@@ -28,7 +28,7 @@
                 </b-form-group>
             </b-form>
             <p class="g-center">Ved å klikke her godtar du KOMPIS sine<br>
-                <b-link v-b-modal.consent>Vilkår for Personvern</b-link>
+                <b-link @click="agree()">Vilkår for Personvern</b-link>
             </p>
             <!-- <p-check color="info" v-model="accepted">Jeg godtar KOMPIS sine<b-link>Vilkår for Personvern</b-link></p-check> -->
 
