@@ -1,12 +1,12 @@
   <template>
     <div class="container">
-        <div>
-            <h1 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
+        <div  style="margin-tbottom: 5em">
+            <h2 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
                 <b-button class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
-            </h1>
+            </h2>
         </div>
-
-        <b-card-group v-for="elem in certificates" :key="elem.id">
+        <br>
+        <b-card-group v-for="elem in certificates" :key="elem.id">
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
                     <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { uid: user_id, cid: elem.id  } }">{{ elem.employer }}</b-link>
