@@ -7,7 +7,8 @@ var config = {
     databaseURL: "https://cvue-bf9ec.firebaseio.com",
     projectId: "cvue-bf9ec",
     storageBucket: "gs://cvue-bf9ec.appspot.com",
-    messagingSenderId: "851848949486"
+    messagingSenderId: "851848949486",
+    webApiKey: "AIzaSyC8VV6GnkDeH9Bq84hamZVyT6U1LptaS4A"
   };
 
 

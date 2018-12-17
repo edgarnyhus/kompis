@@ -28,7 +28,7 @@
                 </b-form-group>
             </b-form>
             <p class="g-center">Ved å klikke her godtar du KOMPIS sine<br>
-                <b-link @click="agree()">Vilkår for Personvern</b-link>
+                <b-link v-b-modal.consent>Vilkår for Personvern</b-link>
             </p>
             <!-- <p-check color="info" v-model="accepted">Jeg godtar KOMPIS sine<b-link>Vilkår for Personvern</b-link></p-check> -->
 
@@ -120,19 +120,20 @@ export default {
                         user = cred.user
                         return ref.set({
                             alias: this.alias,
-                            user_id: user.uid
+                            user_id: user.uid,
+                            timestamp: Date.now()
                         })
                     }).then(() => {
                         console.log('signup ok')
                         this.$router.push({ name: 'MyCV' })
                     })
-                    .catch(error=> {
-                        this.feedback = err.message
+                    .catch(error => {
+                        this.feedback = error.message
                     })
                 }
             })
-            .catch(error=> {
-                this.feedback = err.message
+            .catch(error => {
+                this.feedback = error.message
             })
 
             // checkAlias(slug)

@@ -95,33 +95,6 @@ export default {
 </script>
 
 <style>
-@media (max-width: 768px) {
-    .navbar-collapse {
-        position: absolute;
-        top: 54px;
-        left: 0;
-        padding-left: 15px;
-        padding-right: 15px;
-        padding-bottom: 15px;
-        width: 100%;
-    }
-    .navbar-collapse.collapsing {
-        height: auto;
-        -webkit-transition: left 0.3s ease;
-        -o-transition: left 0.3s ease;
-        -moz-transition: left 0.3s ease;
-        transition: left 0.3s ease;
-        left: -100%;
-    }
-    .navbar-collapse.show {
-        left: 0;
-        -webkit-transition: left 0.3s ease-in;
-        -o-transition: left 0.3s ease-in;
-        -moz-transition: left 0.3s ease-in;
-        transition: left 0.3s ease-in;
-    }
-}
-
 h1,h2,h3,h4,h5,h6,p {
     font-family:  Verdana, Geneva, Tahoma, sans-serif;
 }

@@ -44,8 +44,8 @@ const router = new Router({
         path: '/profileview',
         name: 'ProfileView',
         component: ProfileView
-      },
-      {
+    },
+    {
       path: '/',
       name: 'MyCV',
       component: MyCV,
