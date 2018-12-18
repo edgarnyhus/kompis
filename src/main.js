@@ -121,26 +121,4 @@ const vm = new Vue({
    },
 })
 
-// var userData = new Vue ({
-//     el: '#userData',
-//     data: {
-//         windowWidth: 0
-//     },
-//     methods: {
-//         handleWindowResize(event) { 
-//             this.windowWidth = event.currentTarget.innerWidth; 
-//             console.log('resize', this.windowWidth)
-//         },
-//     },
-//     beforeDestroy: function () {
-//         window.removeEventListener('resize', this. handleWindowResize)
-//     },
-//     mounted() {
-//         window.addEventListener('resize', this.handleWindowResize);
-//    },
-//     beforeCreate: function() {
-//         //ajax call to server to retrieve productsHeld length
-//     }
-// });
-
 console.log(vm)

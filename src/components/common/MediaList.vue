@@ -5,7 +5,7 @@
                 <div class="col-md-2" v-for="(item, index) in media" :key="index" style="margin-top: 0.5em; margin.-bottom: 1em">
                     <div class="card h-100" >
                         <h5 class="card-subtitle" style="font-size: 12px; margin: 10px"><strong>{{ item.filename.substring(0,11) }}...</strong></h5>
-                        <img class="card-img-top" style="font-size: 12px" :src="item.url" @click="show(item)" :alt="item.type">
+                        <img class="card-img-top" style="padding-left: 0.4em; padding-right: 0.4em; border-radius: 8px; font-size: 12px" :src="item.url" @click="show(item)" :alt="item.type">
                         <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
                         <!-- <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete_outline</i></span> -->
                     </div>
