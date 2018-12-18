@@ -1,7 +1,7 @@
 <template>
     <div>
         <b-navbar class="navbar-collapse" toggleable="md" type="light" variant="light" 
-            style="height: 70px; border-bottom: 1px solid rgb(232,233,232); padding-left: 3.5%; padding-right: 3.5%;">
+            style="border-bottom: 1px solid rgb(232,233,232); padding-left: 3.5%; padding-right: 3.5%;">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
             <b-navbar-brand href="#"><strong>KOMPIS</strong></b-navbar-brand>
             <b-collapse is-nav id="nav_collapse">
@@ -99,6 +99,9 @@ export default {
 </script>
 
 <style>
+.navbar{
+    background:transparent;
+}
 h1,h2,h3,h4,h5,h6,p {
     font-family:  Verdana, Geneva, Tahoma, sans-serif;
 }
