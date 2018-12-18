@@ -36,6 +36,7 @@
               <div style="margin-top: 1em">
                   <b-progress :value="100" variant="info" striped :animated="animated" class="mb-2"></b-progress>
                   <!-- <md-progress-spinner :md-diameter="30" :md-stroke="5" md-mode="indeterminate" style="top-margin: 1em"></md-progress-spinner> -->
+                  <!-- <progress-spinner></progress-spinner> -->
               </div>
             </div>
 
@@ -59,12 +60,16 @@ import firebase from 'firebase'
 import db from '@/firebase/init'
 import 'firebase/storage';
 // import 'vue-material/dist/theme/default.css'
+import ProgressSpinner from './ProgressSpinner'
 
 
   const STATUS_NONE = 0, STATUS_INITIAL = 1, STATUS_SAVING = 2, STATUS_SUCCESS = 3, STATUS_FAILED = 4;
 
   export default {
     name: 'app',
+    components: {
+        ProgressSpinner
+    },
     props: ['profile', 'uid', 'cid', 'media', 'links'],
     data() {
       return {

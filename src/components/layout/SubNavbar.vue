@@ -1,6 +1,6 @@
 <template>
     <div class="g-m0">
-        <b-navbar v-if="true" id="subnavbar" toggleable="md" type="light" variant="light" 
+        <b-navbar v-if="normalScreen" id="subnavbar" toggleable="md" type="light" variant="light" 
             style="height: 70px; border-bottom: 1px solid rgb(232,233,232); padding-left: 3.5%; padding-right: 3.5%;">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
             <b-navbar-brand href="#"><strong>Ok, la oss komme igang!</strong></b-navbar-brand>
@@ -26,16 +26,22 @@ export default {
     data(){
         return{
             user: null,
-            windowwWidth: 0,
+            windowWidth: window.innerWidth,
             show: false
         }
     },
     computed: {
         normalScreen() {
-            return (this.user && window.innerWidth > 480)
+            // return (window.innerWidth > 400)
+            return this.$root.windowWidth > 400
+            
         }
     },
     methods: {
+        // handleWindowResize(event) { 
+        //     this.windowWidth = event.currentTarget.innerWidth; 
+        //     console.log('resize', this.windowWidth)
+        // },
         share() {
             console.log('apiKey', apiKey)
 
@@ -49,20 +55,19 @@ export default {
             })
             .then(result => {
                 console.log('result', result)
-            }, error => {
+            })
+            .catch(error => {
                 console.log('error', error)
             })
         }
     },
-    mounted() {
-        // Initialize navbar
-        // this.$nextTick(() => {
-        //     window.addEventListener('resize', () => {
-        //         this.windowWidth = window.windowWidth
-        //     })
-        // })
+    beforeDestroy() {
+        // window.removeEventListener('resize', this. handleWindowResize)
     },
-    created(){
+    mounted() {
+        // window.addEventListener('resize', this.handleWindowResize);
+    },
+    created() {
         firebase.auth().onAuthStateChanged((user) => {
             this.user = user;
         })

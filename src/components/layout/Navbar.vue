@@ -8,13 +8,14 @@
                 <b-navbar-nav>
                     <b-nav-item v-if="user" router-link :to="{ name: 'MyCV' }">Min CV</b-nav-item>
                     <b-nav-item v-if="user" router-link :to="{ name: 'PracticeCertificateView' }">Praksisattester</b-nav-item>
-                    <b-nav-item v-if="user" href="#">Utviklingsplan</b-nav-item>
+                    <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Utviklingsplan</b-nav-item>
 
-                    <div v-if="false">
+                    <!-- <div v-if="windowWidth <= 480"> -->
+                    <div v-if="smallScreen">
                         <div class="dropdown-divider"></div>
-                        <b-nav-item v-if="user" href="#" disabled >Del</b-nav-item>
-                        <b-nav-item v-if="user" href="#" disabled>PDF</b-nav-item>
-                        <b-nav-item v-if="user" href="#" disabled>Generer CV</b-nav-item>
+                        <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Del</b-nav-item>
+                        <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>PDF</b-nav-item>
+                        <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Generer CV</b-nav-item>
                     </div>
                 </b-navbar-nav>
 
@@ -44,35 +45,36 @@ export default {
     data() {
         return {
             user: null,
-            windowWidth: 0,
-            logout: function () {
-                console.log('logging out...')
-                firebase.auth().signOut().then(() => {
-                    this.$router.push({ name: 'Login' })
-                })
-            },
-            showProfile: function () {
-                console.log('show profile')
-                
-            }
+            //windowWidth: window.innerWidth,
         }
     },
     computed: {
         smallScreen() {
-            return this.windowWidth <= 480
+            //return this.windowWidth <= 400
+            return this.$root.windowWidth <= 400
         }
     },
     methods: {
+        // handleWindowResize(event) { 
+        //     this.windowWidth = event.currentTarget.innerWidth; 
+        //     console.log('resize', this.windowWidth)
+        // },
         showPracticeCertificateView() {
             this.$router.push({ name: 'PracticeCertificateView' })
         },
-        isMobile() {
-            // an assumption
-            if ( screen.width <= 480 ) {
-                return true
-            }
-            return false
+        logout: function () {
+            console.log('logging out...')
+            firebase.auth().signOut().then(() => {
+                this.$router.push({ name: 'Login' })
+            })
+        },
+        showProfile: function () {
+            console.log('show profile')
+            
         }
+    },
+    beforeDestroy: function () {
+        // window.removeEventListener('resize', this. handleWindowResize)
     },
     mounted() {
         // get current user
@@ -82,6 +84,8 @@ export default {
         //         this.windowWidth = window.innerWidth
         //     })
         // })
+
+        // window.addEventListener('resize', this.handleWindowResize);
    },
     created() {      
         firebase.auth().onAuthStateChanged((user) => {
@@ -192,9 +196,23 @@ b-card-header {
 .g-pic {
     cursor: pointer;
     background: #e6363d;
+    color: white;
+}
+.g-info{
+    cursor: pointer;
+    background: rgb(0,160,161);
     color: white
 }
-
+.g-secondary{
+    cursor: pointer;
+    background: #6c757d;
+    color: white;
+}
+.g-secondary-outline{
+    cursor: pointer;
+    /* background: rgb(0,160,161); */
+    color: #6c757d;
+}
 .g-indent {
     margin-left: 0.75em
 }

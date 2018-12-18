@@ -63,9 +63,27 @@ global.getYear = (value) => {
 }
 
 global.toTimestamp = (month, year) => {
-  let date = month + '-' + '10-' + year
-  return new Date(date)
+    let date = month + '-' + '10-' + year
+    return new Date(date)
 }
+
+// global.isMobile = () => {
+//     if( screen.width <= 760 ) {
+//         return true;
+//     }
+//     else {
+//         return false;
+//     }
+// }
+// global.isMobile = () => {
+//     if(/Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+//         return true
+//     } else {
+//         return false
+//     }
+// }
+
+
 
 // // Register a global custom directive called `v-focus`
 // Vue.directive('focus', {
@@ -82,10 +100,47 @@ global.toTimestamp = (month, year) => {
 // })
 
 const vm = new Vue({
-  el: '#app',
-  router,
-  components: { App },
-  template: '<App/>'
+    el: '#app',
+    router,
+    components: { App },
+    template: '<App/>',
+    data: {
+        windowWidth: 0
+    },
+    methods: {
+        handleWindowResize(event) { 
+            this.windowWidth = event.currentTarget.innerWidth; 
+            console.log('resize', this.windowWidth)
+        },
+    },
+    beforeDestroy: function () {
+        window.removeEventListener('resize', this. handleWindowResize)
+    },
+    mounted() {
+        window.addEventListener('resize', this.handleWindowResize);
+   },
 })
+
+// var userData = new Vue ({
+//     el: '#userData',
+//     data: {
+//         windowWidth: 0
+//     },
+//     methods: {
+//         handleWindowResize(event) { 
+//             this.windowWidth = event.currentTarget.innerWidth; 
+//             console.log('resize', this.windowWidth)
+//         },
+//     },
+//     beforeDestroy: function () {
+//         window.removeEventListener('resize', this. handleWindowResize)
+//     },
+//     mounted() {
+//         window.addEventListener('resize', this.handleWindowResize);
+//    },
+//     beforeCreate: function() {
+//         //ajax call to server to retrieve productsHeld length
+//     }
+// });
 
 console.log(vm)

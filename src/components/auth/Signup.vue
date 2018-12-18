@@ -1,5 +1,5 @@
 <template>
-    <div class="signup g-frame container">
+    <div v-if="!isMobile" class="signup g-frame container">
         <b-card>
             <h3>Registrer deg</h3>
             <p class="g-group">
@@ -23,7 +23,7 @@
                     <b-form-input id="confirmPassword" type="password" @change="feedback = null" v-model="confirmPassword" required></b-form-input>
                 </b-form-group>
                 <b-form-group class="g-sec">
-                    <b-btn class="" variant="info" block :disabled="agreed" @click="signup()">Kom i gang!</b-btn>
+                    <b-btn class="" variant="info" block @click="signup()">Kom i gang!</b-btn>
                     <!-- <b-btn v-b-modal.consent class="g-span" variant="info">Registrer</b-btn> -->
                 </b-form-group>
             </b-form>
