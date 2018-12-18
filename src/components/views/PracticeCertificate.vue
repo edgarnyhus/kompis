@@ -12,9 +12,9 @@
                     </form>
                 </b-modal>
 
+                <md-button class="g-info md-fab md-mini float-right" @click="back()"><md-icon>keyboard_backspace</md-icon></md-button>
                 <h1 style="margin-top: 1em; margin-bottom: 0.2em">{{ employer }}
                     <!-- <b-button class="btn-floating btn-info float-right" @click="back">Tilbake</b-button> -->
-                    <md-button class="g-info md-fab md-mini float-right" @click="back()"><md-icon>keyboard_backspace</md-icon></md-button>
                 </h1>
                 <!-- <b-link v-b-modal.modalPrevent variant="color: info"><strong>Endre</strong></b-link> -->
                 <b-link v-b-modal.setName variant="info" class="info-color btn-mr"><strong>Endre</strong></b-link>

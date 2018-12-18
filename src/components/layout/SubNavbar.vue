@@ -1,6 +1,6 @@
 <template>
     <div class="g-m0">
-        <b-navbar v-if="normalScreen" id="subnavbar" toggleable="md" type="light" variant="light" 
+        <b-navbar v-if="!this.$root.isMobile()" id="subnavbar" toggleable="md" type="light" variant="light" 
             style="border-bottom: 1px solid rgb(232,233,232); padding-left: 3.5%; padding-right: 3.5%;">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
             <b-navbar-brand href="#"><strong>Ok, la oss komme igang!</strong></b-navbar-brand>
@@ -26,22 +26,10 @@ export default {
     data(){
         return{
             user: null,
-            windowWidth: window.innerWidth,
             show: false
         }
     },
-    computed: {
-        normalScreen() {
-            // return (window.innerWidth > 400)
-            return this.$root.windowWidth > 400
-            
-        }
-    },
     methods: {
-        // handleWindowResize(event) { 
-        //     this.windowWidth = event.currentTarget.innerWidth; 
-        //     console.log('resize', this.windowWidth)
-        // },
         share() {
             console.log('apiKey', apiKey)
 
@@ -49,7 +37,7 @@ export default {
                 method: 'post',
                 url: 'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=' + apiKey,
                 dynamicLinkInfo: {
-                    "domainUriPrefix": "https://kompetanse.page.link",
+                    "domainUriPrefix": "https://cvue.page.link",
                     "link": "https://www.example.com/",
                 }
             })
@@ -60,12 +48,6 @@ export default {
                 console.log('error', error)
             })
         }
-    },
-    beforeDestroy() {
-        // window.removeEventListener('resize', this. handleWindowResize)
-    },
-    mounted() {
-        // window.addEventListener('resize', this.handleWindowResize);
     },
     created() {
         firebase.auth().onAuthStateChanged((user) => {

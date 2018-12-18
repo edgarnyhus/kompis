@@ -11,7 +11,7 @@
                     <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Utviklingsplan</b-nav-item>
 
                     <!-- <div v-if="windowWidth <= 480"> -->
-                    <div v-if="smallScreen">
+                    <div v-if="this.$root.isMobile()">
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Del</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>PDF</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Generer CV</b-button>
@@ -45,20 +45,9 @@ export default {
     data() {
         return {
             user: null,
-            //windowWidth: window.innerWidth,
-        }
-    },
-    computed: {
-        smallScreen() {
-            //return this.windowWidth <= 400
-            return this.$root.windowWidth <= 400
         }
     },
     methods: {
-        // handleWindowResize(event) { 
-        //     this.windowWidth = event.currentTarget.innerWidth; 
-        //     console.log('resize', this.windowWidth)
-        // },
         showPracticeCertificateView() {
             this.$router.push({ name: 'PracticeCertificateView' })
         },
@@ -73,9 +62,6 @@ export default {
             
         }
     },
-    beforeDestroy: function () {
-        // window.removeEventListener('resize', this. handleWindowResize)
-    },
     mounted() {
         // get current user
         let user = firebase.auth().currentUser
@@ -84,8 +70,6 @@ export default {
         //         this.windowWidth = window.innerWidth
         //     })
         // })
-
-        // window.addEventListener('resize', this.handleWindowResize);
    },
     created() {      
         firebase.auth().onAuthStateChanged((user) => {
@@ -195,6 +179,10 @@ b-card-header {
 }
 .g-sec {
     margin-top: 2em;
+}
+.g-icon {
+    cursor: pointer;
+    margin-left: 0.2em;
 }
 .g-pic {
     cursor: pointer;

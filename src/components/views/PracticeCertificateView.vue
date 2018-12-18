@@ -2,7 +2,7 @@
     <div class="container">
         <div>
             <h2 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
-                <b-button v-if="this.$root.windowWidth > 400" class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
+                <b-button v-if="!this.$root.isMobile()" class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
                 <md-button v-else class="g-info md-fab md-mini float-right" variant="info" @click="add()"><md-icon>add</md-icon></md-button>
             </h2>
         </div>
@@ -11,8 +11,10 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
                     <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { uid: user_id, cid: elem.id  } }">{{ elem.employer }}</b-link>
-                    <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">Endre</b-button>
-                    <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button>
+                    <!-- <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">Endre</b-button>
+                    <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button> -->
+                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">edit</i></span>
+                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
                     <p class="b-card-text" style="font-style: normal"> Sist endret {{elem.timestamp | formatDateAndTime}}</p>
                 </b-card-header>
             </b-card>
@@ -29,7 +31,9 @@ import db from '@/firebase/init'
 export default {
     name: 'PracticeCertificateView',
     components: {
-
+        isMobile() {
+            return this.$root.isMobile
+        }
     },
     data () {
         return {

@@ -4,8 +4,10 @@
                 <div class="g-group">
                     <h6 class="card-title">{{ elem.employer }}
                         <!-- links -->
-                        <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
-                        <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                        <b-link v-if="!vm.$root.isMobile()" class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
+                        <b-link v-if="!vm.$root.isMobile()" class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                        <span v-if="vm.$root.isMobile()"><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
+                        <span v-if="vm.$root.isMobile()"><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
 
                         <!-- or icons -->
                         <!-- <md-icon class="g-icon float-right" @click="edit(elem)">edit</md-icon> -->

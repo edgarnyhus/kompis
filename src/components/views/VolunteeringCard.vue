@@ -3,7 +3,8 @@
         <b-card> 
             <div v-if="!volunteering[0] && mode!=='edit'" >
                 <h5 class="text-muted">Frivillig arbeid og verv
-                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
+                    <b-button v-if="!this.$root.isMobile()" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
+                    <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Har du tatt på deg frivillig arbeid eller verv? Hva?</p>
             </div>
@@ -11,7 +12,8 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Frivillig arbeid og verv
-                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til frivillig arbeid/verv</strong></b-link>
+                        <b-link v-if="!this.$root.isMobile()" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til frivillig arbeid/verv</strong></b-link>
+                        <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <volunteering-list v-on:editVolunteering="editVolunteering" :volunteering="volunteering" :uid="user_id" :cid="cert_id" :id="id"></volunteering-list>

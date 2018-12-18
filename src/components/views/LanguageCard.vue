@@ -3,7 +3,8 @@
         <b-card> 
             <div v-if="!languages[0] && mode!=='edit'">
                 <h5 class="text-muted">Språk
-                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
+                    <b-button v-if="!this.$root.isMobile()" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
+                    <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hvilke språk kan du snakke?</p>
             </div>
@@ -11,7 +12,8 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Språk
-                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til et språk</strong></b-link>
+                        <b-link v-if="!this.$root.isMobile()" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til et språk</strong></b-link>
+                        <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <language-list v-on:editLanguage="editLanguage" :languages="languages" :uid="user_id" :cid="cert_id" :id="id"></language-list>

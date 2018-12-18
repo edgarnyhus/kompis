@@ -112,6 +112,13 @@ const vm = new Vue({
             this.windowWidth = event.currentTarget.innerWidth; 
             console.log('resize', this.windowWidth)
         },
+        isMobile() {
+            if (this.windowWidth < 760 || (/Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
+                return true
+            } else {
+                return false
+            }
+        }
     },
     beforeDestroy: function () {
         window.removeEventListener('resize', this. handleWindowResize)

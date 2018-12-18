@@ -3,7 +3,8 @@
         <b-card> 
             <div v-if="!skills[0] && mode!=='edit'" >
                 <h5 class="text-muted">Praktiske ferdigheter
-                    <b-button class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
+                    <b-button v-if="!this.$root.isMobile()" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
+                    <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
             </div>
@@ -11,7 +12,8 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Praktiske ferdigheter
-                        <b-link class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til en praktisk ferdighet</strong></b-link>
+                        <b-link v-if="!this.$root.isMobile()" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til en praktisk ferdighet</strong></b-link>
+                        <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <practical-skill-list v-on:editSkill="editSkill" :skills="skills" :uid="user_id" :cid="cert_id" :id="id"></practical-skill-list>
