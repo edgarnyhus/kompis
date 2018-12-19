@@ -158,7 +158,7 @@ export default {
         removeTraining(elem) {
             db.collection('experience').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                // console.log("PC Document successfully deleted!");
                 // this.fetchTraining()
                 if (elem) {
                     let ix = this.experience.findIndex(e => e.id === elem.id)
@@ -184,7 +184,7 @@ export default {
         removeKeyValue(elem) {
             db.collection('keyvalues').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                // console.log("PC Document successfully deleted!");
                 if (elem) {
                     let ix = this.keyvalues.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -196,7 +196,7 @@ export default {
             })
         },
         updateKeyValue(elem) {
-            console.log('updateKeyValue', elem.id)
+            // console.log('updateKeyValue', elem.id)
             this.id = elem.id
             this.selectedComponent = 'KeyValue'            
         },
@@ -210,7 +210,7 @@ export default {
         removeSkill(elem) {
             db.collection('skills').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                // console.log("PC Document successfully deleted!");
                 if (elem) {
                     let ix = this.skills.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -235,7 +235,7 @@ export default {
         removeReference(elem) {
             db.collection('references').doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                // console.log("PC Document successfully deleted!");
                 if (elem) {
                     let ix = this.references.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -258,10 +258,10 @@ export default {
             }
         },
         removeColl(elem) {
-            console.log("PC removeColl", elem.id);
+            // console.log("PC removeColl", elem.id);
             db.collection(coll).doc(elem.id).delete()
             .then(() => {
-                console.log("PC Document successfully deleted!");
+                // console.log("PC Document successfully deleted!");
                 if (elem) {
                     let ix = coll.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -295,7 +295,7 @@ export default {
             }
         },
         handleSubmit () {
-            console.log('PC handleSumit, cert_id=',  this.cert_id)
+            // console.log('PC handleSumit, cert_id=',  this.cert_id)
             this.$refs.modal.hide()
             // this.user = firebase.auth().currentUser
             if (this.cert_id) {
@@ -305,7 +305,7 @@ export default {
                 if (this.cert_id) {
                     db.collection("certs").doc(this.cert_id).set(this.form, {merge: true})
                     .then((doc) => {
-                        console.log("Document written/updated with ID: ", this.cert_id);
+                        // console.log("Document written/updated with ID: ", this.cert_id);
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -313,7 +313,7 @@ export default {
                 } else {
                     db.collection("certs").add(this.form)
                     .then((doc) => {
-                        console.log("Document written with ID: ", doc.id);
+                        // console.log("Document written with ID: ", doc.id);
                         this.cert_id = doc.id
                     })
                     .catch((error) => {
@@ -330,12 +330,12 @@ export default {
                 db.collection('certs').doc(this.cert_id)
                 .get()
                 .then(doc => {
-                    console.log('fetchCertificate ok,', doc.data() )
+                    // console.log('fetchCertificate ok,', doc.data() )
                     this.form = doc.data()
                     this.employer = this.form.employer
                 })
-                .catch(error=> {
-                    console.log('Fetching certificate failed', error)
+                .catch(error => {
+                    console.error('Fetching certificate failed', error)
                 })
             }
         },
@@ -352,8 +352,8 @@ export default {
                         this.experience.push(elem)
                     })
                 })
-                .catch(error=> {
-                    console.log('Fetching certificate failed', error)
+                .catch(error => {
+                    console.error('Fetching certificate failed', error)
                 })
             }
         },
@@ -369,8 +369,8 @@ export default {
                         this.keyvalues.push(elem)
                     })
                 })
-                .catch(error=> {
-                    console.log('Fetching certificate failed', error)
+                .catch(error => {
+                    console.error('Fetching certificate failed', error)
                 })
             }
         },
@@ -386,8 +386,8 @@ export default {
                         this.skills.push(elem)
                     })
                 })
-                .catch(error=> {
-                    console.log('Fetching certificate failed', error)
+                .catch(error => {
+                    console.error('Fetching certificate failed', error)
                 })
             }
         },
@@ -403,8 +403,8 @@ export default {
                         this.references.push(elem)
                     })
                 })
-                .catch(error=> {
-                    console.log('Fetching certificate failed', error)
+                .catch(error => {
+                    console.error('Fetching certificate failed', error)
                 })
             }
         }
@@ -415,7 +415,7 @@ export default {
         if (!this.user_id) {
             this.user_id = firebase.auth().currentUser.uid
         }
-        console.log('show certificate', this.user_id, this.cert_id)
+        // console.log('show certificate', this.user_id, this.cert_id)
 
         // fetch this practice certificate
         this.fetchCertificate()

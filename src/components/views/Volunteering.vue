@@ -36,7 +36,7 @@
 
             <upload-media :parent="'vol'" :uid="user_id" :cid="cert_id" :media="media" :links="links" > </upload-media>
  
-            <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id"></media-list>
+            <media-list :media="media" :links="links" :uid="user_id" :cid="cert_id" style="margin-top: 1em"></media-list>
 
             <div class="g-group">
                 <b-button class="g-span" type="submit" variant="info">Lagre</b-button>
@@ -94,10 +94,13 @@ export default {
         }
     },
     watch: {
-        id(newId, oldId) {
-            console.log('volunteering watch', this.id, newId, oldId)
-            this.e_id = this.id
-            this.init()
+        id: {
+            handler(newId, oldId) {
+                // console.log('volunteering watch', this.id, newId, oldId)
+                this.e_id = this.id
+                this.init()
+            },
+            deep: true
         }
     },
     computed: {
@@ -112,11 +115,12 @@ export default {
             this.links = []
         },
         destroy() {
-        //   this.$destroy();
+            // this.reset()
+            // this.$destroy();
         },    
         cancel() {
-            this.$emit(this.reason, null)
             this.destroy()
+            this.$emit(this.reason, null)
         },
         update() {
             if (this.user_id) {
@@ -137,7 +141,7 @@ export default {
                     .then(() => {
                         this.updateMedia()
                         this.updateLinks()
-                        console.log("volunteering updated", this.e_id);
+                        // console.log("volunteering updated", this.e_id);
                         this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
@@ -150,10 +154,10 @@ export default {
                     this.form.cert_id = this.cert_id 
                     db.collection("volunteering").add(this.form)
                     .then((doc) => {
+                        this.e_id = doc.id
                         this.updateMedia()
                         this.updateLinks()
-                        this.e_id = doc.id
-                        console.log("education added ", this.e_id);
+                        // console.log("education added ", this.e_id);
                         this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
@@ -175,7 +179,7 @@ export default {
                 if (element.id) {
                     db.collection("media").doc(element.id).set(item, {merge: true})
                     .then(() => {
-                        console.log("media updated with ID: ", element.id);
+                        // console.log("media updated with ID: ", element.id);
                     })
                     .catch((error) => {
                         console.error("error adding media: ", error);
@@ -184,7 +188,7 @@ export default {
                 } else {
                     db.collection("media").add(item)
                     .then((doc) => {
-                        console.log("media written with ID: ", doc.id);
+                        // console.log("media written with ID: ", doc.id);
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -227,11 +231,11 @@ export default {
                         let elem = doc.data()
                         elem.id = doc.id
                         this.media.push(elem)
-                        console.log('maedia fetched', doc.id)
+                        // console.log('maedia fetched', doc.id)
                     })
                 })
-                .catch(error=> {
-                    console.log('fetching media failed', error)
+                .catch(error => {
+                    console.error('fetching media failed', error)
                     alert(error)
                 })
             }
@@ -247,15 +251,15 @@ export default {
                         this.links.push(elem)
                     })
                 })
-                .catch(error=> {
-                    console.log('fetching links failed', error)
+                .catch(error => {
+                    console.error('fetching links failed', error)
                     alert(error)
                 })
             }
         },
         fetchData() {
             if (this.e_id) {
-                console.log('we get object', this.e_id)
+                // console.log('we get object', this.e_id)
                 db.collection('volunteering').doc(this.e_id)
                 .get()
                 .then ((doc) => {
@@ -273,7 +277,7 @@ export default {
                         this.form.id = doc.id
                         this.fetchMedia()
                         this.fetchLinks()
-                        console.log('volunteering fetched ok')
+                        // console.log('volunteering fetched ok')
                     }
                 })
                 .catch((error) => {
@@ -286,15 +290,15 @@ export default {
             this.reset()
             if (this.cid != undefined) 
                 this.cert_id  = this.cid
-            if (!this.cert_id)
+            if (!this.cert_id && this.$route.params.cid)
                 this.cert_id = this.$route.params.cid
             if (this.id != undefined) 
                 this.e_id  = this.id
-            if (!this.e_id)
+            if (!this.e_id && this.$route.params.id)
                 this.e_id = this.$route.params.id
             if (this.uid != undefined)
                 this.user_id = this.uid
-            if (!this.user_id)
+            if (!this.user_id && this.$route.params.uid)
                 this.user_id = this.$route.params.uid
             if (!this.user_id)
                 this.user_id = firebase.auth().currentUser.uid

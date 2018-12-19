@@ -56,7 +56,7 @@ export default {
     },
     methods: {
         editExperience(id) {
-            console.log('experienceCard edit', id, this.cert_id)
+            // console.log('experienceCard edit', id, this.cert_id)
             if (id) {
                 this.id = id
                 this.mode = 'edit'
@@ -64,7 +64,7 @@ export default {
         },
         onUpdatedExperience(id) {
             // child component (slot) signaled finished
-            console.log('updated event from child, ID=', id)
+            // console.log('updated event from child, ID=', id)
             if (id) {
                 this.fetchData()
             }
@@ -90,8 +90,8 @@ export default {
                         this.experience.push(elem)
                     })
                 })
-                .catch(error=> {
-                    console.log('mc fetching experience failed', error)
+                .catch(error => {
+                    console.error('mc fetching experience failed', error)
                 })
             }
             // this.fetchMedia()
@@ -107,8 +107,8 @@ export default {
                     media.push(elem)
                 })
             })
-            .catch(error=> {
-                console.log('fetching media failed', error)
+            .catch(error => {
+                console.error('fetching media failed', error)
             })
             return media
         }
@@ -116,11 +116,11 @@ export default {
     created() {
         if (this.cid != undefined) 
             this.cert_id  = this.cid
-        if (!this.cert_id)
+        if (!this.cert_id && this.$route.params.cid)
             this.cert_id = this.$route.params.cid
         if (this.uid != undefined)
             this.user_id = this.uid
-        if (!this.user_id)
+        if (!this.user_id && this.$route.params.uid)
             this.user_id = this.$route.params.uid
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid

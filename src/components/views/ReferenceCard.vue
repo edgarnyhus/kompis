@@ -17,7 +17,7 @@
                     <h5 class="text-muted">Referanser
                         <b-link v-if="!isMobile" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til referanse</strong></b-link>
                     </h5>
-                    <div style="margin-bottom: 1em"></div>
+                    <div style="margin-bottom: 1.7em"></div>
                     <reference-list v-on:editReference="editReference" :references="references" :uid="user_id" :cid="cert_id" :id="id"></reference-list>
                 </b-collapse>
             </div>
@@ -65,7 +65,7 @@ export default {
         },
         onUpdatedReference(id) {
             // child component (slot) signaled finished
-            console.log('updated event from child, ID=', id)
+            // console.log('updated event from child, ID=', id)
             if (id) {
                 this.fetchData()
             }
@@ -89,8 +89,8 @@ export default {
                         this.references.push(elem)
                     })
                 })
-                .catch(error=> {
-                    console.log('fetching references failed', error)
+                .catch(error => {
+                    console.error('fetching references failed', error)
                 })
             }
         },
@@ -105,8 +105,8 @@ export default {
                     media.push(elem)
                 })
             })
-            .catch(error=> {
-                console.log('fetching media failed', error)
+            .catch(error => {
+                console.error('fetching media failed', error)
             })
             return media
         }
@@ -114,11 +114,11 @@ export default {
     created() {
         if (this.cid != undefined) 
             this.cert_id  = this.cid
-        if (!this.cert_id)
+        if (!this.cert_id && this.$route.params.cid)
             this.cert_id = this.$route.params.cid
         if (this.uid != undefined)
             this.user_id = this.uid
-        if (!this.user_id)
+        if (!this.user_id && this.$route.params.uid)
             this.user_id = this.$route.params.uid
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid

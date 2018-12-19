@@ -55,7 +55,7 @@ export default {
         remove: function(elem) {
             db.collection('experience').doc(elem.id).delete()
             .then(() => {
-                console.log("pc document successfully deleted!");
+                // console.log("pc document successfully deleted!");
                 if (elem) {
                     let ix = this.experience.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -68,7 +68,7 @@ export default {
             })
         },
         edit: function(elem) {
-            console.log('experience edit:', elem.id)
+            // console.log('experience edit:', elem.id)
             this.$emit(this.reason, elem.id)
         },
         showMore() {

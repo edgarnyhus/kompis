@@ -112,7 +112,7 @@ import ProgressSpinner from './ProgressSpinner'
         if (formData) {
             const file = formData.get('media')
             let elem = { filename: file.name, type: file.type, url: formData.get('url'), description: '' }
-            console.log('add media', elem)
+            // console.log('add media', elem)
             if (this.profile) {
                 // this.profile.picture = elem.url
                 this.$emit(this.reason, elem)
@@ -137,13 +137,13 @@ import ProgressSpinner from './ProgressSpinner'
                 this.add(formData)
             })
             .catch((error) => {
-                console.log(error)
+                console.error(error)
                 this.uploadError = error.response;
                 this.currentStatus = STATUS_FAILED;
             })
         })
         .catch((error) => {
-            console.log(error)
+            console.error(error)
             this.uploadError = error.response;
             this.currentStatus = STATUS_FAILED;
         })

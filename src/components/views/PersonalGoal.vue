@@ -71,7 +71,7 @@ export default {
     },
     methods: {
         cancel() {
-            console.log("cancel")
+            // console.log("cancel")
             this.$router.push({ name: 'MyCV' })
         }
     }

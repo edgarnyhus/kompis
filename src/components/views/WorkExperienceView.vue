@@ -48,13 +48,13 @@ export default {
     },
     methods: {
         cancel() {
-            console.log("cancel")
+            // console.log("cancel")
             this.$emit(this.reason, null)
         },
         removeTraining(elem) {
             db.collection('experience').doc(elem.id).delete()
             .then(() => {
-                console.log("pc document successfully deleted!");
+                // console.log("pc document successfully deleted!");
                 if (elem) {
                     let ix = this.experience.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -71,7 +71,7 @@ export default {
         },
         onUpdatedTraining(id) {
             // child component (slot) signaled finished
-            console.log('updated event from child, ID=', id)
+            // console.log('updated event from child, ID=', id)
             this.selectedComponent = null
             if (id) {
                 this.fetchTraining()

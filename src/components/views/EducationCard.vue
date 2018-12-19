@@ -16,12 +16,12 @@
                         <b-link v-if="!isMobile" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til skole/kurs</strong></b-link>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
-                    <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="edu_id"></education-list>
+                    <education-list v-on:editEducation="editEducation" :education="education" :uid="user_id" :cid="cert_id" :id="id"></education-list>
                 </b-collapse>
             </div>
 
             <b-collapse class="mt-2"  id="editEdu" :visible="mode==='edit'">
-                <education v-on:onUpdatedEducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="edu_id"></education>
+                <education v-on:onUpdatedEducation="onUpdatedEducation" :uid="user_id" :cid="cert_id" :id="id"></education>
             </b-collapse>
         </b-card>
     </div>
@@ -45,7 +45,7 @@ export default {
             education: [],
             user_id: null,
             cert_id: null,
-            edu_id: null,
+            id: null,
             mode: 'list'
         }
     },
@@ -56,9 +56,9 @@ export default {
     },
     methods: {
         editEducation(id) {
-            console.log('educationCard edit', id)
+            // console.log('educationCard edit', id)
             if (id) {
-                this.edu_id = id
+                this.id = id
                 this.mode = 'edit'
             }
         },
@@ -114,11 +114,11 @@ export default {
     created() {
         if (this.cid != undefined) 
             this.cert_id  = this.cid
-        if (!this.cert_id)
+        if (!this.cert_id && this.$route.params.cid)
             this.cert_id = this.$route.params.cid
         if (this.uid != undefined)
             this.user_id = this.uid
-        if (!this.user_id)
+        if (!this.user_id && this.$route.params.uid)
             this.user_id = this.$route.params.uid
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid

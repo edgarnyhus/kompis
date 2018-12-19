@@ -102,7 +102,7 @@ export default {
             return true
         },
         signup() {
-            console.log('signup...')
+            // console.log('signup...')
             if (!this.fieldsOk())
                 return
             this.feedback = null
@@ -124,7 +124,7 @@ export default {
                             timestamp: Date.now()
                         })
                     }).then(() => {
-                        console.log('signup ok')
+                        // console.log('signup ok')
                         this.$router.push({ name: 'MyCV', params: {uid: user.uid } })
                     })
                     .catch(error => {

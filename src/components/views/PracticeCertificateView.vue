@@ -16,7 +16,7 @@
                         <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button>
                     </div>
                     <div v-else>
-                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">edit</i></span>
+                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
                         <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(elem)">delete</i></span>
                     </div>
                     <p class="b-card-text" style="font-style: normal"> Sist endret {{elem.timestamp | formatDateAndTime}}</p>
@@ -55,11 +55,14 @@ export default {
         add() {
             this.$router.push({ name: 'PracticeCertificate', params: { uid: this.user_id, cid: null }})
         },
+        edit(cert) {
+            this.$router.push({ name: 'PracticeCertificate', params: { uid: this.user_id, cid: cert.id }})
+        },
         remove(cert) {
-            console.log("onRemove", cert.id);
+            // console.log("onRemove", cert.id);
             db.collection('certs').doc(cert.id).delete()
             .then(() => {
-                console.log("Document successfully deleted!");
+                // console.log("Document successfully deleted!");
                 this.certificates = []
                 this.fetchCertificates()
                 // let idx = this.certificates.findIndex(cert)
@@ -87,11 +90,12 @@ export default {
         }
     },
     created() {
-        this.user_id = this.$route.params.uid
-        if (!this.user_id) {
+        if (this.uid != undefined)
+            this.user_id = this.uid
+        if (!this.user_id && this.$route.params.uid)
+            this.user_id = this.$route.params.uid
+        if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
-        }
-
         this.fetchCertificates()
     }
 }

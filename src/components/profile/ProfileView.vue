@@ -109,15 +109,15 @@ export default {
             this.getProfile()
         },
         addedPicture(file) {
-            console.log('onAddedPicture', file)
+            // console.log('onAddedPicture', file)
             this.profile.picture = file.url 
             db.collection('users').doc(this.slug)
             .set({picture: file.url}, {merge: true})
             .then(() => {
-                console.log('profile picture updated')
+                // console.log('profile picture updated')
             })
             .catch(error=> {
-                console.log('updating profile picture failed', error)
+                console.error('updating profile picture failed', error)
                 alert(error)
             })
         },
@@ -129,11 +129,11 @@ export default {
                     this.slug = doc.id
                     this.profile = doc.data()
                     this.email = this.user.email
-                    console.log('profile', this.profile)
+                    // console.log('profile', this.profile)
                 })
             })
-            .catch(error=> {
-                console.log('fetching user profile', error)
+            .catch(error => {
+                console.error('fetching user profile', error)
                 alert(error)
             })
             

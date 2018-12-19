@@ -63,8 +63,7 @@ export default {
             })
         },
         showProfile: function () {
-            console.log('show profile')
-            
+            // console.log('show profile')
         }
     },
     mounted() {

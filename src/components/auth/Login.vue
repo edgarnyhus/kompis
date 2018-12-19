@@ -41,7 +41,7 @@ export default {
     },
     methods: {
         reset() {
-            console.log('reset..')
+            // console.log('reset..')
             this.feedback = null
         },
         login(){

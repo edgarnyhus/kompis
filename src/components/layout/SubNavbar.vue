@@ -47,10 +47,10 @@ export default {
                 }
             })
             .then(result => {
-                console.log('result', result)
+                // console.log('result', result)
             })
             .catch(error => {
-                console.log('error', error)
+                console.error('error', error)
             })
         }
     },

@@ -48,7 +48,7 @@ export default {
         remove: function(elem) {
             db.collection('references').doc(elem.id).delete()
             .then(() => {
-                console.log("document successfully deleted!");
+                // console.log("document successfully deleted!");
                 if (elem) {
                     let ix = this.references.findIndex(e => e.id === elem.id)
                     if (~ix) {
@@ -61,7 +61,7 @@ export default {
             })
         },
         edit: function(elem) {
-            console.log('edit:', elem.id)
+            // console.log('edit:', elem.id)
             this.$emit(this.reason, elem.id)
         }
     }

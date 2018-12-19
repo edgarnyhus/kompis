@@ -113,7 +113,7 @@ export default {
             }
         },
         handleSubmit () {
-            console.log('pc handleSumit, cert_id=',  this.cert_id)
+            // console.log('pc handleSumit, cert_id=',  this.cert_id)
             this.$refs.inputEmployer.hide()
             if (this.user_id) {
                 this.form.employer = this.employer
@@ -122,7 +122,7 @@ export default {
                 if (this.cert_id) {
                     db.collection("certs").doc(this.cert_id).set(this.form, {merge: true})
                     .then((docRef) => {
-                        console.log("Document written/updated with ID: ", this.cert_id);
+                        // console.log("Document written/updated with ID: ", this.cert_id);
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -130,7 +130,7 @@ export default {
                 } else {
                     db.collection("certs").add(this.form)
                     .then((doc) => {
-                        console.log("Document written with ID: ", doc.id);
+                        // console.log("Document written with ID: ", doc.id);
                         this.cert_id = doc.id
                     })
                     .catch((error) => {
@@ -147,12 +147,12 @@ export default {
                 db.collection('certs').doc(this.cert_id)
                 .get()
                 .then(doc => {
-                    console.log('fetchCertificate ok,', doc.data() )
+                    // console.log('fetchCertificate ok,', doc.data() )
                     this.form = doc.data()
                     this.employer = this.form.employer
                 })
                 .catch(error => {
-                    console.log('Fetching certificate failed', error)
+                    console.error('Fetching certificate failed', error)
                 })
             }
         },
@@ -166,11 +166,11 @@ export default {
         // this.show = this.$route.params.show
         if (this.cid != undefined) 
             this.cert_id  = this.cid
-        if (!this.cert_id)
+        if (!this.cert_id && this.$route.params.cid)
             this.cert_id = this.$route.params.cid
         if (this.uid != undefined)
             this.user_id = this.uid
-        if (!this.user_id)
+        if (!this.user_id && this.$route.params.uid)
             this.user_id = this.$route.params.uid
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid

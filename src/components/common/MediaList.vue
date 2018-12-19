@@ -41,11 +41,11 @@ export default {
     },
     methods: {
         remove: function(item) {
-            console.log('remove', item.filename, item.id)
+            // console.log('remove', item.filename, item.id)
             if (item.id) {
                 db.collection('media').doc(item.id).delete()
                 .then(() => {
-                    console.log('media deleted in database/media')
+                    // console.log('media deleted in database/media')
                 }).catch(error => {
                     console.info("error removing media; not saved yet?...", error);
                     // alert(error)
@@ -56,7 +56,7 @@ export default {
             firebase.storage().ref('media').child(item.filename).delete()
             .then(() => {
                 // File deleted successfully
-                console.log("media successfully deleted from storage!");
+                // console.log("media successfully deleted from storage!");
             }).catch((error) => {
                 // Uh-oh, an error occurred!
                 console.error("error removing media from storage", error);
@@ -69,7 +69,7 @@ export default {
             }
         },
         show(item) {
-            console.log('show', item)
+            // console.log('show', item)
             this.file = item
             window.open(item.url)
         },
