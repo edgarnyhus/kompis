@@ -33,12 +33,6 @@ Vue.filter('formatDateAndTime', function(value) {
     }
 })
 
-Vue.filter('truncateFilename', function(value) {
-    if (value) {
-        return (filename.length > 11 ? filename.substring(0, 11) + '...' : filename);
-    }
-})
-
 //credit to @Bill Criswell for this filter
 Vue.filter('truncate', function (text, stop, clamp) {
     return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
