@@ -75,8 +75,9 @@ global.toTimestamp = (month, year) => {
 //         return false;
 //     }
 // }
-// global.isMobile = () => {
-//     if(/Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+
+// global.isSmallScreen = () => {
+//     if ((this.windowWidth < 768) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 //         return true
 //     } else {
 //         return false
@@ -99,33 +100,71 @@ global.toTimestamp = (month, year) => {
 //   }
 // })
 
+// const mixin = new Vue.mixin({
+//     computed: {
+//         isMobile() {
+//             // if((this.windowWidth < 768) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+//             if (this.windowWidth < 768) {
+//                 ret = true
+//             } else {
+//                 ret = false
+//             }
+//             console.log('smallScreen', ret)
+//             return ret
+//         }
+//     },
+//     data() {
+//         return {
+//             windowWidth: 0
+//         }
+//     },
+//     methods: {
+//         handleWindowResize(event) { 
+//             this.windowWidth = event.currentTarget.innerWidth; 
+//             console.log('resize', this.windowWidth)
+//         },
+//     },
+//     beforeDestroy: function () {
+//         window.removeEventListener('resize', this. handleWindowResize)
+//     },
+//     mounted() {
+//         window.addEventListener('resize', this.handleWindowResize);
+//    }
+// })
+  
 const vm = new Vue({
     el: '#app',
     router,
     components: { App },
     template: '<App/>',
-    data: {
-        windowWidth: 0
+    mixins: [],
+    data() {
+        return {
+            windowWidth: 0
+        }
     },
     methods: {
         handleWindowResize(event) { 
             this.windowWidth = event.currentTarget.innerWidth; 
             console.log('resize', this.windowWidth)
         },
-        isMobile() {
-            if (this.windowWidth < 760 || (/Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))) {
-                return true
-            } else {
-                return false
-            }
-        }
     },
     beforeDestroy: function () {
         window.removeEventListener('resize', this. handleWindowResize)
     },
     mounted() {
         window.addEventListener('resize', this.handleWindowResize);
-   },
+    }
 })
+
+Vue.prototype.$isSmallScreen = function() {
+    if (this.windowWidth < 760) {
+        ret = true
+    } else {
+        ret = false
+    }
+    console.log('isMobile', ret)
+    return ret
+}
 
 console.log(vm)

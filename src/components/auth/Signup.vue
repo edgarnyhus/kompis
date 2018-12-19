@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!isMobile" class="signup g-frame container">
+    <div class="signup g-frame container">
         <b-card>
             <h3>Registrer deg</h3>
             <p class="g-group">

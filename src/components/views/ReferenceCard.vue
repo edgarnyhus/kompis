@@ -3,7 +3,7 @@
         <b-card> 
             <div v-if="!references[0] && mode!=='edit'" >
                 <h5 class="text-muted">Referanser
-                    <b-button v-if="!this.$root.isMobile()" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
+                    <b-button v-if="!isMobile" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                     <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hvilke personer kan potensielle arbeidsgivere kontakte for å bli kjent med deg? Husk å be om tillatelse!</p>
@@ -12,7 +12,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <h5 class="text-muted">Referanser
-                        <b-link v-if="!this.$root.isMobile()" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til referanse</strong></b-link>
+                        <b-link v-if="!isMobile" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til referanse</strong></b-link>
                         <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
@@ -48,6 +48,11 @@ export default {
             cert_id: null,
             id: null,
             mode: 'list'
+        }
+    },
+    computed: {
+        isMobile() {
+            return this.$isSmallScreen
         }
     },
     methods: {

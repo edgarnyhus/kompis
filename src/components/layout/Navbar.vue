@@ -11,7 +11,7 @@
                     <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Utviklingsplan</b-nav-item>
 
                     <!-- <div v-if="windowWidth <= 480"> -->
-                    <div v-if="this.$root.isMobile()">
+                    <div v-if="isMobile">
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Del</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>PDF</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Generer CV</b-button>
@@ -45,6 +45,11 @@ export default {
     data() {
         return {
             user: null,
+        }
+    },
+    computed: {
+        isMobile() {
+            return this.$isSmallScreen
         }
     },
     methods: {
@@ -182,7 +187,7 @@ b-card-header {
 }
 .g-icon {
     cursor: pointer;
-    margin-left: 0.2em;
+    margin-left: 1em;
 }
 .g-pic {
     cursor: pointer;

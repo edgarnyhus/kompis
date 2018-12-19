@@ -2,7 +2,7 @@
     <div class="container">
         <div>
             <h2 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
-                <b-button v-if="!this.$root.isMobile()" class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
+                <b-button v-if="!isMobile" class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
                 <md-button v-else class="g-info md-fab md-mini float-right" variant="info" @click="add()"><md-icon>add</md-icon></md-button>
             </h2>
         </div>
@@ -40,6 +40,11 @@ export default {
             certificates: [],
             profile: null,
             user_id: null            
+        }
+    },
+    computed: {
+        isMobile() {
+            return this.$isSmallScreen
         }
     },
     methods: {
