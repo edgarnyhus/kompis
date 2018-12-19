@@ -3,8 +3,14 @@
         <div v-for="elem in volunteering" :key="elem.id">
             <div class="g-group">
                 <h6 class="card-title text-muted">{{ elem.org }}
-                    <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
-                    <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                    <div v-if="!isMobile">
+                        <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
+                        <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                    </div>
+                    <div v-if="isMobile">
+                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
+                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                    </div>
                 </h6>
                 <h5 class="card-subtitle ">{{elem.role}}</h5>
                     <p v-if="elem.ongoing" class="card-text text-muted" style="margin-bottom: 0.5em">{{ elem.from | formatDate }} - (Har fortsatt dette vervet)<br>
@@ -36,6 +42,11 @@ export default {
         return {
             more: true,
             reason: 'editVolunteering'
+        }
+    },
+    computed: {
+        isMobile() {
+            return this.$smallScreen
         }
     },
     methods: {

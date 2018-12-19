@@ -30,9 +30,9 @@ import db from '@/firebase/init'
 
 export default {
     name: 'PracticeCertificateView',
-    components: {
+    computed: {
         isMobile() {
-            return this.$root.isMobile
+            return this.$smallScreen
         }
     },
     data () {
@@ -44,7 +44,7 @@ export default {
     },
     computed: {
         isMobile() {
-            return this.$isSmallScreen
+            return this.$smallScreen
         }
     },
     methods: {

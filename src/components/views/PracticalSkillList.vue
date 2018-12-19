@@ -2,10 +2,15 @@
     <div class="component">
         <div v-for="elem in skills" :key="elem.id">
             <div class="g-group">
-                <h5 class="card-subtitle">{{ elem.skill }}
+                <div v-if="!isMobile">
                     <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
                     <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
-                </h5>
+                </div>
+                <div v-if="isMobile">
+                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
+                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                </div>
+                <h5 class="card-subtitle">{{ elem.skill }}</h5>
                 <p class="card-text" style="margin-top: 0.5em">{{elem.description}}</p>
 
                 <!-- <b-link @click="more=true">se mer...</b-link> -->
@@ -29,6 +34,11 @@ export default {
         return {
             more: true,
             reason: 'editSkill'
+        }
+    },
+    computed: {
+        isMobile() {
+            return this.$smallScreen
         }
     },
     methods: {

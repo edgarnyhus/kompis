@@ -5,12 +5,12 @@
                     <h6 class="card-title">{{ elem.employer }}
                         <!-- links -->
                         <div v-if="!isMobile">
-                        <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
-                        <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
+                            <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
+                            <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
                         </div>
                         <div v-if="isMobile">
-                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
-                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                            <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
+                            <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
                         </div>
 
                         <!-- or icons -->
@@ -47,13 +47,14 @@ export default {
     props: ['experience'],
     data: function() {
         return {
+            // screen: window.innerWidth,
             more: true,
             reason: 'editExperience'
         }
     },
     computed: {
         isMobile() {
-            return this.$isSmallScreen
+            return this.$smallScreen
         }
     },
     methods: {

@@ -85,7 +85,9 @@ export default {
         }
     },
     computed: {
-
+        isMobile() {
+            return this.$smallScreen
+        }
     },
     methods: {
         reset () {

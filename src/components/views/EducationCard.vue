@@ -52,10 +52,10 @@ export default {
     },
     computed: {
         isMobile() {
-            return this.$isSmallScreen
+            return this.$smallScreen
         }
     },
-   methods: {
+    methods: {
         editEducation(id) {
             console.log('educationCard edit', id)
             if (id) {

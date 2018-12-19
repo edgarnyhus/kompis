@@ -80,6 +80,11 @@ export default {
             id: null
         }
     },
+    computed: {
+        isMobile() {
+            return this.$smallScreen
+        }
+    },
     methods: {
         back() {
             this.$router.back()

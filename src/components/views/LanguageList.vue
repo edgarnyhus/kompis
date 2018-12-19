@@ -2,10 +2,15 @@
     <div class="component">
         <div v-for="elem in languages" :key="elem.id">
             <div class="g-groupy">
-                <h5 class="card-title">{{ elem.language }}
+                <div v-if="!isMobile">
                     <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
                     <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
-                </h5>
+                </div>
+                <div v-if="isMobile">
+                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
+                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                </div>
+                <h5 class="card-title">{{ elem.language }}</h5>
                 <h6 class="card-subtitle text-muted">{{ elem.proficiency }}</h6>
                 <p class="card-text" style="margin-top: 0.5em">{{elem.description}}</p>
 
@@ -30,6 +35,11 @@ export default {
         return {
             more: true,
             reason: 'editLanguage'
+        }
+    },
+    computed: {
+        isMobile() {
+            return this.$smallScreen
         }
     },
     methods: {

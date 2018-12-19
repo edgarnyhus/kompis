@@ -11,7 +11,7 @@
                     <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Utviklingsplan</b-nav-item>
 
                     <!-- <div v-if="windowWidth <= 480"> -->
-                    <div v-if="isMobile">
+                    <div v-if="this.$smallScreen">
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Del</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>PDF</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Generer CV</b-button>
@@ -49,7 +49,7 @@ export default {
     },
     computed: {
         isMobile() {
-            return this.$isSmallScreen
+            return this.$smallScreen
         }
     },
     methods: {

@@ -1,6 +1,6 @@
 <template>
     <div class="g-m0">
-        <b-navbar v-if="!isMobile" id="subnavbar" toggleable="md" type="light" variant="light" 
+        <b-navbar v-if="!this.$smallScreen" id="subnavbar" toggleable="md" type="light" variant="light" 
             style="border-bottom: 1px solid rgb(232,233,232); padding-left: 3.5%; padding-right: 3.5%;">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
             <b-navbar-brand href="#"><strong>Ok, la oss komme igang!</strong></b-navbar-brand>
@@ -31,7 +31,7 @@ export default {
     },
     computed: {
         isMobile() {
-            return this.$isSmallScreen
+            return this.$smallScreen
         }
     },
     methods: {

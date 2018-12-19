@@ -2,10 +2,15 @@
     <div class="component">
         <div v-for="elem in references" :key="elem.id">
             <div class="g-group">
-                <h5 class="card-title">{{ elem.person }}
+                <div v-if="!isMobile">
                     <b-link class="gb-link btn-floating float-right btn-sm" @click="edit(elem)">Endre</b-link>
                     <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="remove(elem)">Slett</b-link>
-                </h5>
+                </div>
+                <div v-if="isMobile">
+                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
+                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                </div>
+                <h5 class="card-title">{{ elem.person }}</h5>
                 <p class="card-subtitle text-muted" style="margin-bottom: 0.5em">Email: {{elem.email}}<br>
                     Telefon: {{elem.phone}}
                 </p>
@@ -32,6 +37,11 @@ export default {
         return {
             more: true,
             reason: 'editReference'
+        }
+    },
+    computed: {
+        isMobile() {
+            return this.$smallScreen
         }
     },
     methods: {

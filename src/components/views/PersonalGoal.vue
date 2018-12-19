@@ -64,8 +64,10 @@ export default {
             }
         }
     },
-    components: {
-
+    computed: {
+        isMobile() {
+            return this.$smallScreen
+        }
     },
     methods: {
         cancel() {

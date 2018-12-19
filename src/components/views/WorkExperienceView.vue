@@ -42,6 +42,11 @@ export default {
         }
     },
     props: ['cid', 'id'],
+    computed: {
+        isMobile() {
+            return this.$smallScreen
+        }
+    },
     methods: {
         cancel() {
             console.log("cancel")

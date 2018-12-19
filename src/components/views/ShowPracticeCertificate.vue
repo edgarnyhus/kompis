@@ -146,6 +146,9 @@ export default {
                 return true
             }
             return false;
+        },
+        isMobile() {
+            return this.$smallScreen
         }
     },
     methods: {

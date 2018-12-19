@@ -52,7 +52,7 @@ export default {
     },
     computed: {
         isMobile() {
-            return this.$isSmallScreen
+            return this.$smallScreen
         }
     },
     methods: {
