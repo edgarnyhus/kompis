@@ -10,14 +10,8 @@
                         </div>
                         <div v-if="isMobile">
                             <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
-                            <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                            <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(elem)">delete</i></span>
                         </div>
-
-                        <!-- or icons -->
-                        <!-- <md-icon class="g-icon float-right" @click="edit(elem)">edit</md-icon> -->
-                        <!-- <md-icon class="g-icon float-right" style="margin-right: 10px" @click="remove(elem)">delete</md-icon> -->
-                        <!-- <md-button class="g-icon md-fab md-mini float-right" @click="edit(elem) "><md-icon>edit</md-icon></md-button> -->
-                        <!-- <md-button class="g-icon md-fab md-mini md-plain float-right" @click="remove(elem)"><md-icon>delete</md-icon></md-button> -->
                     </h6>
                     <h5 class="card-subtitle">{{ elem.role }}</h5>
                     <p v-if="elem.ongoing" class="card-text text-muted" style="margin-bottom: 0.5em">{{ elem.from | formatDate }} - (Jobber her nå)<br>

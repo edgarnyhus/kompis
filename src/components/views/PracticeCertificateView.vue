@@ -11,10 +11,14 @@
             <b-card no-body class="mb-1">
                 <b-card-header header-tag="header" role="tab">
                     <b-link class="link-prop" href="#" router-link :to="{ name: 'ShowPracticeCertificate', params: { uid: user_id, cid: elem.id  } }">{{ elem.employer }}</b-link>
-                    <!-- <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">Endre</b-button>
-                    <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button> -->
+                    <div v-if="!isMobile">
+                        <b-button class="btn-floating btn-secondary float-right" router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">Endre</b-button>
+                        <b-button class="button-span btn-floating btn-outline-secondary float-right" @click="remove(elem)">Slett</b-button>
+                    </div>
+                    <div v-else>
                         <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  router-link :to="{ name: 'PracticeCertificate', params: { uid: user_id, cid: elem.id } }">edit</i></span>
-                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                        <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(elem)">delete</i></span>
+                    </div>
                     <p class="b-card-text" style="font-style: normal"> Sist endret {{elem.timestamp | formatDateAndTime}}</p>
                 </b-card-header>
             </b-card>

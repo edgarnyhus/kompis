@@ -8,7 +8,7 @@
                 </div>
                 <div v-if="isMobile">
                     <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="edit(elem)">edit</i></span>
-                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(item)">delete</i></span>
+                    <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="remove(elem)">delete</i></span>
                 </div>
                 <h5 class="card-title">{{ elem.language }}</h5>
                 <h6 class="card-subtitle text-muted">{{ elem.proficiency }}</h6>
