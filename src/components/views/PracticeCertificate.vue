@@ -115,7 +115,6 @@ export default {
         handleSubmit () {
             console.log('pc handleSumit, cert_id=',  this.cert_id)
             this.$refs.inputEmployer.hide()
-            this.user = firebase.auth().currentUser
             if (this.user_id) {
                 this.form.employer = this.employer
                 this.form.user_id = this.user_id
@@ -165,12 +164,16 @@ export default {
     },
     created() {
         // this.show = this.$route.params.show
-        this.cert_id = this.$route.params.cid
-        this.user_id = this.$route.params.uid
-        if (!this.user_id) {
+        if (this.cid != undefined) 
+            this.cert_id  = this.cid
+        if (!this.cert_id)
+            this.cert_id = this.$route.params.cid
+        if (this.uid != undefined)
+            this.user_id = this.uid
+        if (!this.user_id)
+            this.user_id = this.$route.params.uid
+        if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
-        }
-        console.log('created cert', this.user_id, this.cert_id)
         if (this.cert_id) {
             this.fetchCertificate()
         }

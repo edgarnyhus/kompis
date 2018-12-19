@@ -45,7 +45,6 @@ export default {
     data() {
         return {
             volunteering: [],
-            user: null,
             user_id: null,
             cert_id: null,
             id: null,
@@ -76,7 +75,7 @@ export default {
             this.volunteering = []
             let ref = null
             if (this.cert_id) {
-                ref = db.collection('volunteering').where('user_id', '==', this.cert_id)
+                ref = db.collection('volunteering').where('cert_id', '==', this.cert_id)
             } else {
                 ref = db.collection('volunteering').where('user_id', '==', this.user_id)
             }
@@ -112,18 +111,17 @@ export default {
         }
     },
     created() {
-        // current user
-        this.user = firebase.auth().currentUser
-        this.cert_id = this.cid
-        if (this.uid) {
+        if (this.cid != undefined) 
+            this.cert_id  = this.cid
+        if (!this.cert_id)
+            this.cert_id = this.$route.params.cid
+        if (this.uid != undefined)
             this.user_id = this.uid
-        } else if (this.user) {
-            this.user_id = this.user.uid
-        }
-        if (this.user) {
-            // fetch work volunteering
-            this.fetchData()
-        }
+        if (!this.user_id)
+            this.user_id = this.$route.params.uid
+        if (!this.user_id)
+            this.user_id = firebase.auth().currentUser.uid
+        this.fetchData()
     }
     
 }

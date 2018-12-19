@@ -45,7 +45,6 @@ export default {
     data() {
         return {
             languages: [],
-            user: null,
             user_id: null,
             cert_id: null,
             id: null,
@@ -73,11 +72,11 @@ export default {
             this.mode = 'list'
         },
         fetchData() {
-            if (this.user) {
+            if (this.user_id) {
                 this.languages = []
                 let ref = null
                 if (this.cert_id) {
-                    ref = db.collection('languages').where('user_id', '==', this.cert_id)
+                    ref = db.collection('languages').where('cert_id', '==', this.cert_id)
                 } else {
                     ref = db.collection('languages').where('user_id', '==', this.user_id)
                 }
@@ -115,18 +114,17 @@ export default {
 
     },
     created() {
-        // current user
-        this.user = firebase.auth().currentUser
-        this.cert_id = this.cid
-        if (this.uid) {
+        if (this.cid != undefined) 
+            this.cert_id  = this.cid
+        if (!this.cert_id)
+            this.cert_id = this.$route.params.cid
+        if (this.uid != undefined)
             this.user_id = this.uid
-        } else if (this.user) {
-            this.user_id = this.user.uid
-        }
-        if (this.user) {
-            // fetch work Language/training
-            this.fetchData()
-        }
+        if (!this.user_id)
+            this.user_id = this.$route.params.uid
+        if (!this.user_id)
+            this.user_id = firebase.auth().currentUser.uid
+        this.fetchData()
     }
     
 }

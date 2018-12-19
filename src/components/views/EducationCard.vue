@@ -45,7 +45,6 @@ export default {
     data() {
         return {
             education: [],
-            user: null,
             user_id: null,
             cert_id: null,
             edu_id: null,
@@ -78,7 +77,7 @@ export default {
                 this.education = []
                 let ref = null
                 if (this.cert_id) {
-                    ref = db.collection('education').where('user_id', '==', this.cert_id)
+                    ref = db.collection('education').where('cert_id', '==', this.cert_id)
                 } else {
                     ref = db.collection('education').where('user_id', '==', this.user_id)
                 }
@@ -115,19 +114,17 @@ export default {
         }
     },
     created() {
-        // current user
-        this.user = firebase.auth().currentUser
-        if (this.cert_id !== undefined)
-            this.cert_id = this.cid
-        if (this.uid !== undefined) {
+        if (this.cid != undefined) 
+            this.cert_id  = this.cid
+        if (!this.cert_id)
+            this.cert_id = this.$route.params.cid
+        if (this.uid != undefined)
             this.user_id = this.uid
-        } else if (this.user) {
-            this.user_id = this.user.uid
-        }
-        if (this.user) {
-            // fetch education
-            this.fetchData()
-        }
+        if (!this.user_id)
+            this.user_id = this.$route.params.uid
+        if (!this.user_id)
+            this.user_id = firebase.auth().currentUser.uid
+        this.fetchData()
     }
     
 }

@@ -68,6 +68,8 @@ global.toTimestamp = (month, year) => {
     return new Date(date);
 }
   
+
+// TODO: use a Vuex store instead of this globalData thing
 let globalData = new Vue({
     data: { $smallScreen: false }
 });
@@ -96,7 +98,7 @@ const vm = new Vue({
         handleWindowResize(event) { 
             this.windowWidth = event.currentTarget.innerWidth; 
             this.$smallScreen = (this.windowWidth < 770);
-            // this.$smallScreen = ((this.windowWidth < 768) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+            // this.$smallScreen = ((this.windowWidth < 770) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
             console.log('resize', this.windowWidth, this.$smallScreen)
         },
     },
@@ -107,7 +109,7 @@ const vm = new Vue({
         window.addEventListener('resize', this.handleWindowResize);
         this.windowWidth = window.innerWidth;
         this.$smallScreen = (this.windowWidth < 770);
-        // this.$smallScreen = ((this.windowWidth < 768) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
+        // this.$smallScreen = ((this.windowWidth < 770) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
     }
 });
 

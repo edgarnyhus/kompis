@@ -109,7 +109,6 @@ export default {
             },
             media: [],
             links: [],
-            user: null,
             user_id: null,
             cert_id: null,
             e_id: null,
@@ -309,17 +308,20 @@ export default {
         },
         init() {
             this.reset()
-            this.user = firebase.auth().currentUser
-            if (this.cid != undefined)
+            if (this.cid != undefined) 
                 this.cert_id  = this.cid
-            if (this.id != undefined)
+            if (!this.cert_id)
+                this.cert_id = this.$route.params.cid
+            if (this.id != undefined) 
                 this.e_id  = this.id
-            if (this.uid != undefined) {
+            if (!this.e_id)
+                this.e_id = this.$route.params.id
+            if (this.uid != undefined)
                 this.user_id = this.uid
-            } else {
-                this.user_id = this.user.uid
-            }
-            console.log('experience created:', this.cert_id, this.e_id)
+            if (!this.user_id)
+                this.user_id = this.$route.params.uid
+            if (!this.user_id)
+                this.user_id = firebase.auth().currentUser.uid
             this.fetchData()
         }
     },

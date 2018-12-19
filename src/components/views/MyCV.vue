@@ -67,11 +67,12 @@ export default {
         }
     },
     created() {
-        if (this.uid) {
+        if (this.uid != undefined)
             this.user_id = this.uid
-        } else {
+        if (!this.user_id)
+            this.user_id = this.$route.params.uid
+        if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
-        }
     }
 }
 </script>

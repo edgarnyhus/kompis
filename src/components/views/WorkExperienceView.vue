@@ -6,14 +6,14 @@
             <div class="card">
                 <div class="card-body">
                     <h6 class="card-title">{{ elem.employer }}
-                        <!-- <md-button class="md-fab md-mini md-primary float-right" >
-                            <menu-icon>edit</menu-icon>
-                        </md-button>
-                        <md-button class="md-fab md-mini md-primary float-right" >
-                            <menu-icon>delete</menu-icon>
-                        </md-button> -->
-                        <b-link class="info-color btn-floating float-right btn-sm" @click="updateTraining(elem)">Endre</b-link>
-                        <b-link class="info-color button-span btn-floating float-right btn-sm" @click="removeTraining(elem)">Slett</b-link>
+                        <div v-if="!isMobile">
+                            <b-link class="gb-link btn-floating float-right btn-sm" @click="updateTraining(elem)">Endre</b-link>
+                            <b-link class="gb-link button-span btn-floating float-right btn-sm" @click="removeTraining(elem)">Slett</b-link>
+                        </div>
+                        <div v-if="isMobile">
+                            <span><i class="material-icons md-light float-right g-icon" style="color: #767676"  @click="updateTraining(elem)">edit</i></span>
+                            <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="removeTraining(elem)">delete</i></span>
+                        </div>
                     </h6>
                     <h5 class="card-subtitle text-muted">{{elem.role}}</h5>
                     <!-- <p class="card-text text-muted" style="margin-bottom: 0.5em">{{elem.from.month}} {{elem.from.year}} - {{ elem.to.month }} {{elem.to.year}}<br> -->
@@ -36,7 +36,6 @@ export default {
     data() {
         return {
             experience: [],
-            user: null,
             cert_id: null,
             wid: null
         }
@@ -79,7 +78,7 @@ export default {
             }
         },
         fetchData() {
-            if (this.user && this.wid) {
+            if (this.wid) {
                 // get object
                 db.collection('experience').doc(this.wid)
                 .get()
@@ -101,10 +100,15 @@ export default {
         
     },
     created() {
-        this.cert_id  = this.cid
         this.wid = this.id
-        this.user = firebase.auth().currentUser
-        console.info('WEW created, CID=', this.form.cert_id, "WID=", this.wid)
+        if (this.cid != undefined) 
+            this.cert_id  = this.cid
+        if (!this.cert_id)
+            this.cert_id = this.$route.params.cid
+        if (this.id != undefined) 
+            this.wid  = this.id
+        if (!this.wid)
+            this.wid = this.$route.params.id
         this.fetchData()       
     }
 }
@@ -113,4 +117,3 @@ export default {
 <style>
 
 </style>
-

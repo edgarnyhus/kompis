@@ -50,7 +50,7 @@ export default {
                 firebase.auth().signInWithEmailAndPassword(this.email, this.password)
                 .then(user => {
                     //console.log(user)
-                    this.$router.push({ name: 'MyCV' })
+                    this.$router.push({ name: 'MyCV', params: {uid: user.uid } })
                 }).catch(error=> {
                     this.feedback = error.message
                 })

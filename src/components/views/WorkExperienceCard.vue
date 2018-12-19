@@ -45,7 +45,6 @@ export default {
     data() {
         return {
             experience: [],
-            user: null,
             user_id: null,
             cert_id: null,
             id: null,
@@ -117,19 +116,17 @@ export default {
         }
     },
     created() {
-        // current user 
-        this.user = firebase.auth().currentUser
-        if (this.cid !== undefined)
-            this.cert_id = this.cid
-        if (this.uid) {
+        if (this.cid != undefined) 
+            this.cert_id  = this.cid
+        if (!this.cert_id)
+            this.cert_id = this.$route.params.cid
+        if (this.uid != undefined)
             this.user_id = this.uid
-        } else if (this.user) {
-            this.user_id = this.user.uid
-        }
-        if (this.user) {
-            // fetch work experience/training
-            this.fetchData()
-        }
+        if (!this.user_id)
+            this.user_id = this.$route.params.uid
+        if (!this.user_id)
+            this.user_id = firebase.auth().currentUser.uid
+        this.fetchData()
     }
     
 }

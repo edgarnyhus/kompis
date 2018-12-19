@@ -125,7 +125,7 @@ export default {
                         })
                     }).then(() => {
                         console.log('signup ok')
-                        this.$router.push({ name: 'MyCV' })
+                        this.$router.push({ name: 'MyCV', params: {uid: user.uid } })
                     })
                     .catch(error => {
                         this.feedback = error.message
