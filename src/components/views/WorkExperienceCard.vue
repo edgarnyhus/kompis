@@ -2,20 +2,18 @@
     <div class="component">
         <b-card> 
             <div v-if="!experience[0] && mode!=='edit'" >
+                <md-button  v-if="isMobile" class="g-secondary md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                 <h5 class="text-muted">Arbeidserfaring
                     <b-button v-if="!isMobile" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
-                    <!-- <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span> -->
-                    <md-button v-else class="g-secondary md-fab md-mini float-right" variant="info" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Har du hatt jobb før? Hvilke jobber har du hatt?</p>
             </div>
 
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
+                    <md-button  v-if="isMobile" class="g-secondary md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                     <h5 class="text-muted">Arbeidserfaring
                         <b-link v-if="!isMobile" class="g-link float-right" @click="id=0; mode='edit'"><strong>Legg til arbeidserfaring</strong></b-link>
-                        <!-- <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span> -->
-                        <md-button v-else class="g-secondary md-fab md-mini float-right" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <work-experience-list v-on:editExperience="editExperience" :experience="experience" :uid="user_id" :cid="cert_id" :id="id"></work-experience-list>

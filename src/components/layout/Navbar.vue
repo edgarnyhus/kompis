@@ -187,7 +187,7 @@ b-card-header {
 }
 .g-icon {
     cursor: pointer;
-    margin-left: 1em;
+    margin-left: 0.5em;
 }
 .g-pic {
     cursor: pointer;

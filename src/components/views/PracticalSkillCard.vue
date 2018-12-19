@@ -2,20 +2,20 @@
     <div class="component">
         <b-card> 
             <div v-if="!skills[0] && mode!=='edit'" >
+                <md-button  v-if="isMobile" class="g-secondary md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                 <h5 class="text-muted">Praktiske ferdigheter
                     <b-button v-if="!isMobile" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
-                    <!-- <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span> -->
-                    <md-button v-else class="g-secondary md-fab md-mini float-right" variant="info" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                 </h5>
                 <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
             </div>
 
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
+                    <div v-if="isMobile" style="margin-bottom: 1.5em">
+                        <md-button class="g-secondary md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
+                    </div>
                     <h5 class="text-muted">Praktiske ferdigheter
                         <b-link v-if="!isMobile" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til en praktisk ferdighet</strong></b-link>
-                        <!-- <span v-else><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="id=null; mode='edit'">add</i></span> -->
-                        <md-button v-else class="g-secondary md-fab md-mini float-right" variant="info" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                     </h5>
                     <div style="margin-bottom: 1em"></div>
                     <practical-skill-list v-on:editSkill="editSkill" :skills="skills" :uid="user_id" :cid="cert_id" :id="id"></practical-skill-list>

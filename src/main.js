@@ -39,6 +39,11 @@ Vue.filter('truncateFilename', function(value) {
     }
 })
 
+//credit to @Bill Criswell for this filter
+Vue.filter('truncate', function (text, stop, clamp) {
+    return text.slice(0, stop) + (stop < text.length ? clamp || '...' : '')
+})
+
 global.getMonth = (value) => {
     if (value) {
         // return moment(String(value)).format('MM/DD/YYYY hh:mm')
