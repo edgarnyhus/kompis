@@ -36,24 +36,28 @@ export default {
     },
     methods: {
         share() {
-            console.log('apiKey', apiKey)
+            let apiKey = "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
+            let url = "https://www.googleapis.com/urlshortener/v1/url"
+            console.log('share', apiKey)
 
             axios.post({
                 method: 'post',
-                url: 'https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=' + apiKey,
+                uri: `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=${apiKey}`,
+                // url: 'https://www.googleapis.com/urlshortener/v1/url?key=${apiKey}' + apiKey,
                 dynamicLinkInfo: {
                     "domainUriPrefix": "https://cvue.page.link",
-                    "link": "https://www.example.com/",
-                }
+                    "link": "https://cvue-bf9ec.firebaseapp.com/",
+                },
+                json: true
             })
             .then(result => {
-                // console.log('result', result)
+                console.log('result', result)
             })
             .catch(error => {
                 console.error('error', error)
             })
         }
-    },
+   },
     created() {
         firebase.auth().onAuthStateChanged((user) => {
             this.user = user;

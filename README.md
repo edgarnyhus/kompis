@@ -13,6 +13,7 @@ npm install firebase --save
 npm install bootstrp-vue --save
 npm install vue-material --save
 npm install vue-pdf --save
+npm install axios --save
 
 # initialize firebasse
 firebase login
@@ -37,8 +38,20 @@ npm install firebase-admin@latest --save-exact
 npm install --save @google-cloud/storage
 npm install --save child-process-promise
 
+# Functions
+# define the Web API Key in functions environment config
+firebase functions:config:set applinks.key="AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA"
+firebase functions:config:get
+{
+  "applinks": {
+    "key": "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA"
+  }
+}
+
+
 # build for production and view the bundle analyzer report
 npm run build --report
 ```
+
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
