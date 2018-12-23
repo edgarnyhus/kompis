@@ -18,28 +18,31 @@ exports.checkAlias = funcitons.https.onCall((data, context) => {
 })
 
 exports.getShortLink = funcitons.https.onCall((data, context) => {
-    let apiKey = "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
-    let url = "https://www.googleapis.com/urlshortener/v1/url"
+    // let apiKey = "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
+    // let url = "https://www.googleapis.com/urlshortener/v1/url"
     console.log('share', apiKey)
 
-    axios.post({
-        method: 'post',
-        // url: `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=${apiKey}`,
-        url: `https://www.googleapis.com/urlshortener/v1/url?key=${apiKey}`,
-        dynamicLinkInfo: {
-            "domainUriPrefix": "https://cvue.page.link",
-            "link": "https://cvue-bf9ec.firebaseapp.com/",
-        },
-        json: true
-    })
-    .then(response => {
-        let shortLink = response.json.getShortLink()
-        console.log('result', shortLink)
-        return ({ shortLink: shortLink})
-    })
-    .catch(error => {
-        console.error('error', error)
-        throw new functions.https.HttpsError('failed to get shortLink')
+    return new Promise((resolve, reject) => {
+        axios.post({
+            method: 'post',
+            // url: `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=${apiKey}`,
+            url: `https://www.googleapis.com/urlshortener/v1/url?key=${functions.config().applinks.key}`,
+            dynamicLinkInfo: {
+                "domainUriPrefix": "https://cvue.page.link",
+                "link": "https://cvue-bf9ec.firebaseapp.com/",
+            },
+            json: true
+        })
+        .then(response => {
+            let shortLink = response.json.getShortLink()
+            console.log('result', shortLink)
+            resolve ({ shortLink: shortLink})
+        })
+        .catch(error => {
+            console.error('error', error)
+            // throw new functions.https.HttpsError('failed to get shortLink')
+            reject(new functions.https.HttpsError('failed to get shortLink'))
+        })
     })
 })
 

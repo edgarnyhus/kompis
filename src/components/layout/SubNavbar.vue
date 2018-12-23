@@ -36,6 +36,15 @@ export default {
     },
     methods: {
         share() {
+            return getShortLink()
+            .then((reponse) => {
+                console.log('getShortLink', reponse)
+            })
+            .catch((error) => {
+                console.error('getShortLink', error)
+            })
+
+            /*
             let apiKey = "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
             let url = "https://www.googleapis.com/urlshortener/v1/url"
             console.log('share', apiKey)
@@ -56,6 +65,7 @@ export default {
             .catch(error => {
                 console.error('error', error)
             })
+            */
         }
    },
     created() {
