@@ -98,7 +98,7 @@ const vm = new Vue({
             this.windowWidth = event.currentTarget.innerWidth; 
             this.$smallScreen = (this.windowWidth < 770);
             // this.$smallScreen = ((this.windowWidth < 770) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-            console.log('resize', this.windowWidth, this.$smallScreen)
+            // console.log('resize', this.windowWidth, this.$smallScreen)
         },
     },
     beforeDestroy: function () {
