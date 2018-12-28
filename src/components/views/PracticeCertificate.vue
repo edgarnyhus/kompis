@@ -172,6 +172,8 @@ export default {
             this.user_id = this.uid
         if (!this.user_id && this.$route.params.uid)
             this.user_id = this.$route.params.uid
+        if (!this.user_id && this.$user)
+            this.user_id = this.$user.user_id
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
         if (this.cert_id) {

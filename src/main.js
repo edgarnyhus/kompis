@@ -70,7 +70,10 @@ global.toTimestamp = (month, year) => {
 
 // TODO: use a Vuex store instead of this globalData thing
 let globalData = new Vue({
-    data: { $smallScreen: false }
+    data: { 
+        $smallScreen: false,
+        user: null
+     }
 });
 
 Vue.mixin({
@@ -78,6 +81,10 @@ Vue.mixin({
       $smallScreen: {
         get: function () { return globalData.$data.$smallScreen; },
         set: function (value) { globalData.$data.$smallScreen = value; }
+      },
+      $user: {
+        get: function () { return globalData.$data.$user; },
+        set: function (value) { globalData.$data.$user = value; }
       }
     }
 });

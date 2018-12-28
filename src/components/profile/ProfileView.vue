@@ -140,7 +140,10 @@ export default {
         }
     },
     created() {
-        this.user = firebase.auth().currentUser
+        if (this.$user)
+            this.user = this.$user
+        if (!this.user)
+            this.user = firebase.auth().currentUser
         if (this.user) {
             this.user_id = this.user.uid
             this.getProfile(this.user_id)

@@ -129,7 +129,10 @@ export default {
         }
     },
     mounted() {
-        this.user = firebase.auth().currentUser
+        if (this.$user)
+            this.user = this.$user
+        if (!this.user)
+            this.user = firebase.auth().currentUser
         if (this.user) {
             this.getProfile()
         }

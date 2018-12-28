@@ -67,12 +67,15 @@ export default {
         }
     },
     created() {
-        if (this.uid != undefined)
+        if (this.uid !== undefined)
             this.user_id = this.uid
-        if (!this.user_id)
+        if (!this.user_id && this.$route.params.uid)
             this.user_id = this.$route.params.uid
+        if (!this.user_id && this.$user)
+            this.user_id = this.$user.user_id
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
+        console.log('MyCV created', this.user_id)
     }
 }
 </script>
