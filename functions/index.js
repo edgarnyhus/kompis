@@ -46,7 +46,7 @@ exports.inviteUser = functions.https.onCall((data, context) => {
     
     //Sends a email to the given user.
     mailOptions.subject = `Du er invitert til ${APP_NAME}!`,
-    mailOptions.html = `Hei ${invitee || ''}! ́<br>${slug} ønsker å dele sine data med deg på ${'https://cvue-bf9ec.firebaseapp.com/'}.<br><br>Med vennlig hilsen<br>${APP_NAME}`;
+    mailOptions.html = `<p>Hei ${invitee || ''}!</p><p><strong>${slug}</strong> ønsker å dele sine data med deg på ${'https://cvue-bf9ec.firebaseapp.com/'}.</p><p>Med vennlig hilsen<br>${APP_NAME}</p>`;
     return mailTransport.sendMail(mailOptions)
     .then(() => {
         return ({ id: doc.id })

@@ -93,9 +93,16 @@ export default {
 <style>
 .navbar{
     background:transparent;
-}
-h1,h2,h3,h4,h5,h6,p {
-    font-family:  Verdana, Geneva, Tahoma, sans-serif;
+}   
+html *
+{
+    /* font-size: 1em !important;
+    color: #000 !important; */
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
+    font-family: 'Open Sans', sans-serif;
+    font-family: 'Lato', sans-serif; */
 }
 .g-top {
     margin-top: 2.5em;

@@ -1,7 +1,7 @@
   <template>
     <div class="container">
         <div>
-            <md-button  v-if="isMobile" class="g-info md-fab md-mini md-fab-top-right" style="margin-top: 3em; margin-right: 0" @click="add()"><md-icon>add</md-icon></md-button>
+            <md-button  v-if="isMobile" class="md-fab md-mini md-fab-top-right" style="margin-top: 3em; margin-right: 0; backgrond: rgb(0,160,161)" @click="add()"><md-icon>add</md-icon></md-button>
             <h2 style="margin-top: 0.7em; margin-bottom: 0.7em">Praksisattester
                 <b-button v-if="!isMobile" class="btn-floating btn-info float-right" @click="add()">Lag ny praksisattest</b-button>
             </h2>

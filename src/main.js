@@ -9,9 +9,12 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import moment from 'moment'
 import firebase from 'firebase'
 import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.css'
- 
+// import { MdButton, MdContent, MdTabs } from 'vue-material/dist/components'
+// import 'vue-material/dist/vue-material.css'
+import 'vue-material/dist/vue-material.min.css'
+
 Vue.use(VueMaterial);
+// Vue.use(MdButton)
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false;
 

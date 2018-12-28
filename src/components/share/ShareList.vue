@@ -1,7 +1,8 @@
 <template>
     <div class="container">
         <b-card style="border: none; masrgin: 0; padding: 0">
-            <md-button v-if="mode=='list'" class="g-info md-fab md-mini md-fab-top-right" style="margin-top: 1.5em; margin-right: 0" @click="form.email=null; mode='new'"><md-icon>share</md-icon></md-button>
+            <md-button v-if="mode=='list'" class="md-fab md-mini md-fab-top-right" style="margin-top: 1.5em; margin-right: 0)" @click="form.email=null; mode='new'"><md-icon>share</md-icon></md-button>
+            <md-button class="md-fab md-mini md-plain md-fab-top-right" style="margin-top: 1.5em; margin-right: 0)" @click="form.email=null; mode='new'"><md-icon>share</md-icon></md-button>
         </b-card>
         <h2 style="margin-top: 0.2em; margin-bottom: 0.7em">Deling</h2>
         <div v-if="mode=='list'">
@@ -50,6 +51,13 @@
             <b-link @click="mode='list'" href="#" class="gb-link"><strong>Avbyt</strong></b-link>
         </div>
 
+        <!--ENJDING-->
+        <div v-if="isSending">
+            <div style="margin-top: 1.5em">
+                <b-progress :value="100" variant="info" striped :animated="animated" class="mb-2"></b-progress>
+            </div>
+        </div>
+
         <div class="g-bottom"></div>
     </div>
 </template>
@@ -81,6 +89,9 @@ export default {
                 email: null
             },
             user: null,
+            progress: 20,
+            animated: true,
+            isSending: false
         }
     },
     computed: {
@@ -90,7 +101,6 @@ export default {
     },
     methods: {
         send() {
-            this.form.slug = this.user.uid
             this.form.timestamp = Date.now()
 
             const ref = db.collection('shares').where('slug', '==', this.form.slug)
@@ -102,13 +112,16 @@ export default {
                     return db.collection('shares').add({ slug: this.form.slug, invitee: this.form.email, timestamp: this.form.timestamp })
                     .then((doc) => {
                         // Sends a email to the given user.
+                        this.isSending = true
                         let inviteUser = firebase.functions().httpsCallable('inviteUser')
                         inviteUser(this.form)
                         .then((result) => {
+                            this.isSending = false
                             this.mode = 'list'
                         })
                         .catch((error) => {
                             console.error('inviteUser', error)
+                            this.isSending = false
                             this.mode = 'list'
                         })
                     })
@@ -146,7 +159,7 @@ export default {
             })
         },
         fetchShares() {
-            db.collection('shares').where('slug', '==', this.user.uid).orderBy('timestamp')
+            db.collection('shares').where('slug', '==', this.form.slug).orderBy('timestamp')
             .onSnapshot((snapshot) => {
                 snapshot.docChanges().forEach(change => {
                     if (change.type == 'added') {
@@ -186,7 +199,7 @@ export default {
                 .get()
                 .then(snapshot => {
                     snapshot.forEach(doc => {
-                        this.user.uid = doc.id
+                        this.form.slug = doc.id
                     })
                     this.fetchShares()
                     this.fetchInvitations()
@@ -202,6 +215,7 @@ export default {
             this.mode = this.$route.params.mode
     },
     created() {
+        this.$user = null
         this.fetchData()
     }
 }
