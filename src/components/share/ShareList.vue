@@ -1,10 +1,9 @@
 <template>
     <div class="container">
         <b-card style="border: none; masrgin: 0; padding: 0">
-            <md-button v-if="mode=='list'" class="md-fab md-mini md-fab-top-right" style="margin-top: 1.5em; margin-right: 0)" @click="form.email=null; mode='new'"><md-icon>share</md-icon></md-button>
-            <md-button class="md-fab md-mini md-plain md-fab-top-right" style="margin-top: 1.5em; margin-right: 0)" @click="form.email=null; mode='new'"><md-icon>share</md-icon></md-button>
+            <md-button v-if="mode=='list'" class="md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0)" @click="form.email=null; mode='new'"><md-icon>share</md-icon></md-button>
         </b-card>
-        <h2 style="margin-top: 0.2em; margin-bottom: 0.7em">Deling</h2>
+        <h2 style="margin-top: 0 margin-bottom: 0.7em">Deling</h2>
         <div v-if="mode=='list'">
 
             <h4 v-if="invitations[0]" style="margin-top: 0.7em; margin-bottom: 0.7em">Mine invitasjoner</h4>
