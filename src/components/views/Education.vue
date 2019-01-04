@@ -140,7 +140,7 @@ export default {
                     .then(() => {
                         this.updateMedia()
                         this.updateLinks()
-                        console.log("education updated", this.e_id);
+                        // console.log("education updated", this.e_id);
                         this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
@@ -156,7 +156,7 @@ export default {
                         this.e_id = doc.id
                         this.updateMedia()
                         this.updateLinks()
-                        console.log("education added ", this.e_id);
+                        // console.log("education added ", this.e_id);
                         this.$emit(this.reason, this.e_id)
                     })
                     .catch((error) => {
@@ -178,7 +178,7 @@ export default {
                 if (element.id) {
                     db.collection("media").doc(element.id).set(item, {merge: true})
                     .then(() => {
-                        console.log("media updated with ID: ", element.id);
+                        // console.log("media updated with ID: ", element.id);
                     })
                     .catch((error) => {
                         console.error("error adding media: ", error);
@@ -187,7 +187,7 @@ export default {
                 } else {
                     db.collection("media").add(item)
                     .then((doc) => {
-                        console.log("media written with ID: ", doc.id);
+                        // console.log("media written with ID: ", doc.id);
                     })
                     .catch((error) => {
                         console.error("Error adding document: ", error);
@@ -203,7 +203,7 @@ export default {
                 if (element.id) {
                     db.collection("links").doc(element.id).set(item, {merge: true})
                     .then(() => {
-                        console.log("links updated", element.id);
+                        // console.log("links updated", element.id);
                     })
                     .catch((error) => {
                         console.error("error adding link", error);
@@ -212,7 +212,7 @@ export default {
                 } else {
                     db.collection("links").add(item)
                     .then((doc) => {
-                        console.log("links added", doc.id);
+                        // console.log("links added", doc.id);
                     })
                     .catch((error) => {
                         console.error("Error adding links", error);
@@ -230,7 +230,7 @@ export default {
                         let elem = doc.data()
                         elem.id = doc.id
                         this.media.push(elem)
-                        console.log('maedia fetched', doc.id)
+                        // console.log('maedia fetched', doc.id)
                     })
                 })
                 .catch(error=> {
@@ -276,7 +276,7 @@ export default {
                         this.form.id = doc.id
                         this.fetchMedia()
                         this.fetchLinks()
-                        console.log('education fetched ok')
+                        // console.log('education fetched ok')
                     }
                 })
                 .catch((error) => {
@@ -301,7 +301,7 @@ export default {
                 this.user_id = this.$route.params.uid
             if (!this.user_id)
                 this.user_id = firebase.auth().currentUser.uid
-            console.log('education init', this.user_id, this.cert_id, this.e_id)
+            // console.log('education init', this.user_id, this.cert_id, this.e_id)
             this.fetchData()
         }
     },

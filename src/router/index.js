@@ -17,6 +17,7 @@ import Login from '@/components/auth/Login'
 import ShowMedia from '@/components/common/ShowMedia'
 import Profile from '@/components/Profile/Profile'
 import ProfileView from '@/components/Profile/ProfileView'
+import ShareList from '@/components/share/ShareList'
 import firebase from 'firebase'
 
 Vue.use(Router)
@@ -137,6 +138,14 @@ const router = new Router({
       path: '/goal',
       name: 'PersonalGoal',
       component: PersonalGoal,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/share',
+      name: 'ShareList',
+      component: ShareList,
       meta: {
         requiresAuth: true
       }

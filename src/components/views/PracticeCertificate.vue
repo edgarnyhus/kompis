@@ -12,7 +12,7 @@
                     </form>
                 </b-modal>
 
-                <md-button class="g-info md-fab md-mini float-right" @click="back()"><md-icon>keyboard_backspace</md-icon></md-button>
+                <md-button class="md-fab md-mini float-right" @click="back()"><md-icon>keyboard_backspace</md-icon></md-button>
                 <h1 style="margin-top: 1em; margin-bottom: 0.2em">{{ employer }}
                     <!-- <b-button class="btn-floating btn-info float-right" @click="back">Tilbake</b-button> -->
                 </h1>
@@ -172,6 +172,8 @@ export default {
             this.user_id = this.uid
         if (!this.user_id && this.$route.params.uid)
             this.user_id = this.$route.params.uid
+        if (!this.user_id && this.$user)
+            this.user_id = this.$user.user_id
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
         if (this.cert_id) {

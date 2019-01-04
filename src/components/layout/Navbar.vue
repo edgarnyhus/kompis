@@ -8,11 +8,12 @@
                 <b-navbar-nav>
                     <b-nav-item v-if="user" router-link :to="{ name: 'MyCV' }">Min CV</b-nav-item>
                     <b-nav-item v-if="user" router-link :to="{ name: 'PracticeCertificateView' }">Praksisattester</b-nav-item>
+                    <b-nav-item v-if="user" router-link :to="{ name: 'ShareList' }">Deling</b-nav-item>
                     <b-nav-item v-if="user" href="#" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Utviklingsplan</b-nav-item>
 
                     <!-- <div v-if="windowWidth <= 480"> -->
                     <div v-if="this.$smallScreen">
-                        <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Del</b-button>
+                        <b-button v-if="user" variant="outline-secondary sm" block @click="share()">Del</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>PDF</b-button>
                         <b-button v-if="user" variant="outline-secondary sm" block v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" disabled>Generer CV</b-button>
                     </div>
@@ -53,6 +54,9 @@ export default {
         }
     },
     methods: {
+        share() {
+            this.$router.push({name: 'ShareList', params: {mode: 'new' }})
+        },
         showPracticeCertificateView() {
             this.$router.push({ name: 'PracticeCertificateView' })
         },
@@ -89,9 +93,16 @@ export default {
 <style>
 .navbar{
     background:transparent;
-}
-h1,h2,h3,h4,h5,h6,p {
-    font-family:  Verdana, Geneva, Tahoma, sans-serif;
+}   
+html *
+{
+    /* font-size: 1em !important;
+    color: #000 !important; */
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    /* font-family: 'Montserrat', sans-serif;
+    font-family: 'Raleway', sans-serif;
+    font-family: 'Open Sans', sans-serif;
+    font-family: 'Lato', sans-serif; */
 }
 .g-top {
     margin-top: 2.5em;

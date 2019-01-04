@@ -2,10 +2,10 @@
     <div class="g-top container">
         <!-- <md-button class="g-pic md-fab md-fab-bottom-right md-fixed" @click="edit()"><md-icon>edit</md-icon></md-button> -->
         <h1 v-if="profile && profile.firstname">{{ profile.firstname }} {{ profile.surname }}
-            <md-button class="g-pic md-fab md-mini float-right" @click="edit()"><md-icon>edit</md-icon></md-button>
+            <md-button class="md-fab md-mini float-right" @click="edit()"><md-icon>edit</md-icon></md-button>
         </h1>
         <h1 v-else>[Navnet ditt]
-            <md-button class="g-pic md-fab md-mini float-right" @click="edit()"><md-icon>edit</md-icon></md-button>
+            <md-button class="md-fab md-mini float-right" @click="edit()"><md-icon>edit</md-icon></md-button>
         </h1>
         <ul class="g-sec list-unstyled">
             <b-media v-if="profile && profile.picture" tag="li">
@@ -140,7 +140,10 @@ export default {
         }
     },
     created() {
-        this.user = firebase.auth().currentUser
+        if (this.$user)
+            this.user = this.$user
+        if (!this.user)
+            this.user = firebase.auth().currentUser
         if (this.user) {
             this.user_id = this.user.uid
             this.getProfile(this.user_id)

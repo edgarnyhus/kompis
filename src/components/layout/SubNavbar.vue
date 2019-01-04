@@ -7,7 +7,7 @@
             <b-collapse is-nav id="nav_collapse">
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
-                    <button type="button" class="nav-button btn btn-outline-secondary" @click="share()" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Del</button>
+                    <button type="button" class="nav-button btn btn-outline-secondary" @click="share()">Del</button>
                     <button type="button" class="nav-button btn btn-outline-secondary" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">PDF</button>
                     <button type="button" class="nav-button btn btn-outline-secondary" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Generer CV</button>
                 </b-navbar-nav>
@@ -19,6 +19,7 @@
 <script>
 import firebase from 'firebase'
 import apiKey from '@/firebase/init'
+import functions from 'firebase/functions'
 import axios from 'axios'
 
 export default {
@@ -36,36 +37,7 @@ export default {
     },
     methods: {
         share() {
-            return getShortLink()
-            .then((reponse) => {
-                console.log('getShortLink', reponse)
-            })
-            .catch((error) => {
-                console.error('getShortLink', error)
-            })
-
-            /*
-            let apiKey = "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
-            let url = "https://www.googleapis.com/urlshortener/v1/url"
-            console.log('share', apiKey)
-
-            axios.post({
-                method: 'post',
-                uri: `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=${apiKey}`,
-                // url: 'https://www.googleapis.com/urlshortener/v1/url?key=${apiKey}' + apiKey,
-                dynamicLinkInfo: {
-                    "domainUriPrefix": "https://cvue.page.link",
-                    "link": "https://cvue-bf9ec.firebaseapp.com/",
-                },
-                json: true
-            })
-            .then(result => {
-                console.log('result', result)
-            })
-            .catch(error => {
-                console.error('error', error)
-            })
-            */
+            this.$router.push({name: 'ShareList', params: {mode: 'new' }})
         }
    },
     created() {

@@ -9,9 +9,12 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import moment from 'moment'
 import firebase from 'firebase'
 import VueMaterial from 'vue-material'
-import 'vue-material/dist/vue-material.css'
- 
+// import { MdButton, MdContent, MdTabs } from 'vue-material/dist/components'
+// import 'vue-material/dist/vue-material.css'
+import 'vue-material/dist/vue-material.min.css'
+
 Vue.use(VueMaterial);
+// Vue.use(MdButton)
 Vue.use(BootstrapVue);
 Vue.config.productionTip = false;
 
@@ -70,7 +73,10 @@ global.toTimestamp = (month, year) => {
 
 // TODO: use a Vuex store instead of this globalData thing
 let globalData = new Vue({
-    data: { $smallScreen: false }
+    data: { 
+        $smallScreen: false,
+        user: null
+     }
 });
 
 Vue.mixin({
@@ -78,6 +84,10 @@ Vue.mixin({
       $smallScreen: {
         get: function () { return globalData.$data.$smallScreen; },
         set: function (value) { globalData.$data.$smallScreen = value; }
+      },
+      $user: {
+        get: function () { return globalData.$data.$user; },
+        set: function (value) { globalData.$data.$user = value; }
       }
     }
 });
@@ -98,7 +108,7 @@ const vm = new Vue({
             this.windowWidth = event.currentTarget.innerWidth; 
             this.$smallScreen = (this.windowWidth < 770);
             // this.$smallScreen = ((this.windowWidth < 770) || /Android|webOS|iPhone||iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent));
-            console.log('resize', this.windowWidth, this.$smallScreen)
+            // console.log('resize', this.windowWidth, this.$smallScreen)
         },
     },
     beforeDestroy: function () {

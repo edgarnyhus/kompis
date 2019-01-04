@@ -2,7 +2,7 @@
     <div class="component">
         <b-card> 
             <div v-if="!references[0] && mode!=='edit'" >
-                <md-button  v-if="isMobile" class="g-secondary md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
+                <md-button  v-if="isMobile" class="md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                 <h5 class="text-muted">Referanser
                     <b-button v-if="!isMobile" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
@@ -12,7 +12,7 @@
             <div v-else>
                 <b-collapse class="mt-2" id="listExp" :visible="mode==='list'">
                     <div v-if="isMobile" style="margin-bottom: 1.5em">
-                        <md-button class="g-secondary md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
+                        <md-button class="md-fab md-mini md-fab-top-right" style="margin-top: 0; margin-right: 0" @click="id=null; mode='edit'"><md-icon>add</md-icon></md-button>
                     </div>
                     <h5 class="text-muted">Referanser
                         <b-link v-if="!isMobile" class="g-link float-right" @click="id=null; mode='edit'"><strong>Legg til referanse</strong></b-link>

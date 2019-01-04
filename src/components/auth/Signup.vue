@@ -136,6 +136,7 @@ export default {
                 this.feedback = error.message
             })
 
+            // let checkAlias = firebase.functions().httpsCallable('checkAlias');
             // checkAlias(slug)
             // .then(result =>{
             //     if (!result.unique) {
