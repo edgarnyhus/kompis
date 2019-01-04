@@ -6,7 +6,7 @@ const request = require('request-promise');
 admin.initializeApp(functions.config().firebase);
 
 
-exports.checkAlias = funcitons.https.onCall((data, context) => {
+exports.checkAlias = functions.https.onCall((data, context) => {
     const ref = admin.firestore().collection('users').doc(data.slug)
     return ref.get()
     .then((doc) => {
@@ -17,7 +17,7 @@ exports.checkAlias = funcitons.https.onCall((data, context) => {
     })
 })
 
-exports.getShortLink = funcitons.https.onCall((data, context) => {
+exports.getShortLink = functions.https.onCall((data, context) => {
     // let apiKey = "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
     // let url = "https://www.googleapis.com/urlshortener/v1/url"
     console.log('share', apiKey)
