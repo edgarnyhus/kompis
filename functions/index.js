@@ -51,10 +51,10 @@ exports.inviteUser = functions.https.onCall((data, context) => {
     mailOptions.html = `<p>Hei ${invitee || ''}!</p><p><strong>${slug}</strong> ønsker å dele sine data med deg på ${'https://cvue-bf9ec.firebaseapp.com/'}.</p><p>Med vennlig hilsen<br>${APP_NAME}</p>`;
     return mailTransport.sendMail(mailOptions)
     .then(() => {
-        return { status: 'ok' };
+        return { status: 'success' };
     })
     .catch((error) => {
-        return { message: 'There was an error while sending the email:', error: error };
+        return { status: 'error', message: 'There was an error while sending the email:', error: error };
     });
 })
 

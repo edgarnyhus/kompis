@@ -1,18 +1,47 @@
 {
   "indexes": [
     {
-      "collectionId": "certs",
-      "state": "READY",
+      "collectionGroup": "certs",
+      "queryScope": "COLLECTION",
       "fields": [
         {
           "fieldPath": "user_id",
-          "mode": "ASCENDING"
+          "order": "ASCENDING"
         },
         {
           "fieldPath": "timestamp",
-          "mode": "ASCENDING"
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "shares",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "invitee",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "shares",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "slug",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "ASCENDING"
         }
       ]
     }
-  ]
+  ],
+  "fieldOverrides": []
 }

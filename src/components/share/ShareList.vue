@@ -115,17 +115,24 @@ export default {
                         let inviteUser = firebase.functions().httpsCallable('inviteUser')
                         inviteUser(this.form)
                         .then((result) => {
+                            console.log('inviteUser', result)
+                            if (result.status === 'success' || result.status === 'ok') {
+                                //
+                            } else {
+                                alert('Sending av email feilet. Vær vennlig å gi den du inviterer bsekjed på annen måte.')
+                            }
                             this.isSending = false
                             this.mode = 'list'
                         })
                         .catch((error) => {
-                            console.error('inviteUser', error)
+                            console.error('inviteUser failed', error)
+                            alert('Sending av email feilet. Vær vennlig å gi den du inviterer bsekjed på annen måte.')
                             this.isSending = false
                             this.mode = 'list'
                         })
                     })
                     .catch((error) => {
-                        alert(error)
+                        alert('Deling feilet. Problemer med å aksessere databasen. ' + error)
                         this.mode = 'list'
                     })
                 }
