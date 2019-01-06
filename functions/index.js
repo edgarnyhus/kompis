@@ -7,8 +7,8 @@ const nodemailer = require('nodemailer');
 // Your company name to include in the emails
 // TODO: Change this to your app or company name to customize the email sent.
 const APP_NAME = 'KOMPIS';
-const gmailEmail = "cv.kompis@gmail.com";
-const gmailPassword = "uUamHD8SC9"
+const gmailEmail = functions.config().gmail.email; //"cv.kompis@gmail.com";
+const gmailPassword = functions.config().gmail.password; //"uUamHD8SC9"
 const mailTransport = nodemailer.createTransport({
   service: 'gmail',
   auth: {
@@ -16,7 +16,6 @@ const mailTransport = nodemailer.createTransport({
     pass: gmailPassword,
   },
 });
-
 
 // try {
 //     admin.initializeApp(functions.config().firebase)

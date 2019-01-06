@@ -41,13 +41,20 @@ npm install --save child-process-promise
 # Functions
 # define the Web API Key in functions environment config
 firebase functions:config:set applinks.key="AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA"
+firebase functions:config:set applinks.domain="https://cvue.page.link"
+firebase functions:config:set gmail.email="cv.kompis@gmail.com" gmail.password="uUamHD8SC9"
 firebase functions:config:get
 {
   "applinks": {
-    "key": "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA"
+    "key": "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA",
+    "domain": "https://cvue.page.link"
+  },
+  "gmail": {
+    "password": "uUamHD8SC9",
+    "email": "cv.kompis@gmail.com"
   }
 }
-
+firebase functions:config:unset key1 key2 removes the specified keys from the config
 
 # build for production and view the bundle analyzer report
 npm run build --report
