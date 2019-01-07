@@ -8,7 +8,7 @@
                 <!-- Right aligned nav items -->
                 <b-navbar-nav class="ml-auto">
                     <button type="button" class="nav-button btn btn-outline-secondary" @click="share()">Del</button>
-                    <button type="button" class="nav-button btn btn-outline-secondary" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">PDF</button>
+                    <button type="button" class="nav-button btn btn-outline-secondary" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'" @click="dlink()">PDF</button>
                     <button type="button" class="nav-button btn btn-outline-secondary" v-b-popover.hover="'Funskjon ikke støttet i denne versjonen'">Generer CV</button>
                 </b-navbar-nav>
             </b-collapse>
@@ -27,7 +27,8 @@ export default {
     data(){
         return{
             user: null,
-            show: false
+            show: false,
+            form: null
         }
     },
     computed: {
@@ -36,6 +37,22 @@ export default {
         }
     },
     methods: {
+        dlink() {
+            let getShortLink = firebase.functions().httpsCallable('getShortLink')
+            getShortLink(this.form)
+            .then((result) => {
+                console.log('et Short Link', result)
+                if (result.data.status === 'success' || result.data.status === 'ok') {
+                    //
+                } else {
+                    alert('Get Short Link failed, ' + error)
+                }
+            })
+            .catch((error) => {
+                console.error('et Short ink failed', error)
+                alert('Get Short Link failed, ' + error)
+            })
+        },
         share() {
             this.$router.push({name: 'ShareList', params: {mode: 'new' }})
         }
