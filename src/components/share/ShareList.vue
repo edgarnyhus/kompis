@@ -116,7 +116,7 @@ export default {
                         inviteUser(this.form)
                         .then((result) => {
                             console.log('inviteUser', result)
-                            if (result.status === 'success' || result.status === 'ok') {
+                            if (result.data.status === 'success' || result.data.status === 'ok') {
                                 //
                             } else {
                                 alert('Sending av email feilet. Vær vennlig å gi den du inviterer bsekjed på annen måte.')

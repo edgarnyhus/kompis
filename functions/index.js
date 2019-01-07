@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const axios = require('axios');
+// const request = require('request-promise-native')
 const nodemailer = require('nodemailer');
 
 
@@ -58,28 +59,31 @@ exports.inviteUser = functions.https.onCall((data, context) => {
 })
 
 exports.getShortLink = functions.https.onCall((data, context) => {
-    let apiKey = "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
+    let apiKey = functions.config().applinks.key // "AIzaSyCbN1LSb075G2sLa48Fn8d3dexjiYSdHEA";
     // let url = "https://www.googleapis.com/urlshortener/v1/url"
     console.log('share', apiKey)
 
     axios.post({
         method : 'post',
         url : `https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=${apiKey}`,
-        // url: `https://www.googleapis.com/urlshortener/v1/url?key=${functions.config().applinks.key}`,
-        dynamicLinkInfo: {
-            "domainUriPrefix" : "https://cvue.page.link",
-            "link" : "https://cvue-bf9ec.firebaseapp.com/",
+        dynamicLinkInfo : {
+            domainUriPrefix : 'https://cvue.page.link',
+            link : 'https://cvue-bf9ec.firebaseapp.com/',
+        },
+        suffix : {
+            option : "SHORT"
         },
         json : true
     })
     .then(response => {
         let shortLink = response.json.getShortLink()
         console.log('shortLink', shortLink)
-        return ({ shortLink: shortLink})
+        return { status: 'success', result: response, shortLink: shortLink}
     })
     .catch(error => {
         console.error('error', error)
         // throw new functions.https.HttpsError('failed to get shortLink')
-        return(new functions.https.HttpsError('failed to get shortLink'))
+        return { status: 'failed', key: appKey, error: error }
+
     })
 })
