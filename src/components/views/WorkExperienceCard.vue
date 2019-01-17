@@ -66,51 +66,9 @@ export default {
             // child component (slot) signaled finished
             // console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchData()
+                this.experience = this.$store.state.database.fetchData('experience', this.cert_id, this.user_id)
             }
             this.mode = 'list'
-        },
-        fetchData() {
-            if (this.user_id) {
-                this.experience = []
-                let ref = null
-                if (this.cert_id) {
-                    ref = db.collection('experience').where('cert_id', '==',this.cert_id)
-                 } else {
-                    ref = db.collection('experience').where('user_id', '==',this.user_id)
-                 }   
-                ref.get()
-                .then(snapshot => {
-                    snapshot.forEach(doc => {
-                        let elem = doc.data()
-                        elem.id = doc.id
-                        elem.media = this.fetchMedia('media', doc.id)
-                        elem.links = this.fetchMedia('links', doc.id)
-                        // elem.links = [] 
-                        this.experience.push(elem)
-                    })
-                })
-                .catch(error => {
-                    console.error('mc fetching experience failed', error)
-                })
-            }
-            // this.fetchMedia()
-        },
-        fetchMedia(coll, id) {
-            let media = []
-            db.collection(coll).where('parent_id', '==', id)
-            .get()
-            .then(snapshot => {
-                snapshot.forEach(doc => {
-                    let elem = doc.data()
-                    elem.id = doc.id
-                    media.push(elem)
-                })
-            })
-            .catch(error => {
-                console.error('fetching media failed', error)
-            })
-            return media
         }
     },
     created() {
@@ -124,7 +82,7 @@ export default {
             this.user_id = this.$route.params.uid
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
-        this.fetchData()
+        this.experience = this.$store.state.database.fetchData('experience', this.cert_id, this.user_id)
     }
     
 }

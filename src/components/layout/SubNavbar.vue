@@ -41,15 +41,15 @@ export default {
             let getShortLink = firebase.functions().httpsCallable('getShortLink')
             getShortLink(this.form)
             .then((result) => {
-                console.log('et Short Link', result)
-                if (result.data.status === 'success' || result.data.status === 'ok') {
-                    //
-                } else {
-                    alert('Get Short Link failed, ' + error)
-                }
+                console.log('Get Short Link', result)
+                // if (result.data && (result.data.status === 'success' || result.data.status === 'ok')) {
+                //     //
+                // } else {
+                //     alert('Get Short Link failed, ' + error)
+                // }
             })
             .catch((error) => {
-                console.error('et Short ink failed', error)
+                console.error('Get Short ink failed', error)
                 alert('Get Short Link failed, ' + error)
             })
         },

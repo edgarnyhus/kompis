@@ -65,47 +65,9 @@ export default {
             // child component (slot) signaled finished
             // console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchData()
+                this.volunteering = this.$store.state.database.fetchData('volunteering', this.cert_id, this.user_id)
             }
             this.mode = 'list'
-        },
-        fetchData() {
-            this.volunteering = []
-            let ref = null
-            if (this.cert_id) {
-                ref = db.collection('volunteering').where('cert_id', '==', this.cert_id)
-            } else {
-                ref = db.collection('volunteering').where('user_id', '==', this.user_id)
-            }
-            ref.get()
-            .then(snapshot => {
-                snapshot.forEach(doc => {
-                    let elem = doc.data()
-                    elem.id = doc.id
-                    elem.media = this.fetchMedia('media', doc.id)
-                    elem.links = []
-                    this.volunteering.push(elem)
-                })
-            })
-            .catch(error => {
-                console.error('ec fetching educaion failed', error)
-            })
-        },
-        fetchMedia(coll, id) {
-            let media = []
-            db.collection(coll).where('parent_id', '==', id)
-            .get()
-            .then(snapshot => {
-                snapshot.forEach(doc => {
-                    let elem = doc.data()
-                    elem.id = doc.id
-                    media.push(elem)
-                })
-            })
-            .catch(error => {
-                console.error('fetching media failed', error)
-            })
-            return media
         }
     },
     created() {
@@ -119,7 +81,7 @@ export default {
             this.user_id = this.$route.params.uid
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
-        this.fetchData()
+        this.volunteering = this.$store.state.database.fetchData('volunteering', this.cert_id, this.user_id)
     }
     
 }

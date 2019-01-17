@@ -14,9 +14,27 @@
             <div v-else>
                 <b-button class="g-span" @click="setInitial" variant="secondary">Last opp</b-button>
                 <!-- <input type="file" style="display: none" @change="onFilePicked($event)" ref="fileInput" accept="*"> -->
-                <b-button @click="addLink()" variant="secondary">Lenke</b-button>
-                <p v-if="uploadError" style="color: red; margin-top: 0.4em"> {{ uploadError }}</p>
+                <b-button @click="setLinking" variant="secondary">Lenke</b-button>
+                <!-- <p v-if="uploadError" style="color: red; margin-top: 0.4em"> {{ uploadError }}</p> -->
             </div>
+
+            <!--LINK-->
+            <div v-if="isLinking" style="margin-top: 1em">
+                <label for="name"><strong>Angi et navn på lenken</strong></label>
+                <b-input-group>
+                    <b-form-input class="mb-2 mr-sm-2 mb-sm-0" id="name" type="text" v-model="link.name" required placeholder="Eks. Attest fra NN"></b-form-input>
+                    <b-form-input class="mb-2 mr-sm-2 mb-sm-0" id="url" type="text" v-model="link.url" required placeholder="Eks. http://example.com/documents/mydocument.opt"></b-form-input>
+                    <b-input-group-append>
+                        <div v-if="this.$smallScreen">
+                            <md-button class="md-fab md-mini float-right" @click="addLink" style="margin-top: 0; margin-right: 0"><md-icon>add</md-icon></md-button>
+                        </div>
+                        <div v-else>
+                            <b-btn @click="addLink" variant="secondary">Legg til</b-btn>
+                        </div>
+                    </b-input-group-append>
+                </b-input-group>
+            </div>
+
             <!--UPLOAD-->
             <form enctype="multipart/form-data" novalidate v-if="isInitial">
                 <div class="dropbox">
@@ -33,11 +51,11 @@
 
             <!--SAVING-->
             <div v-if="isSaving">
-              <div style="margin-top: 1em">
-                  <b-progress :value="100" variant="info" striped :animated="animated" class="mb-2"></b-progress>
-                  <!-- <md-progress-spinner :md-diameter="30" :md-stroke="5" md-mode="indeterminate" style="top-margin: 1em"></md-progress-spinner> -->
-                  <!-- <progress-spinner></progress-spinner> -->
-              </div>
+                <div style="margin-top: 1em">
+                    <b-progress :value="100" variant="info" striped :animated="animated" class="mb-2"></b-progress>
+                    <!-- <md-progress-spinner :md-diameter="30" :md-stroke="5" md-mode="indeterminate" style="top-margin: 1em"></md-progress-spinner> -->
+                    <!-- <progress-spinner></progress-spinner> -->
+                </div>
             </div>
 
             <!--SUCCESS-->
@@ -47,11 +65,10 @@
 
             <!--FAILED-->
             <div v-if="isFailed">
-                <p style="color: red; margin-top: 0.6em; margin-bottom: 0">Opplastingen feilet. {{ uploadError }}</p>
-            </div>
+                <p style="color: red; margin-top: 0.6em; margin-bottom: 0">En feil oppsto. {{ uploadError }}</p>
             </div>
         </div>
-
+    </div>
 </template>
 
 <script>
@@ -63,114 +80,137 @@ import 'firebase/storage';
 import ProgressSpinner from './ProgressSpinner'
 
 
-  const STATUS_NONE = 0, STATUS_INITIAL = 1, STATUS_SAVING = 2, STATUS_SUCCESS = 3, STATUS_FAILED = 4;
+const STATUS_NONE = 0, STATUS_INITIAL = 1, STATUS_SAVING = 2, STATUS_SUCCESS = 3, STATUS_FAILED = 4, STATUS_LINKING = 5;
 
-  export default {
-    name: 'app',
+export default {
+    name: 'UploadMedia',
     components: {
         ProgressSpinner
     },
     props: ['profile', 'uid', 'cid', 'media', 'links'],
     data() {
-      return {
-        fileCount: 0,
-        uploadError: null,
-        currentStatus: null,
-        uploadFieldName: 'media',
-        progress: 20,
-        animated: true,
-        reason: 'addedPicture'
-      }
+        return {
+            link: { name: null, url: null, description: null },
+            fileCount: 0,
+            uploadError: null,
+            currentStatus: null,
+            uploadFieldName: 'media',
+            progress: 20,
+            animated: true,
+            reason: 'addedPicture'
+        }
     },
     computed: {
-      isInitial() {
-        return this.currentStatus === STATUS_INITIAL;
-      },
-      isSaving() {
-        return this.currentStatus === STATUS_SAVING;
-      },
-      isSuccess() {
-        return this.currentStatus === STATUS_SUCCESS;
-      },
-      isFailed() {
-        return this.currentStatus === STATUS_FAILED;
-      }
+        isInitial() {
+            return this.currentStatus === STATUS_INITIAL;
+        },
+        isSaving() {
+            return this.currentStatus === STATUS_SAVING;
+        },
+        isSuccess() {
+            return this.currentStatus === STATUS_SUCCESS;
+        },
+        isFailed() {
+            return this.currentStatus === STATUS_FAILED;
+        },
+        isLinking() {
+            return this.currentStatus === STATUS_LINKING;
+        }
     },
     methods: {
-      reset() {
-        // reset form to initial state
-        this.currentStatus = STATUS_NONE;
-        this.uploadedFiles = [];
-        this.uploadError = null;
-        this.fileCount  = 0;
-      },
-      setInitial() {
-          //this.reset()
-          this.currentStatus = STATUS_INITIAL;
-      },
-      add(formData) {
-        if (formData) {
-            const file = formData.get('media')
-            let elem = { filename: file.name, type: file.type, url: formData.get('url'), description: '' }
-            // console.log('add media', elem)
-            if (this.profile) {
-                // this.profile.picture = elem.url
-                this.$emit(this.reason, elem)
-            } else {
-                this.media.push(elem)
+        reset() {
+            // reset form to initial state
+            this.currentStatus = STATUS_NONE;
+            this.uploadedFiles = [];
+            this.uploadError = null;
+            this.fileCount  = 0;
+        },
+        setInitial() {
+            //this.reset()
+            this.currentStatus = STATUS_INITIAL;
+        },
+        setLinking() {
+            this.currentStatus = STATUS_LINKING;
+        },
+        add(formData) {
+            if (formData) {
+                const file = formData.get('media')
+                let elem = { filename: file.name, type: file.type, url: formData.get('url'), description: '' }
+                // console.log('add media', elem)
+                if (this.profile) {
+                    // this.profile.picture = elem.url
+                    this.$emit(this.reason, elem)
+                } else {
+                    this.media.push(elem)
+                }
             }
-        }
-      },
-      upload(formData) {
-        // upload data to the server
-        this.currentStatus = STATUS_SAVING;
+        },
+        upload(formData) {
+            // upload data to the server
+            this.currentStatus = STATUS_SAVING;
 
-        const file = formData.get('media')
-        firebase.storage().ref('media').child(file.name)
-        .put(file)
-        .then (() => {
-            firebase.storage().ref('media').child(file.name).getDownloadURL()
-            .then (url => {
-                this.currentStatus = STATUS_SUCCESS;
-                formData.append('url', url)
-                console.log('upload, url=', url)
-                this.add(formData)
+            const file = formData.get('media')
+            firebase.storage().ref('media').child(file.name)
+            .put(file)
+            .then (() => {
+                firebase.storage().ref('media').child(file.name).getDownloadURL()
+                .then (url => {
+                    this.currentStatus = STATUS_SUCCESS;
+                    formData.append('url', url)
+                    console.log('upload, url=', url)
+                    this.add(formData)
+                })
+                .catch((error) => {
+                    console.error(error)
+                    this.uploadError = error.response;
+                    this.currentStatus = STATUS_FAILED;
+                })
             })
             .catch((error) => {
                 console.error(error)
                 this.uploadError = error.response;
                 this.currentStatus = STATUS_FAILED;
             })
-        })
-        .catch((error) => {
-            console.error(error)
-            this.uploadError = error.response;
-            this.currentStatus = STATUS_FAILED;
-        })
-      },
-      filesChange(fieldName, fileList) {
-        // handle file changes
-        if (!fileList.length) return;
+        },
+        filesChange(fieldName, fileList) {
+            // handle file changes
+            if (!fileList.length)
+                return;
 
-        // append the files to FormData
-        const formData = new FormData();
-        Array
-          .from(Array(fileList.length).keys())
-          .map(item => {
-            formData.append(fieldName, fileList[item], fileList[item].name);
-          });
+            // append the files to FormData
+            const formData = new FormData();
+            Array
+                .from(Array(fileList.length).keys())
+                .map(item => {
+                    formData.append(fieldName, fileList[item], fileList[item].name);
+                });
 
-        // save it
-        this.upload(formData);
-      }
+            // save it
+            this.upload(formData);
+        },
+        addLink() {
+            try {
+                this.links.forEach(element => {
+                    if (element.url === this.link.url) {
+                        throw new Error('Denne lenken finnes allerede.');
+                    }
+                });
+                this.links.push(this.link)
+                // console.log('link', this.link)
+                this.currentStatus = STATUS_SUCCESS;
+            } catch(error) {
+                this.uploadError = error.message
+                this.currentStatus = STATUS_FAILED;
+            }
+        }
     },
     mounted() {
-      this.reset();
+        this.reset();
     },
     activated() {
         this.reset()
     }
-  }
+}
 
 </script>
 

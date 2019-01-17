@@ -1,6 +1,7 @@
 <template>
     <div class="component">
         <ul class="list-unstyled" style="">
+            <p v-if="media !== undefined && media[0]" style="margin-top: 0.5em; margin-bottom: 0.5em"><strong>Media</strong></p>
             <div class="row" style="margin-left: 0; ">
                 <div class="" v-for="(item, index) in media" :key="index" style="margin-top: 0; margin-bottom: 0.5em">
                     <div class="card h-100" style="width: 110px; margin-right: 0.2em; padding-bottom: 0.2em" >
@@ -14,8 +15,10 @@
 
             <show-media v-if="showFile" v-on:onFileClose="onFileClose" :file="file"></show-media>
 
-            <b-media tag="li" v-for="item in links" :key="item.url" style="margin-bottom: 0.5em">
-                <b-link href="item.url">Link</b-link>
+            <p v-if="links !== undefined && links[0]" style="margin-top: 0.5em; margin-bottom: 0.5em"><strong>Lenker</strong></p>
+            <b-media tag="li" v-for="item in links" :key="item.url">
+                <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="removeLink(item)">delete</i></span>
+                <b-link :href="item.url" @click="openUrl(item)">{{ item.name }}</b-link>
                 <p style="margin-bottom: 5px">{{ item.description }}</p>
             </b-media>
         </ul>
@@ -40,6 +43,10 @@ export default {
         }
     },
     methods: {
+        openUrl(item) {
+            let win = window.open(item.url, '_blank');
+            win.focus();
+        },
         remove: function(item) {
             // console.log('remove', item.filename, item.id)
             if (item.id) {
@@ -66,6 +73,24 @@ export default {
             let ix = this.media.findIndex(e => e.id === item.id)
             if (~ix) {
                 this.media.splice(ix, 1)
+            }
+        },
+        removeLink: function(item) {
+            // console.log('remove', item)
+            if (item.id) {
+                db.collection('links').doc(item.id).delete()
+                .then(() => {
+                    // console.log('link deleted in database/media')
+                }).catch(error => {
+                    console.info("error removing link; not saved yet?...", error);
+                    // alert(error)
+                })
+            }
+
+            // Remove from array
+            let ix = this.links.findIndex(e => e.id === item.id)
+            if (~ix) {
+                this.links.splice(ix, 1)
             }
         },
         show(item) {

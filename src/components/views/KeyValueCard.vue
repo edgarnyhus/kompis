@@ -67,49 +67,9 @@ export default {
             // child component (slot) signaled finished
             // console.log('updated event from child, ID=', id)
             if (id) {
-                this.fetchData()
+                this.keyvalues = this.$store.state.database.fetchData('keyvalues', this.cert_id, this.user_id)
             }
             this.mode = 'list'
-        },
-        fetchData() {
-            if (this.user_id) {
-                this.keyvalues = []
-                let ref = null
-                if (this.cert_id) {
-                    ref = db.collection('keyvalues').where('cert_id', '==',this.cert_id)
-                } else {
-                    ref = db.collection('keyvalues').where('user_id', '==',this.user_id)
-                }
-                ref.get()
-                .then(snapshot => {
-                    snapshot.forEach(doc => {
-                        let elem = doc.data()
-                        elem.id = doc.id
-                        elem.id = doc.id
-                        elem.media = this.fetchMedia('media', doc.id)
-                        this.keyvalues.push(elem)
-                    })
-                })
-                .catch(error=> {
-                    console.error('fetching key values failed', error)
-                })
-            }
-        },
-        fetchMedia(coll, id) {
-            let media = []
-            db.collection(coll).where('parent_id', '==', id)
-            .get()
-            .then(snapshot => {
-                snapshot.forEach(doc => {
-                    let elem = doc.data()
-                    elem.id = doc.id
-                    media.push(elem)
-                })
-            })
-            .catch(error=> {
-                console.error('fetching media failed', error)
-            })
-            return media
         }
     },
     created() {
@@ -123,7 +83,7 @@ export default {
             this.user_id = this.$route.params.uid
         if (!this.user_id)
             this.user_id = firebase.auth().currentUser.uid
-        this.fetchData()
+        this.keyvalues = this.$store.state.database.fetchData('keyvalues', this.cert_id, this.user_id)
     }
     
 }

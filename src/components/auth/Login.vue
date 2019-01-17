@@ -17,6 +17,8 @@
                 <b-form-group class="g-sec">
                     <b-btn class="" type="submit" align="center" variant="info" block>Logg inn</b-btn>
                 </b-form-group>
+
+                <b-link router-link :to="{ name: 'ResetPassword' }">Glemt passord?</b-link>
             </b-form>
 
             <p v-if="feedback" style="margin-top: 1.5em; color: red">{{ feedback }}</p>
