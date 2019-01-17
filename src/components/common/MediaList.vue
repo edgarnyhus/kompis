@@ -18,7 +18,7 @@
             <p v-if="links !== undefined && links[0]" style="margin-top: 0.5em; margin-bottom: 0.5em"><strong>Lenker</strong></p>
             <b-media tag="li" v-for="item in links" :key="item.url">
                 <span><i class="material-icons md-light float-right g-icon" style="color: #767676" @click="removeLink(item)">delete</i></span>
-                <b-link :href="item.url" @click="openUrl(item)">{{ item.name }}</b-link>
+                <b-link class="gb-link" @click="openUrl(item)">{{ item.name }}</b-link>
                 <p style="margin-bottom: 5px">{{ item.description }}</p>
             </b-media>
         </ul>
@@ -44,8 +44,9 @@ export default {
     },
     methods: {
         openUrl(item) {
-            let win = window.open(item.url, '_blank');
-            win.focus();
+            // let win = window.open(item.url, '_blank');
+            // win.focus();
+            Object.assign(document.createElement('a'), { target: '_blank', href: item.url }).click()
         },
         remove: function(item) {
             // console.log('remove', item.filename, item.id)
