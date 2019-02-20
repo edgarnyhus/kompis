@@ -47,22 +47,26 @@ class Database {
         return media
     }
 
-    updateMedia(coll, id, item) {
-        if (id) {
-            db.collection(coll).doc(id).set(item, {merge: true})
-            .then(() => {
+    uploadMedia(coll, formData) {
+        // upload data to the server
+        return new Promise((resolve, reject) => {
+            const file = formData.get(coll)
+            firebase.storage().ref(coll).child(file.name)
+            .put(file)
+            .then (() => {
+                firebase.storage().ref(coll).child(file.name).getDownloadURL()
+                .then (url => {
+                    // File uploaded ok
+                    resolve(url)
+                })
+                .catch((error) => {
+                    reject('Opplasting av fieln feilet. ' + error)
+                })
             })
             .catch((error) => {
-                throw new Error("Oppdatering av '" + coll + "' feilet! " + error)
-            });
-        } else {
-            db.collection(coll).add(item)
-            .then((doc) => {
+                reject('Opplasting av fieln feilet. ' + error)
             })
-            .catch((error) => {
-                throw new Error("Lagring av '" + coll + "' feilet! " + error)
-            })
-        }
+        })
     }
 }
 
