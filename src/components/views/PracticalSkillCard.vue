@@ -6,7 +6,7 @@
                 <h5 class="text-muted">Praktiske ferdigheter
                     <b-button v-if="!isMobile" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
-                <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Npe du har lært på skolen eller i jobb?</p>
+                <p class="b-card-text" style="font-style: italic">Hva er dine praktiske evner? Noe du har lært på skolen eller i jobb?</p>
             </div>
 
             <div v-else>

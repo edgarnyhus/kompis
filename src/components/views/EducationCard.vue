@@ -6,7 +6,7 @@
                 <h5 class="text-muted">Utdanning og kurs
                     <b-button v-if="!isMobile" class="btn-floating btn-secondary float-right" @click="id=null; mode='edit'">Legg til emne</b-button>
                 </h5>
-                <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt nen kurs på skolen, jobb eller fritid?</p>
+                <p class="b-card-text" style="font-style: italic">Hvilke skoler har du gått på? Har du tatt noen kurs på skolen, jobb eller fritid?</p>
             </div>
 
             <div v-else>
